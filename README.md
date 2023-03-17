@@ -39,6 +39,13 @@ Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de
 16.	Ca utilizator, as vrea sa pot juca jocuri in echipa.  
 17.	Ca jucator, as vrea sa vad modificari pe tabla de joc in timp real.
 
+## Backlog 
+Backlog-ul proiectului a fost realizat cu ajutorul aplicatiei [Trello](https://trello.com/create-first-team) si se regaseste [aici](https://github.com/bogdanputinelu/uni-PartyPlaytime/tree/main/trelloBacklog). Acesta pune in evidenta cele 4 etape ale proiectului:
+1. fixarea backlog-ului proiectului
+2. implementarea a cel putin 1/3 din backlog 
+3. implementarea a cel puțin 2/3 din backlog
+4. prezentarea proiectului
+
 ## Workflow Diagram 
 
 Diagrama Workflow a aplicatiei se gaseste [aici](https://github.com/bogdanputinelu/uni-PartyPlaytime/tree/main/diagrameWorkflow). Aceasta contine sase componente (Main, Word Rush, Headspin, Board Blitz, Help Us Decide si Tic Tac Toe) impartite conform functionalitatilor aplicatiei. Structurarea lor clara permite o buna intelegere a pasilor de implementare. 
