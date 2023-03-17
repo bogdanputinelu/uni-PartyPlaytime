@@ -14,6 +14,11 @@ Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de
 
 **‘Help us decide’** este o functionalitate suplimentara a aplicatiei pentru a ajuta grupurile de prieteni sa ia decizii. Aceasta afiseaza statistica voturilor, continand si un tie breaker.
 
+## Membrii echipei 
+- **[Putinelu Bogdan](https://github.com/bogdanputinelu)**
+- **[Nicolae Mihaila](https://github.com/MihailaNicolae)**
+- **[Enescu Irina ](https://github.com/irinaenescu2002)**
+
 ## User Stories 
 
 1.	Ca utilizator, as vrea o aplicatie cu diverse jocuri de societate pentru a nu fi nevoit sa aduc la o petrecere cartonase de joc, tabla de joc etc..
@@ -34,4 +39,6 @@ Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de
 16.	Ca utilizator, as vrea sa pot juca jocuri in echipa.  
 17.	Ca jucator, as vrea sa vad modificari pe tabla de joc in timp real.
 
+## Workflow Diagram 
 
+Diagrama Workflow a aplicatiei se gaseste [aici](https://github.com/bogdanputinelu/uni-PartyPlaytime/tree/main/diagrameWorkflow). Aceasta contine sase componente (Main, Word Rush, Headspin, Board Blitz, Help Us Decide si Tic Tac Toe) impartite conform functionalitatilor aplicatiei. Structurarea lor clara permite o buna intelegere a pasilor de implementare. 
