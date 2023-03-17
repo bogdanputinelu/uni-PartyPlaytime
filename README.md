@@ -21,15 +21,15 @@ Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de
 
 ## User Stories 
 
-1.	Ca utilizator, as vrea o aplicatie cu diverse jocuri de societate pentru a nu fi nevoit sa aduc la o petrecere cartonase de joc, tabla de joc etc..
-2.	Ca utilizator, as vrea sa creez mai multe grupuri de prieteni (de exemplu: prietenii de la facultate, prietenii de la liceu etc.). 
+1.	Ca utilizator, as vrea o aplicatie cu diverse jocuri de societate.
+2.	Ca utilizator, as vrea sa creez mai multe grupuri de prieteni (prietenii de la facultate, de la liceu etc.). 
 3.	Ca jucator, as dori ca jocurile din aplicatie sa imi indice inca de la inceput care este numarul minim de jucatori.
 4.	Ca jucator, as dori ca jocurile din aplicatie sa permita setarea numarului de jucatori pentru jocurile de grup.
 5.	Ca jucator, as dori sa setez numarul de runde in urma carora sa se castige un joc. 
 6.	Ca jucator, as dori sa setez cate puncte trebuie acumulate pentru a castiga un joc. 
-7.	Ca jucator, as dori sa am optiunea de a adauga optiuni personalizate in jocuri (de exemplu: adaugarea unui cuvant propriu intr-un joc de mima). 
-8.	Ca lider de grup, as dori o functionalitate suplimentara care sa imi permita sa realizez un poll pentru a lua decizii mai usor. 
-9.	Ca lider de grup, as dori o functionalitate suplimentara care sa ma ajute sa iau o decizie in cazul unei remize. 
+7.	Ca jucator, as dori sa am optiunea de a adauga optiuni personalizate in jocuri. 
+8.	Ca lider de grup, as dori o functionalitate care sa imi permita realizarea unui poll pentru a lua decizii mai usor. 
+9.	Ca lider de grup, as dori o functionalitate care sa ma ajute sa iau o decizie in cazul unei remize. 
 10.	Ca utilizator, as dori sa pot juca un joc in mod single player cu ajutorul unui bot. 
 11.	Ca jucator, as dori un cronometru incorporat pentru jocurile cu o anumita limita de timp. 
 12.	Ca utilizator, as dori un set de instructiuni pentru fiecare joc. 
