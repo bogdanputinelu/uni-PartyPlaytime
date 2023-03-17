@@ -1,6 +1,7 @@
 # PartyPlaytime
 
-## Descrierea aplicatiei 
+<img align="right" src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/8aafd6121516019.60c7cf2e396a4.gif"> </img>
+
 Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de prieteni. Utilizatorul poate juca mai multe mini-game-uri cu grupurile de prieteni. In cazul in care nu are un grup de prieteni cu care sa se joace, utilizatorul poate opta pentru jocuri single player, avand posibilitatea de a juca cu un bot. De asemenea, aplicatia ofera o functionalitate suplimentara implementata sub forma unui poll ce permite o organizare mai buna a unui grup de prieteni. 
 
 **‘Word Rush’** este un joc de societate ce necesita cel putin patru persoane (2 echipe de 2 persoane). Pe ecran va aparea o expresie sau un cuvant care trebuie mimat, desenat sau descris (intr-un interval de timp) de un membru al echipei. Ceilalti coechipieri trebuie sa ghiceasca cuvantul. Daca acestia il ghicesc, primesc un punct. Prima echipa care ajunge la X puncte castiga.  
