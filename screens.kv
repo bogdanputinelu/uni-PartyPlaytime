@@ -1,0 +1,71 @@
+#: import WipeTransition kivy.uix.screenmanager.WipeTransition
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import utils kivy.utils
+
+WindowManager:
+    WelcomeScreen:
+    PartyPlaytime:
+    BoardBlitz:
+
+<ScreenManager>:
+    transition: FadeTransition()
+
+<WelcomeScreen>:
+    name: "welcome"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#437B56")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    AnchorLayout:
+        size: root.width, root.height
+        anchor_x: "center"
+        anchor_y: "center"
+
+        Video:
+            source: "StartLogo.mp4"
+            state: "play"
+            size_hint: 0.5, 0.5
+            on_eos:
+                app.root.current = "party"
+                app.root.transition = WipeTransition()
+
+
+<PartyPlaytime>:
+    name: "party"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "PartyPlaytime"
+            font_size: 32
+
+        Button:
+            text: "Click to go to BoardBlitz"
+            font_size: 32
+            on_release: app.root.current = "board"
+
+        VideoPlayer:
+            source: "StartLogo.mp4"
+            state: "play"
+
+<BoardBlitz>:
+    name: "board"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "BoardBlitz"
+            font_size: 32
+
+        Button:
+            text: "Click to go to PartyPlaytime"
+            font_size: 32
+            on_release: app.root.current = "party"
