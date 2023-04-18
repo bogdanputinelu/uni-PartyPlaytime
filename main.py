@@ -15,6 +15,22 @@ class BoardBlitz(Screen):
     pass
 
 
+class WordRush(Screen):
+    pass
+
+
+class Headspin(Screen):
+    pass
+
+
+class TicTacToe(Screen):
+    pass
+
+
+class HelpUsDecide(Screen):
+    pass
+
+
 class WindowManager(ScreenManager):
     pass
 

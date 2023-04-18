@@ -1,11 +1,16 @@
 #: import WipeTransition kivy.uix.screenmanager.WipeTransition
 #: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import FallOutTransition kivy.uix.screenmanager.FallOutTransition
 #: import utils kivy.utils
 
 WindowManager:
     WelcomeScreen:
     PartyPlaytime:
     BoardBlitz:
+    WordRush:
+    Headspin:
+    TicTacToe:
+    HelpUsDecide:
 
 <ScreenManager>:
     transition: FadeTransition()
@@ -31,11 +36,18 @@ WindowManager:
             size_hint: 0.5, 0.5
             on_eos:
                 app.root.current = "party"
-                app.root.transition = WipeTransition()
+                app.root.transition = FadeTransition(duration=0.10)
 
 
 <PartyPlaytime>:
     name: "party"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#437B56")
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
     BoxLayout:
         orientation: "vertical"
@@ -45,17 +57,97 @@ WindowManager:
             text: "PartyPlaytime"
             font_size: 32
 
-        Button:
-            text: "Click to go to BoardBlitz"
-            font_size: 32
-            on_release: app.root.current = "board"
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.blitz_image.source = "logos/Board_Blitz_-_Logo_pressed.png"
+                    on_release:
+                        root.ids.blitz_image.source = "logos/Board_Blitz_-_Logo.png"
+                        app.root.current = "blitz"
+                    Image:
+                        id: blitz_image
+                        source: "logos/Board_Blitz_-_Logo.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.spin_image.source = "logos/Headspin_-_Logo_pressed.png"
+                    on_release:
+                        root.ids.spin_image.source = "logos/Headspin_-_Logo.png"
+                        app.root.current = "spin"
+                    Image:
+                        id: spin_image
+                        source: "logos/Headspin_-_Logo.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.rush_image.source = "logos/Word_Rush_-_Logo_pressed.png"
+                    on_release:
+                        root.ids.rush_image.source = "logos/Word_Rush_-_Logo.png"
+                        app.root.current = "rush"
+                    Image:
+                        id: rush_image
+                        source: "logos/Word_Rush_-_Logo.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
 
-        VideoPlayer:
-            source: "StartLogo.mp4"
-            state: "play"
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.tic_image.source = "logos/Tic_Tac_Toe_-_Logo_pressed.png"
+                    on_release:
+                        root.ids.tic_image.source = "logos/Tic_Tac_Toe_-_Logo.png"
+                        app.root.current = "tic"
+                    Image:
+                        id: tic_image
+                        source: "logos/Tic_Tac_Toe_-_Logo.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.33, 1
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.decide_image.source = "logos/Help_Us_Decide_-_Logo_pressed.png"
+                    on_release:
+                        root.ids.decide_image.source = "logos/Help_Us_Decide_-_Logo.png"
+                        app.root.current = "decide"
+                    Image:
+                        id: decide_image
+                        source: "logos/Help_Us_Decide_-_Logo.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+
+        Label:
+            text: "Games row 3"
 
 <BoardBlitz>:
-    name: "board"
+    name: "blitz"
 
     BoxLayout:
         orientation: "vertical"
@@ -63,6 +155,70 @@ WindowManager:
 
         Label:
             text: "BoardBlitz"
+            font_size: 32
+
+        Button:
+            text: "Click to go to PartyPlaytime"
+            font_size: 32
+            on_release: app.root.current = "party"
+
+<WordRush>:
+    name: "rush"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "WordRush"
+            font_size: 32
+
+        Button:
+            text: "Click to go to PartyPlaytime"
+            font_size: 32
+            on_release: app.root.current = "party"
+
+<Headspin>:
+    name: "spin"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Headspin"
+            font_size: 32
+
+        Button:
+            text: "Click to go to PartyPlaytime"
+            font_size: 32
+            on_release: app.root.current = "party"
+
+<TicTacToe>:
+    name: "tic"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "TicTacToe"
+            font_size: 32
+
+        Button:
+            text: "Click to go to PartyPlaytime"
+            font_size: 32
+            on_release: app.root.current = "party"
+
+<HelpUsDecide>:
+    name: "decide"
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "HelpUsDecide"
             font_size: 32
 
         Button:
