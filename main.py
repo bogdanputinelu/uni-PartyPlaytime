@@ -23,6 +23,18 @@ class Headspin(Screen):
     pass
 
 
+class HeadspinRules(Screen):
+    pass
+
+
+class HeadspinSettings(Screen):
+    pass
+
+
+class HeadspinPlay(Screen):
+    pass
+
+
 class TicTacToe(Screen):
     pass
 
@@ -41,7 +53,6 @@ kv = Builder.load_file("screens.kv")
 class PartyPlaytimeApp(App):
     def build(self):
         return kv
-
 
 
 if __name__ == "__main__":
