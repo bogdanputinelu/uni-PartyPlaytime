@@ -336,7 +336,7 @@ WindowManager:
                     color: utils.get_color_from_hex("#437B56")
 
         Label:
-            text: "aici o sa apara cuvantu"
+            text: "aici o sa apara cuvantul"
             font_size: 32
             color: utils.get_color_from_hex("#437B56")
 
@@ -348,7 +348,7 @@ WindowManager:
                 Button:
                     text: "Check"
                     font_size: 32
-                    color: utils.get_color_from_hex("#437B56")
+                    color: utils.get_color_from_hex("#CBDDD1")
                     background_color: utils.get_color_from_hex("#437B56")
                     on_release: app.root.current = "headspinPlay"
             AnchorLayout:
@@ -358,9 +358,17 @@ WindowManager:
                 Button:
                     text: "Pass"
                     font_size: 32
-                    color: utils.get_color_from_hex("#437B56")
+                    color: utils.get_color_from_hex("#CBDDD1")
                     background_color: utils.get_color_from_hex("#437B56")
                     on_release: app.root.current = "headspinPlay"
+
+        Button:
+            text: "Leave game"
+            font_size: 32
+            on_release: app.root.current = "spin"
+            size_hint: 1, .4
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
 
 <TicTacToe>:
     name: "tic"
