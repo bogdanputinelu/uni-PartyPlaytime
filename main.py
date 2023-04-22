@@ -23,6 +23,18 @@ class Headspin(Screen):
     pass
 
 
+class HeadspinRules(Screen):
+    pass
+
+
+class HeadspinSettings(Screen):
+    pass
+
+
+class HeadspinPlay(Screen):
+    pass
+
+
 class TicTacToe(Screen):
     pass
 
