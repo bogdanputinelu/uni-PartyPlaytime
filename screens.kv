@@ -14,6 +14,9 @@ WindowManager:
     HeadspinPlay:
     TicTacToe:
     HelpUsDecide:
+    HelpUsDecideRules:
+    HelpUsDecideSettings:
+    HelpUsDecidePlay:
 
 <ScreenManager>:
     transition: FadeTransition()
@@ -350,7 +353,7 @@ WindowManager:
                 anchor_x: "left"
                 anchor_y: "center"
                 Label:
-                    text: "NO Round"
+                    text: "Number of rounds:"
                     color: utils.get_color_from_hex("#437B56")
             AnchorLayout:
                 size_hint: 0.50, 1
@@ -368,7 +371,7 @@ WindowManager:
                 anchor_x: "left"
                 anchor_y: "center"
                 Label:
-                    text: "NO Teams"
+                    text: "Number of teams:"
                     color: utils.get_color_from_hex("#437B56")
             AnchorLayout:
                 size_hint: 0.50, 1
@@ -386,7 +389,7 @@ WindowManager:
                 anchor_x: "left"
                 anchor_y: "center"
                 Label:
-                    text: "NO Players in a team"
+                    text: "Number of players in a team:"
                     color: utils.get_color_from_hex("#437B56")
             AnchorLayout:
                 size_hint: 0.50, 1
@@ -496,15 +499,246 @@ WindowManager:
 <HelpUsDecide>:
     name: "decide"
 
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: "vertical"
         size: root.width, root.height
 
         Label:
-            text: "HelpUsDecide"
+            text: "Help Us Decide"
             font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.settings_image.source = "logos/Settings.png"
+                    on_release:
+                        root.ids.settings_image.source = "logos/Settings.png"
+                        app.root.current = "helpUsDecideSettings"
+                    Image:
+                        id: settings_image
+                        source: "logos/Settings.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.rules_image.source = "logos/Rules.png"
+                    on_release:
+                        root.ids.rules_image.source = "logos/Rules.png"
+                        app.root.current = "helpUsDecideRules"
+                    Image:
+                        id: rules_image
+                        source: "logos/Rules.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "bottom"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.back_image.source = "logos/Back.png"
+                    on_release:
+                        root.ids.back_image.source = "logos/Back.png"
+                        app.root.current = "party"
+                    Image:
+                        id: back_image
+                        source: "logos/Back.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "bottom"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.play_image.source = "logos/Play.png"
+                    on_release:
+                        root.ids.play_image.source = "logos/Play.png"
+                        app.root.current = "helpUsDecidePlay"
+                    Image:
+                        id: play_image
+                        source: "logos/Play.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+
+<HelpUsDecideRules>:
+    name: "helpUsDecideRules"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Help Us Decide Rules"
+            font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        Label:
+            text: "! Poll time ! "
+            size_hint_y: None
+            text_size: self.width, None
+            height: self.texture_size[1]
+            color: utils.get_color_from_hex("#437B56")
+            halign: 'center'
+            valign: 'top'
+            font_size: 18
+
+        Label:
+            text: "After the game settings have been configured (number of participants and options, participant names and options) the survey can begin. Each poll participant will vote for their favorite option on the screen. At the end, the votes are counted and the ranking is displayed. In case of a tie, a random option will be chosen."
+            size_hint_y: None
+            text_size: self.width, None
+            height: self.texture_size[1]
+            color: utils.get_color_from_hex("#437B56")
+            halign: 'center'
+            valign: 'top'
+            font_size: 18
+
+        Label:
+            height: self.texture_size[1]
 
         Button:
-            text: "Click to go to PartyPlaytime"
+            text: "Click to go back to HelpUsDecideMenu"
             font_size: 32
-            on_release: app.root.current = "party"
+            on_release: app.root.current = "decide"
+            size_hint: 1, 1
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
+            size_hint_y: None
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'top'
+
+<HelpUsDecideSettings>:
+    name: "helpUsDecideSettings"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Game Settings"
+            font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Number of players:"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "How many people will vote?"
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Names:"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "What are their names?"
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Number of options:"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "How many options will be?"
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Options:"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "What are the poll options?"
+
+        Label:
+            height: self.texture_size[1]
+
+        Button:
+            text: "Click to go back to HelpUsDecideMenu"
+            font_size: 32
+            on_release: app.root.current = "decide"
+            size_hint: 1, 1
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
+            size_hint_y: None
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'top'

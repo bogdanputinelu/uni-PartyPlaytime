@@ -43,6 +43,18 @@ class HelpUsDecide(Screen):
     pass
 
 
+class HelpUsDecideRules(Screen):
+    pass
+
+
+class HelpUsDecideSettings(Screen):
+    pass
+
+
+class HelpUsDecidePlay(Screen):
+    pass
+
+
 class WindowManager(ScreenManager):
     pass
 
