@@ -8,6 +8,9 @@ WindowManager:
     PartyPlaytime:
     BoardBlitz:
     WordRush:
+    WordRushRules:
+    WordRushSettings:
+    WordRushPlay:
     Headspin:
     HeadspinRules:
     HeadspinSettings:
@@ -165,8 +168,17 @@ WindowManager:
             font_size: 32
             on_release: app.root.current = "party"
 
+#DE AICI INCEP EU
+
 <WordRush>:
     name: "rush"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
     BoxLayout:
         orientation: "vertical"
@@ -175,11 +187,285 @@ WindowManager:
         Label:
             text: "WordRush"
             font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.settings_image.source = "logos/Settings.png"
+                    on_release:
+                        root.ids.settings_image.source = "logos/Settings.png"
+                        app.root.current = "rushSettings"
+                    Image:
+                        id: settings_image
+                        source: "logos/Settings.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.33, 1
+                anchor_x: "center"
+                anchor_y: "center"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.rules_image.source = "logos/Rules.png"
+                    on_release:
+                        root.ids.rules_image.source = "logos/Rules.png"
+                        app.root.current = "rushRules"
+                    Image:
+                        id: rules_image
+                        source: "logos/Rules.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "bottom"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.back_image.source = "logos/Back.png"
+                    on_release:
+                        root.ids.back_image.source = "logos/Back.png"
+                        app.root.current = "party"
+                    Image:
+                        id: back_image
+                        source: "logos/Back.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "bottom"
+                Button:
+                    size_hint: 0.4, 0.67
+                    background_color: 0, 0, 0, 0
+                    on_press: root.ids.play_image.source = "logos/Play.png"
+                    on_release:
+                        root.ids.play_image.source = "logos/Play.png"
+                        app.root.current = "rushPlay"
+                    Image:
+                        id: play_image
+                        source: "logos/Play.png"
+                        center_x: self.parent.center_x
+                        center_y: self.parent.center_y
+
+<WordRushRules>:
+    name: "rushRules"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "WordRush Rules"
+            font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        Label:
+            text: "! Be the first team to win a certain amount of rounds by guessing the word that you and your team members will be miming, drawing or describing ! "
+            size_hint_y: None
+            text_size: self.width, None
+            height: self.texture_size[1]
+            color: utils.get_color_from_hex("#437B56")
+            halign: 'center'
+            valign: 'top'
+            font_size: 18
+
+        Label:
+            text: "Every round, each team chooses a team member that will have to make his team guess what he is miming, drawing or describing. At the start of the round, without showing the others the screen, the chosen player sees the word given to him and the type of round that he is supposed to play (miming, drawing or describing). His goal is to make his team members guess the word that he is miming, drawing or describing (depending on the round) within 1 minute. If his team members guess the word within the given time, the team earns a point. If they don't, they do not earn a point. Each team has the right to ask for another word 3 times, if they do not want to play the word they were given. The teams take turns repeating this proccess, until they reach a certain score or play a certain number of rounds, depending on their preference"
+            size_hint_y: None
+            text_size: self.width, None
+            height: self.texture_size[1]
+            color: utils.get_color_from_hex("#437B56")
+            halign: 'center'
+            valign: 'top'
+            font_size: 18
+
+        Label:
+            height: self.texture_size[1]
 
         Button:
-            text: "Click to go to PartyPlaytime"
+            text: "Click to go back to WordRushMenu"
             font_size: 32
-            on_release: app.root.current = "party"
+            on_release: app.root.current = "rush"
+            size_hint: 1, 1
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
+            size_hint_y: None
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'top'
+
+<WordRushSettings>:
+    name: "rushSettings"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        Label:
+            text: "Game Settings"
+            font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "NO Round"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "How many rounds do you want to play?"
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "NO Teams"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "How many teams will play this game?"
+
+        Label:
+            height: self.texture_size[1]
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "NO Players in a team"
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "center"
+                TextInput:
+                    text: "How many players will be in a team?"
+
+        Label:
+            height: self.texture_size[1]
+
+        Button:
+            text: "Click to go back to WordRushMenu"
+            font_size: 32
+            on_release: app.root.current = "rush"
+            size_hint: 1, 1
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
+            size_hint_y: None
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'top'
+
+<WordRushPlay>
+    name: "rushPlay"
+
+    canvas:
+        Color:
+            rgba: utils.get_color_from_hex("#CBDDD1")
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "bottom"
+                Label:
+                    text: "ROUND"
+                    font_size: 32
+                    color: utils.get_color_from_hex("#437B56")
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "bottom"
+                Label:
+                    text: "TIMER"
+                    font_size: 32
+                    color: utils.get_color_from_hex("#437B56")
+
+        Label:
+            text: "aici o sa apara cuvantul"
+            font_size: 32
+            color: utils.get_color_from_hex("#437B56")
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "bottom"
+                Button:
+                    text: "Check"
+                    font_size: 32
+                    color: utils.get_color_from_hex("#CBDDD1")
+                    background_color: utils.get_color_from_hex("#437B56")
+                    on_release: app.root.current = "rushPlay"
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "right"
+                anchor_y: "bottom"
+                Button:
+                    text: "Pass"
+                    font_size: 32
+                    color: utils.get_color_from_hex("#CBDDD1")
+                    background_color: utils.get_color_from_hex("#437B56")
+                    on_release: app.root.current = "rushPlay"
+
+        Button:
+            text: "Leave game"
+            font_size: 32
+            on_release: app.root.current = "rush"
+            size_hint: 1, .4
+            color: utils.get_color_from_hex("#CBDDD1")
+            background_color:utils.get_color_from_hex("#437B56")
+# DE AICI IN JOS E A IRINEI
 
 <Headspin>:
     name: "spin"

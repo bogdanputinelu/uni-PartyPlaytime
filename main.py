@@ -18,6 +18,17 @@ class BoardBlitz(Screen):
 class WordRush(Screen):
     pass
 
+class WordRushRules(Screen):
+    pass
+
+
+class WordRushSettings(Screen):
+    pass
+
+
+class WordRushPlay(Screen):
+    pass
+
 
 class Headspin(Screen):
     pass
