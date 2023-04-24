@@ -15,6 +15,17 @@ class PartyPlaytime(Screen):
 class BoardBlitz(Screen):
     pass
 
+class BoardBlitzRules(Screen):
+    pass
+
+
+class BoardBlitzSettings(Screen):
+    pass
+
+
+class BoardBlitzPlay(Screen):
+    pass
+
 
 class WordRush(Screen):
     pass
@@ -28,11 +39,13 @@ class WordRushSettings(Screen):
 
 
 class WordRushPlay(Screen):
+    pass
+    """
     fisier = open("cuvinte.txt", 'r')  # deschidem fisierul de unde luam cuvintele
     listaCuvinte = fisier.read().split(",")# In lista asta sunt cuvintele de mimat/desenat/descris din fisier. Irina, jocurile noastre pot impari fisierul
     nr_echipe = int(input("Numarul de echipe este = "))  # Selectam numarul de echipe
     puncte_echipe = [0 for contor in range(1, nr_echipe + 1)]
-    versiune = int(input("Doriti sa jucati pe runde sau pe punctaj? Tastati 0 pentru runde sau 1 pentru punctaj"))
+    versiune = int(input("Doriti sa jucati pe runde sau pe punctaj? Tastati 0 pentru runde sau 1 pentru punctaj\n"))
     if versiune == 0:
         nr_runde = int(input("Numarul de runde este = "))  # Selectam numarul de runde (in total se joaca nr_runde * nr_echipe runde)
         for runda in range(1, nr_runde + 1):
@@ -40,7 +53,7 @@ class WordRushPlay(Screen):
             for echipa in range(1, nr_echipe + 1):
                 print("Este randul echipei ", echipa)
                 tip_cartonas = random.randint(1, 4)
-                indiceCartonas = random.randint(0,len(listaCuvinte))
+                indiceCartonas = random.randint(0,len(listaCuvinte)-1)
                 cuvant_cartonas =  listaCuvinte[indiceCartonas]# extragem din lista cuvantul
                 print("Tipul rundei: ", sep="")
                 if tip_cartonas == 1:
@@ -64,7 +77,7 @@ class WordRushPlay(Screen):
             for echipa in range(1, nr_echipe + 1):
                 print("Este randul echipei ", echipa)
                 tip_cartonas = random.randint(1, 4)
-                indiceCartonas = random.randint(0, len(listaCuvinte))
+                indiceCartonas = random.randint(0, len(listaCuvinte)-1)
                 cuvant_cartonas = listaCuvinte[indiceCartonas]# extragem din lista cuvantul in mod aleator
                 print("Tipul rundei: ", sep="")
                 if tip_cartonas == 1:
@@ -87,7 +100,7 @@ class WordRushPlay(Screen):
                 break
         print("Echipa ", echipa_castigatoare, " a castigat!")
         # cumva ar trebui sa trimit inapoi la aplicatie
-
+    """
 
 
 class Headspin(Screen):
