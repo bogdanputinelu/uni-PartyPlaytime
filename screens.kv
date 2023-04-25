@@ -158,6 +158,8 @@ WindowManager:
         Label:
             text: "Games row 3"
 
+# ---------------------------------------------------------------------------------------------------------------------
+
 <BoardBlitz>:
     name: "blitz"
 
@@ -419,6 +421,7 @@ WindowManager:
             color: utils.get_color_from_hex("#CBDDD1")
             background_color:utils.get_color_from_hex("#437B56")
 
+# ---------------------------------------------------------------------------------------------------------------------
 #DE AICI INCEP EU
 
 <WordRush>:
@@ -716,7 +719,10 @@ WindowManager:
             size_hint: 1, .4
             color: utils.get_color_from_hex("#CBDDD1")
             background_color:utils.get_color_from_hex("#437B56")
+
 # DE AICI IN JOS E A IRINEI
+
+# ---------------------------------------------------------------------------------------------------------------------
 
 <Headspin>:
     name: "spin"
@@ -876,28 +882,35 @@ WindowManager:
         Label:
             text: "Game Settings"
             font_size: 32
-            color: utils.get_color_from_hex("#437B56")
-
-        Label:
-            height: self.texture_size[1]
+            background_color: utils.get_color_from_hex("#437B56")
+            color: utils.get_color_from_hex("#CBDDD1")
+            canvas.before:
+				Color:
+					rgba: utils.get_color_from_hex("#437B56")
+				Rectangle:
+					size: self.size
+					pos: self.pos
 
         BoxLayout:
             AnchorLayout:
                 size_hint: 0.50, 1
-                anchor_x: "left"
+                anchor_x: "right"
                 anchor_y: "center"
                 Label:
                     text: "Number of rounds:"
                     color: utils.get_color_from_hex("#437B56")
+                    font_size: 20
+
             AnchorLayout:
                 size_hint: 0.50, 1
-                anchor_x: "right"
+                anchor_x: "left"
                 anchor_y: "center"
                 TextInput:
                     text: "How many rounds do you want to play?"
-
-        Label:
-            height: self.texture_size[1]
+                    size_hint: (.8, .5)
+                    height: 30
+                    multiline: False
+                    halign: "center"
 
         BoxLayout:
             AnchorLayout:
@@ -907,15 +920,17 @@ WindowManager:
                 Label:
                     text: "Number of teams:"
                     color: utils.get_color_from_hex("#437B56")
+                    font_size: 20
             AnchorLayout:
                 size_hint: 0.50, 1
-                anchor_x: "right"
+                anchor_x: "left"
                 anchor_y: "center"
                 TextInput:
                     text: "How many teams will play this game?"
-
-        Label:
-            height: self.texture_size[1]
+                    size_hint: (.8, .5)
+                    height: 30
+                    multiline: False
+                    halign: "center"
 
         BoxLayout:
             AnchorLayout:
@@ -925,15 +940,57 @@ WindowManager:
                 Label:
                     text: "Number of players in a team:"
                     color: utils.get_color_from_hex("#437B56")
+                    font_size: 20
             AnchorLayout:
                 size_hint: 0.50, 1
-                anchor_x: "right"
+                anchor_x: "left"
                 anchor_y: "center"
                 TextInput:
                     text: "How many players will be in a team?"
+                    size_hint: (.8, .5)
+                    height: 30
+                    multiline: False
+                    halign: "center"
 
-        Label:
-            height: self.texture_size[1]
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Timer:"
+                    color: utils.get_color_from_hex("#437B56")
+                    font_size: 20
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                TextInput:
+                    text: "How long do you want to guess the words?"
+                    size_hint: (.8, .5)
+                    height: 30
+                    multiline: False
+                    halign: "center"
+
+        BoxLayout:
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                Label:
+                    text: "Custom Words:"
+                    color: utils.get_color_from_hex("#437B56")
+                    font_size: 20
+            AnchorLayout:
+                size_hint: 0.50, 1
+                anchor_x: "left"
+                anchor_y: "center"
+                TextInput:
+                    text: "Do you want to add custom words to the game?"
+                    size_hint: (.8, .5)
+                    height: 30
+                    multiline: False
+                    halign: "center"
 
         Button:
             text: "Click to go back to HeadspinMenu"
@@ -1014,6 +1071,8 @@ WindowManager:
             color: utils.get_color_from_hex("#CBDDD1")
             background_color:utils.get_color_from_hex("#437B56")
 
+# ---------------------------------------------------------------------------------------------------------------------
+
 <TicTacToe>:
     name: "tic"
 
@@ -1029,6 +1088,8 @@ WindowManager:
             text: "Click to go to PartyPlaytime"
             font_size: 32
             on_release: app.root.current = "party"
+
+# ---------------------------------------------------------------------------------------------------------------------
 
 <HelpUsDecide>:
     name: "decide"
