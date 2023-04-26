@@ -881,13 +881,24 @@ WindowManager:
 
         Label:
             text: "Game Settings"
-            font_size: 32
+            font_size: 36
             background_color: utils.get_color_from_hex("#437B56")
             color: utils.get_color_from_hex("#CBDDD1")
+            bold: True
             canvas.before:
 				Color:
 					rgba: utils.get_color_from_hex("#437B56")
 				Rectangle:
+					size: self.size
+					pos: self.pos
+
+	    Label:
+	        background_color: utils.get_color_from_hex("#000000")
+	        size_hint: (1, .05)
+	        canvas.before:
+				Color:
+					rgba: utils.get_color_from_hex("#000000")
+			    Rectangle:
 					size: self.size
 					pos: self.pos
 
@@ -907,7 +918,7 @@ WindowManager:
                 anchor_y: "center"
                 TextInput:
                     text: "How many rounds do you want to play?"
-                    size_hint: (.8, .5)
+                    size_hint: (.9, .5)
                     height: 30
                     multiline: False
                     halign: "center"
@@ -927,7 +938,7 @@ WindowManager:
                 anchor_y: "center"
                 TextInput:
                     text: "How many teams will play this game?"
-                    size_hint: (.8, .5)
+                    size_hint: (.9, .5)
                     height: 30
                     multiline: False
                     halign: "center"
@@ -947,7 +958,7 @@ WindowManager:
                 anchor_y: "center"
                 TextInput:
                     text: "How many players will be in a team?"
-                    size_hint: (.8, .5)
+                    size_hint: (.9, .5)
                     height: 30
                     multiline: False
                     halign: "center"
@@ -967,7 +978,7 @@ WindowManager:
                 anchor_y: "center"
                 TextInput:
                     text: "How long do you want to guess the words?"
-                    size_hint: (.8, .5)
+                    size_hint: (.9, .5)
                     height: 30
                     multiline: False
                     halign: "center"
@@ -987,10 +998,20 @@ WindowManager:
                 anchor_y: "center"
                 TextInput:
                     text: "Do you want to add custom words to the game?"
-                    size_hint: (.8, .5)
+                    size_hint: (.9, .5)
                     height: 30
                     multiline: False
                     halign: "center"
+
+        Label:
+	        background_color: utils.get_color_from_hex("#437B56")
+	        size_hint: (1, .05)
+	        canvas.before:
+				Color:
+					rgba: utils.get_color_from_hex("#437B56")
+			    Rectangle:
+					size: self.size
+					pos: self.pos
 
         Button:
             text: "Click to go back to HeadspinMenu"
