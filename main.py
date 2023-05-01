@@ -1,169 +1,304 @@
-from kivy.app import App
+from kivy.animation import Animation
+from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.uix.screenmanager import Screen, ScreenManager
-import random
-from cuvinte import words
+from kivy.uix.screenmanager import FadeTransition
+from kivymd.app import MDApp
+from kivymd.uix.behaviors import ScaleBehavior, CommonElevationBehavior
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.floatlayout import MDFloatLayout
+from kivymd.uix.label import MDLabel
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.screenmanager import MDScreenManager
+from kivymd.uix.transition import MDFadeSlideTransition
+import json
+import re
+
+Window.size = (400, 780)
+Window.top = 30
+Window.left = 1000
+
+user_logged_in = None
+email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 
-class WelcomeScreen(Screen):
+class Game(MDBoxLayout):
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+        self.register_event_type("on_release")
+
+    def on_release(self, *args):
+
+        args[0].current = args[1]
+
+
+class ElevatedBox(CommonElevationBehavior, MDFloatLayout):
     pass
 
 
-class PartyPlaytime(Screen):
+class ScaleLabel(ScaleBehavior, MDLabel):
     pass
 
 
-class BoardBlitz(Screen):
-    pass
-
-class BoardBlitzRules(Screen):
+class WindowManager(MDScreenManager):
     pass
 
 
-class BoardBlitzSettings(Screen):
+class HomeScreen(MDScreen):
     pass
 
 
-class BoardBlitzPlay(Screen):
-    pass
+class RegisterScreen(MDScreen):
+    def switch_password_mode(self):
+        if self.ids.password_register.password is True:
+            self.ids.password_register.password = False
+            self.ids.password_register.icon_right = "lock-open"
+        else:
+            self.ids.password_register.password = True
+            self.ids.password_register.icon_right = "lock"
+        self.ids.password_register.focus = True
 
+    def animate_wrong_widget(self, widget):
+        animate = Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        )
+        animate.start(widget)
 
-class WordRush(Screen):
-    pass
+    def create_account(self, screen_manager):
 
-class WordRushRules(Screen):
-    pass
+        wrong_input = False
+        global email_regex
 
+        if not re.fullmatch(email_regex, self.ids.email_register.text):
+            self.animate_wrong_widget(self.ids.email_register)
+            wrong_input = True
 
-class WordRushSettings(Screen):
-    pass
+        if len(self.ids.password_register.text) < 8:
+            self.animate_wrong_widget(self.ids.password_register)
+            wrong_input = True
 
+        if self.ids.username_register.text == "":
+            self.animate_wrong_widget(self.ids.username_register)
+            return
 
-class WordRushPlay(Screen):
-    nr_echipe = int(input("Numarul de echipe este = "))  # Selectam numarul de echipe
-    puncte_echipe = [0 for contor in range(0, nr_echipe + 1)] #Aici memorez cate puncte are fiecare echipa
-    pass_echipe = [3 for contor in range(0, nr_echipe + 1)] #Aici memorez cate pass-uri mai are fiecare echipa
-    versiune = int(input("Doriti sa jucati pe runde sau pe punctaj? Tastati 0 pentru runde sau 1 pentru punctaj\n"))
-    if versiune == 0:
-        nr_runde = int(input("Numarul de runde este = "))  # Selectam numarul de runde (in total se joaca nr_runde * nr_echipe runde)
-        for runda in range(1, nr_runde + 1):
-            # Afisam ce runda este. Un pop up sau sa ramana pe ecran
-            for echipa in range(1, nr_echipe + 1):
-                print("Este randul echipei ", echipa)
-                tip_cartonas = random.randint(1, 4)
-                indiceCartonas = random.randint(0, len(words) - 1) #
-                cuvant_cartonas =  words[indiceCartonas]# extragem din lista cuvantul
-                print("Tipul rundei: ", sep="")
-                if tip_cartonas == 1:
-                    print("Descris")
-                elif tip_cartonas == 2:
-                    print("Mimat")
-                else:
-                    print("Desenat")
-                print(cuvant_cartonas)
-                while(pass_echipe[echipa] != 0): # Un while pe care il folosesc pentru a permite alegerea altui cuvant
-                    pasam = int(input("Doriti sa primiti alt cuvant? Mai aveti " + str(pass_echipe[echipa]) + " pass-uri disponibile. Introduceti 1 daca da, 0 altfel"))
-                    if pasam == 1:
-                        pass_echipe[echipa] = pass_echipe[echipa] - 1
-                        tip_cartonas = random.randint(1, 4)
-                        indiceCartonas = random.randint(0, len(words) - 1)
-                        cuvant_cartonas = words[indiceCartonas]
-                        print("Tipul rundei: ", sep="")
-                        if tip_cartonas == 1:
-                            print("Descris")
-                        elif tip_cartonas == 2:
-                            print("Mimat")
-                        else:
-                            print("Desenat")
-                        print(cuvant_cartonas)
-                    else:
-                        break
+        with open("user_accounts.json", 'r+') as accounts_file:
+            accounts = json.load(accounts_file)
 
-                # aici as pune o pauza de 5 secunde ca sa ii dau timp celui care joaca sa retina ce cuvant are de jucat
-                # pornesc timer 60 de secunde de raspuns
-                # opresc timer
-                print("A ghicit echipa cuvantul/expresia? Tastati 0 pentru nu sau 1 pentru da")
-                punct = int(input())
-                puncte_echipe[echipa-1] += punct
-    else:
-        nr_puncte = input("Numarul de puncte este = ")  # Selectam numarul de puncte ce trebuie atins pentru a castiga
-        gata_joc = 0  # E o valoare care ne ajuta sa ne dam seama daca jocul s-a terminat (adica daca o echipa a ajuns la punctajul dorit)
-        echipa_castigatoare = -1  # Aici salvam care e echipa castigatoare
-        while (1):
-            for echipa in range(1, nr_echipe + 1):
-                print("Este randul echipei ", echipa)
-                tip_cartonas = random.randint(1, 4)
-                indiceCartonas = random.randint(0, len(words) - 1)
-                cuvant_cartonas = words[indiceCartonas]# extragem din lista cuvantul in mod aleator
-                print("Tipul rundei: ", sep="")
-                if tip_cartonas == 1:
-                    print("Descris")
-                elif tip_cartonas == 2:
-                    print("Mimat")
-                else:
-                    print("Desenat")
-                # aici as pune un buton care sa ofere optiunea de a incepe ca sa ii dau timp celui care joaca sa retina ce cuvant are de jucat
-                # pornesc timer 60 de secunde de raspuns
-                # opresc timer
-                print("A ghicit echipa cuvantul/expresia? Tastati 0 pentru nu sau 1 pentru da")
-                punct = int(input())
-                puncte_echipe[echipa-1] += punct
-                if (puncte_echipe[echipa-1] == nr_puncte):
-                    gata_joc = 1
-                    echipa_castigatoare = echipa
+            for user in accounts["user_accounts"]:
+                if user["username"] == self.ids.username_register.text:
+                    self.animate_wrong_widget(self.ids.username_register)
                     break
-            if (gata_joc == 1):
-                break
-        print("Echipa ", echipa_castigatoare, " a castigat!")
-        # cumva ar trebui sa trimit inapoi la aplicatie
+            else:
+                if wrong_input is True:
+                    return
 
-class Headspin(Screen):
+                new_account = {"username": self.ids.username_register.text,
+                               "password": self.ids.password_register.text,
+                               "first_name": self.ids.first_name_register.text,
+                               "last_name": self.ids.last_name_register.text,
+                               "e-mail": self.ids.email_register.text,
+                               "nickname": self.ids.nickname_register.text
+                               }
+                accounts["user_accounts"].append(new_account)
+                accounts_file.seek(0)
+                json.dump(accounts, accounts_file, indent=4)
+                screen_manager.current = 'login'
+
+
+class LoginScreen(MDScreen):
+    def switch_password_mode(self):
+        if self.ids.password_login.password is True:
+            self.ids.password_login.password = False
+            self.ids.password_login.icon_right = "lock-open"
+        else:
+            self.ids.password_login.password = True
+            self.ids.password_login.icon_right = "lock"
+        self.ids.password_login.focus = True
+
+    def login(self, screen_manager):
+        with open("user_accounts.json", 'r+') as accounts_file:
+            accounts = json.load(accounts_file)
+
+            for user in accounts["user_accounts"]:
+                if user["username"] == self.ids.username_login.text \
+                        and user["password"] == self.ids.password_login.text:
+                    global user_logged_in
+                    user_logged_in = user["username"]
+                    screen_manager.current = "home"
+                    break
+            else:
+                self.animate_wrong_account()
+
+    def animate_wrong_account(self):
+        animate = Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        )+Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        )+Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        )+Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        )
+        animate.start(self.ids.password_login)
+        animate.start(self.ids.username_login)
+
+
+class WelcomeScreen(MDScreen):
+    def change_transition(self, screen_manager):
+        screen_manager.transition = MDFadeSlideTransition(duration=0.5)
+
+    def change_transition_for_welcome(self, screen_manager):
+        screen_manager.transition = FadeTransition()
+
+
+class BoardBlitzScreen(MDScreen):
+    def go_back(self, screen_manager):
+        screen_manager.current = "home"
+
+
+class HeadSpinScreen(MDScreen):
     pass
 
 
-class HeadspinRules(Screen):
+class WordRushScreen(MDScreen):
     pass
 
 
-class HeadspinSettings(Screen):
+class TicTacToeScreen(MDScreen):
     pass
 
 
-class HeadspinPlay(Screen):
+class HelpUsDecideScreen(MDScreen):
     pass
 
 
-class TicTacToe(Screen):
+class AccountInformation(MDFloatLayout):
     pass
 
 
-class HelpUsDecide(Screen):
-    pass
+class PartyPlaytime(MDApp):
+    account_dialog = None
 
-
-class HelpUsDecideRules(Screen):
-    pass
-
-
-class HelpUsDecideSettings(Screen):
-    pass
-
-
-class HelpUsDecidePlay(Screen):
-    pass
-
-
-class WindowManager(ScreenManager):
-    pass
-
-
-kv = Builder.load_file("screens.kv")
-
-
-class PartyPlaytimeApp(App):
     def build(self):
-        return kv
+        return Builder.load_file('party.kv')
+
+    def account_info(self):
+        if not self.account_dialog:
+            self.account_dialog = MDDialog(
+                type="custom",
+                content_cls=AccountInformation(),
+            )
+
+        with open("user_accounts.json", 'r+') as accounts_file:
+            accounts = json.load(accounts_file)
+
+            for user in accounts["user_accounts"]:
+                if user["username"] == user_logged_in:
+                    self.account_dialog.content_cls.ids.first_name_information.text = user["first_name"]
+                    self.account_dialog.content_cls.ids.last_name_information.text = user["last_name"]
+                    self.account_dialog.content_cls.ids.email_information.text = user["e-mail"]
+                    self.account_dialog.content_cls.ids.nickname_information.text = user["nickname"]
+                    break
+
+        self.account_dialog.open()
+
+    def exit_dialogue(self):
+
+        self.account_dialog.dismiss()
+
+    def animate_wrong_email(self, widget):
+
+        animate = Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(1, 0, 0, 1),
+            hint_text_color_normal=(1, 0, 0, 1),
+            icon_right_color_normal=(1, 0, 0, 1),
+            text_color_normal=(1, 0, 0, 1)
+        ) + Animation(
+            duration=0.2,
+            line_color_normal=(0, 0, 0, 0.38),
+            hint_text_color_normal=(0, 0, 0, 0.38),
+            icon_right_color_normal=(0, 0, 0, 0.38),
+            text_color_normal=(0, 0, 0, 0.38)
+        )
+        animate.start(widget)
+
+    def save_changes_made(self):
+
+        global email_regex
+
+        if not re.fullmatch(email_regex, self.account_dialog.content_cls.ids.email_information.text):
+            self.animate_wrong_email(self.account_dialog.content_cls.ids.email_information)
+        else:
+            with open("user_accounts.json", 'r+') as accounts_file:
+                accounts = json.load(accounts_file)
+
+                for user in accounts["user_accounts"]:
+                    if user["username"] == user_logged_in:
+                        user["first_name"] = self.account_dialog.content_cls.ids.first_name_information.text
+                        user["last_name"] = self.account_dialog.content_cls.ids.last_name_information.text
+                        user["e-mail"] = self.account_dialog.content_cls.ids.email_information.text
+                        user["nickname"] = self.account_dialog.content_cls.ids.nickname_information.text
+
+                        accounts_file.seek(0)
+                        json.dump(accounts, accounts_file, indent=4)
+                        accounts_file.truncate()
+                        self.account_dialog.dismiss()
+                        return
 
 
-if __name__ == "__main__":
-    PartyPlaytimeApp().run()
+
+
+if __name__ == '__main__':
+    PartyPlaytime().run()
