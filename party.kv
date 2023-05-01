@@ -1,0 +1,721 @@
+WindowManager:
+    WelcomeScreen:
+    LoginScreen:
+    RegisterScreen:
+    HomeScreen:
+    BoardBlitzScreen:
+    HeadSpinScreen:
+    WordRushScreen:
+    TicTacToeScreen:
+    HelpUsDecideScreen:
+
+<GameCard@Game>:
+    size_hint_y: None
+    height: "80dp"
+    source: ""
+    game_name: ""
+    next_screen: ""
+
+    MDBoxLayout:
+        size_hint: None, None
+        size: "100dp", root.height
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: "200dp", root.height
+
+            ScaleLabel:
+                text: root.game_name
+                bold: True
+                font_style: "H3"
+                font_size: "42sp"
+                scale_value_x: .4
+                scale_value_y: .4
+                size_hint: None, None
+                size: "200dp", root.height
+                x: -dp(48)
+    MDBoxLayout:
+        size_hint: .8, None
+        height: root.height
+
+        FitImage:
+            size_hint: .8, None
+            height: root.height
+            source: root.source
+
+
+    MDBoxLayout:
+        size_hint: None, None
+        size: root.height, root.height
+        pos_hint: {"right": 1}
+
+        MDRelativeLayout:
+            md_bg_color: "black"
+            size_hint: None, None
+            size: root.height, root.height
+
+            MDIconButton:
+                icon: "arrow-right"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                opposite_colors: True
+                on_release: root.dispatch("on_release", app.root, root.next_screen)
+
+<AccountInformation>:
+    id: account_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: account_box.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "window-close"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_dialogue()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "Account Information"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDRectangleFlatIconButton:
+                icon: "check"
+                text: "Save"
+                pos_hint: {"center_x": .3, "center_y": .5}
+                icon_color: "black"
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+                on_release: app.save_changes_made()
+
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "250dp"
+        y: account_box.top - self.height - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+
+        MDFloatLayout:
+            id: name_box
+            size_hint_y: .25
+
+            MDTextField:
+                id: first_name_information
+                mode: "rectangle"
+                hint_text: "First Name"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "150dp"
+                y: name_box.top - self.height
+                x: name_box.x + (name_box.width / 2 - self.width) / 2
+
+            MDTextField:
+                id: last_name_information
+                mode: "rectangle"
+                hint_text: "Last Name"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "150dp"
+                y: name_box.top - self.height
+                x: name_box.x + (3 * name_box.width / 2 - self.width) / 2
+
+
+        MDFloatLayout:
+            id: details_box
+            size_hint_y: .75
+
+            MDTextField:
+                id: email_information
+                mode: "rectangle"
+                hint_text: "E-Mail"
+                icon_right: "email"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "326dp"
+                y: details_box.top - self.height
+                x: details_box.x + (details_box.width - self.width) / 2
+
+            MDTextField:
+                id: nickname_information
+                mode: "rectangle"
+                hint_text: "Nickname"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "326dp"
+                y: details_box.top - self.height * 2 - dp(4)
+                x: details_box.x + (details_box.width - self.width) / 2
+
+    MDFloatLayout:
+        size_hint: 1.16, None
+        height: "250dp"
+        y: account_box.top - self.height * 2 - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+
+        FitImage:
+            size_hint: None, None
+            size: "220dp", "160dp"
+            source: "logos/account_information_logo.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
+<WelcomeScreen>:
+#    MDRoundFlatIconButton:
+#        text:"Press"
+#        on_release: app.root.current = 'login'
+#        pos_hint: {"center_y":.5, "center_x": .5}
+    MDAnchorLayout:
+        size: root.width, root.height
+        anchor_x: "center"
+        anchor_y: "center"
+
+        Video:
+            source: "logos/StartLogo.mp4"
+            state: "play"
+            size_hint: 0.5, 0.5
+            on_eos:
+                root.change_transition_for_welcome(app.root)
+                app.root.current = 'login'
+                root.change_transition(app.root)
+
+<LoginScreen>:
+    name: "login"
+    md_bg_color: "grey"
+
+    ElevatedBox:
+        id: login_box
+        size_hint: .75, .75
+        pos_hint: {"center_x": .5, "center_y": .5}
+        md_bg_color: "white"
+        elevation: 3
+        padding: "25dp"
+        spacing: "25dp"
+        radius: 10
+
+        MDFloatLayout:
+            size_hint_y: .3
+            y: login_box.top - self.height
+            pos_hint: {"center_x": .5}
+
+            Image:
+                size_hint: None, None
+                size: "220dp", "160dp"
+                source: "logos/giphy.gif"
+                pos_hint: {"center_x": .5, "center_y":.5}
+                anim_delay: 0.05
+                allow_stretch: True
+                keep_ratio: False
+                keep_data: True
+
+        MDFloatLayout:
+            size_hint_y: .15
+            y: login_box.top - self.height*3
+            pos_hint: {"center_x": .5}
+
+            ScaleLabel:
+                text: "WELCOME"
+                font_size: "40sp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                bold: True
+                adaptive_size: True
+
+        MDFloatLayout:
+            id: login_account_box
+            size_hint_y: .55
+            y: login_box.top - self.height*1.82
+            pos_hint: {"center_x": .5}
+
+            MDTextField:
+                id: username_login
+                mode: "rectangle"
+                hint_text: "Username"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                y: login_account_box.top - self.height
+                x: login_account_box.x + (login_account_box.width - self.width) / 2
+                icon_right: "account"
+
+            MDTextField:
+                id: password_login
+                mode: "rectangle"
+                hint_text: "Password"
+                password: True
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                y: login_account_box.top - self.height * 2
+                x: login_account_box.x + (login_account_box.width - self.width) / 2
+                icon_right: "lock"
+
+
+            MDFlatButton:
+                size_hint: None, None
+                size: "24dp", "24dp"
+                x: login_account_box.x + dp(258)
+                y: login_account_box.top - dp(104)
+                on_release: root.switch_password_mode()
+
+            MDRectangleFlatButton:
+                size_hint: None, None
+                width: root.width * 0.6
+                text: "Login"
+                text_color: "black"
+                line_color: 0, 0, 0, 1
+                y: login_account_box.top - self.height * 6
+                x: login_account_box.x + (login_account_box.width - self.width) / 2
+                on_release: root.login(app.root)
+
+            MDRectangleFlatButton:
+                size_hint: None, None
+                width: root.width * 0.6
+                text: "Register"
+                text_color: "black"
+                line_color: 0, 0, 0, 1
+                y: login_account_box.top - self.height * 7 - dp(10)
+                x: login_account_box.x + (login_account_box.width - self.width) / 2
+                on_release: app.root.current = "register"
+
+<RegisterScreen>:
+    name: "register"
+    md_bg_color: "grey"
+
+    ElevatedBox:
+        id: register_box
+        size_hint: .75, .85
+        pos_hint: {"center_x": .5, "center_y": .5}
+        md_bg_color: "white"
+        elevation: 3
+        padding: "25dp"
+        spacing: "25dp"
+        radius: 10
+
+        MDFloatLayout:
+            size_hint: .1, .05
+            x: register_box.x
+            y: register_box.top - self.height
+            MDIconButton:
+                icon: "chevron-left"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                on_release: app.root.current = "login"
+
+
+        MDFloatLayout:
+            size_hint_y: .3
+            y: register_box.top - self.height
+            pos_hint: {"center_x": .5}
+
+            Image:
+                size_hint: None, None
+                size: "220dp", "160dp"
+                source: "logos/giphy.gif"
+                pos_hint: {"center_x": .5, "center_y":.5}
+                anim_delay: 0.05
+                allow_stretch: True
+                keep_ratio: False
+                keep_data: True
+
+        MDFloatLayout:
+            size_hint_y: .1
+            y: register_box.top - self.height*4
+            pos_hint: {"center_x": .5}
+
+            ScaleLabel:
+                text: "Sign Up!"
+                font_size: "30sp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                bold: True
+                adaptive_size: True
+
+
+        MDFloatLayout:
+            id: register_account_box
+            size_hint_y: .55
+            y: register_box.top - self.height*1.82
+            pos_hint: {"center_x": .5}
+
+            MDTextField:
+                id: username_register
+                mode: "rectangle"
+                hint_text: "Username"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                y: register_account_box.top - self.height / 2
+                x: register_account_box.x + (register_account_box.width - self.width) / 2
+                icon_right: "account"
+
+            MDTextField:
+                id: password_register
+                mode: "rectangle"
+                hint_text: "Password"
+                password: True
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                y: register_account_box.top - self.height * 1.5
+                x: register_account_box.x + (register_account_box.width - self.width) / 2
+                icon_right: "lock"
+
+
+            MDFlatButton:
+                size_hint: None, None
+                size: "24dp", "24dp"
+                x: register_account_box.x + dp(258)
+                y: register_account_box.top - dp(74)
+                on_release: root.switch_password_mode()
+
+            MDRectangleFlatButton:
+                size_hint: None, None
+                width: root.width * 0.6
+                text: "Create an account"
+                text_color: "black"
+                line_color: 0, 0, 0, 1
+                y: register_account_box.top - self.height * 9 - dp(10)
+                x: register_account_box.x + (register_account_box.width - self.width) / 2
+                on_release: root.create_account(app.root)
+
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_y:  None
+            height: "250dp"
+            y: register_box.top - self.height *2.5
+            pos_hint: {"center_x": .5}
+            radius: 10
+
+            MDFloatLayout:
+                id: name_box
+                size_hint_y: .25
+
+                MDTextField:
+                    id: first_name_register
+                    mode: "rectangle"
+                    hint_text: "First Name"
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                    size_hint_x: None
+                    width: "130dp"
+                    y: name_box.top - self.height * 1.25 + dp(3)
+                    x: name_box.x + (name_box.width / 2 - self.width) / 2
+
+                MDTextField:
+                    id: last_name_register
+                    mode: "rectangle"
+                    hint_text: "Last Name"
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                    size_hint_x: None
+                    width: "130dp"
+                    y: name_box.top - self.height * 1.25 + dp(3)
+                    x: name_box.x + (3 * name_box.width / 2 - self.width) / 2
+
+
+            MDFloatLayout:
+                id: details_box
+                size_hint_y: .75
+
+                MDTextField:
+                    id: email_register
+                    mode: "rectangle"
+                    hint_text: "E-Mail"
+                    icon_right: "email"
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                    size_hint_x: None
+                    width: "280dp"
+                    y: details_box.top - self.height * 1.2 + dp(4)
+                    x: details_box.x + (details_box.width - self.width) / 2
+
+                MDTextField:
+                    id: nickname_register
+                    mode: "rectangle"
+                    hint_text: "Nickname"
+                    hint_text_color_focus: 0, 0, 0, 1
+                    line_color_focus: 0, 0, 0, 1
+                    text_color_focus: 0, 0, 0, 1
+                    size_hint_x: None
+                    width: "280dp"
+                    y: details_box.top - self.height * 2.5 + dp(22)
+                    x: details_box.x + (details_box.width - self.width) / 2
+
+<HomeScreen>:
+    name: "home"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "12dp"
+
+        MDTopAppBar:
+            md_bg_color: 'grey'
+            specific_text_color: 'black'
+            right_action_items: [['text-box-outline', lambda x: x]]
+            left_action_items: [['account-outline', lambda x: app.account_info()]]
+            elevation: 0
+
+        MDBoxLayout:
+            adaptive_height: True
+            spacing: "8dp"
+            padding: 0, 0, "24dp", 0
+
+            MDSeparator:
+                pos_hint: {"center_y": .5}
+                size_hint_x: None
+                width: "36dp"
+                color: "black"
+
+            MDBoxLayout:
+                size_hint: None, None
+                size: "140dp", "42dp"
+
+                MDRelativeLayout:
+                    size_hint: None, None
+                    size: "140dp", "42dp"
+
+                    ScaleLabel:
+                        text: "PartyPlaytime"
+                        font_size: "36sp"
+                        bold: True
+                        adaptive_size: True
+
+        MDLabel:
+            text: "Play!"
+            adaptive_height: True
+            bold: True
+            halign: "right"
+            padding_x: "24dp"
+
+        MDScrollView:
+
+            MDList:
+                spacing: "12dp"
+
+                GameCard:
+                    source: "logos/Board_Blitz_-_Logo.png"
+                    game_name: "BoardBlitz"
+                    next_screen: "boardblitz"
+
+                GameCard:
+                    source: "logos/Headspin_-_Logo.png"
+                    game_name: "HeadSpin"
+                    next_screen: "headspin"
+
+                GameCard:
+                    source: "logos/Word_Rush_-_Logo.png"
+                    game_name: "WordRush"
+                    next_screen: "wordrush"
+
+                GameCard:
+                    source: "logos/Tic_Tac_Toe_-_Logo.png"
+                    game_name: "TicTacToe"
+                    next_screen: "tictactoe"
+
+                GameCard:
+                    source: "logos/Help_Us_Decide_-_Logo.png"
+                    game_name: "Help Us Decide"
+                    next_screen: "helpusdecide"
+
+
+<BoardBlitzScreen>:
+    name: "boardblitz"
+    md_bg_color: "white"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            md_bg_color: root.md_bg_color
+            specific_text_color: "black"
+            elevation: 0
+            right_action_items: [["magnify", lambda x: x]]
+            left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
+
+        MDBoxLayout:
+            adaptive_height: True
+            spacing: "18dp"
+            padding: 0, 0, "24dp", 0
+
+            MDSeparator:
+                size_hint_x: None
+                width: "36dp"
+                color: "black"
+                pos_hint: {"center_y": .5}
+
+            MDIcon:
+                icon: "weather-sunny"
+                pos_hint: {"center_y": .5}
+
+            MDBoxLayout:
+                size_hint: None, None
+                size: "140dp", "42dp"
+
+                MDRelativeLayout:
+                    size_hint: None, None
+                    size: "140dp", "42dp"
+
+                    ScaleLabel:
+                        text: "PartyPlaytime"
+                        font_size: "18sp"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+                        bold: True
+                        adaptive_size: True
+
+        MDWidget:
+            size_hint_y: None
+            height: "12dp"
+
+        MDFloatLayout:
+            id: float_box
+            size_hint: .8, .6
+
+            MDBoxLayout:
+                size_hint: None, None
+                size: float_box.size
+                pos_hint: {"top": 1}
+
+                FitImage:
+                    source: "logos/Board_Blitz_-_Logo.png"
+
+            MDBoxLayout:
+                size_hint: None, None
+                size: "80dp", "80dp"
+                pos_hint: {"right": 1}
+                md_bg_color: "black"
+                y: float_box.top - self.height / 2
+
+        MDFloatLayout:
+            id: bottom_box
+            size_hint_y: .4
+            md_bg_color: "red"
+
+            MDBoxLayout:
+                size_hint: None, None
+                size: "180dp", "72dp"
+                y: bottom_box.top - self.height / 2
+                md_bg_color: "yellow"
+
+                ScaleLabel:
+                    text: "BoardBlitz"
+                    bold: True
+                    font_style: "H3"
+                    font_size: "42sp"
+                    scale_value_x: .6
+                    scale_value_y: .6
+                    adaptive_size: True
+                    pos_hint: {"center_y": .7}
+
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_size: True
+                y: bottom_box.top - self.height
+
+                MDLabel:
+                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis ultrices mi. Praesent ornare ante eleifend porta imperdiet. Vestibulum quis tincidunt ligula. Nam ut sapien ut lacus vehicula interdum at in nunc."
+                    adaptive_size: True
+                    text_size: root.width - dp(100), None
+                    padding_x: "28dp"
+                    theme_text_color: "Hint"
+
+                MDBoxLayout:
+                    adaptive_height: True
+                    spacing: "12dp"
+                    padding: "12dp"
+
+                    MDIconButton:
+                        icon: "map-marker-outline"
+
+                    MDIconButton:
+                        icon: "map-search-outline"
+
+                    MDIconButton:
+                        icon: "home-outline"
+
+                    MDFlatButton:
+                        text: "[b]More[/b]"
+                        pos_hint: {"center_y": .5}
+
+    MDBoxLayout:
+        size_hint: None, None
+        size: "144dp", "48dp"
+        pos_hint: {"right": 1}
+        md_bg_color: "black"
+
+
+<HeadSpinScreen>:
+    name: "headspin"
+    md_bg_color: "green"
+
+    MDFlatButton:
+        text: "aici headspin"
+        on_release: app.root.current = 'home'
+        md_bg_color: "white"
+        pos_hint: {"center_y": .5, "center_x": .5}
+
+<WordRushScreen>:
+    name: "wordrush"
+    md_bg_color: "yellow"
+
+    MDFlatButton:
+        text: "aici wordrush"
+        on_release: app.root.current = 'home'
+        md_bg_color: "white"
+        pos_hint: {"center_y": .5, "center_x": .5}
+
+<TicTacToeScreen>:
+    name: "tictactoe"
+    md_bg_color: "grey"
+
+    MDFlatButton:
+        text: "aici tictactoe"
+        on_release: app.root.current = 'home'
+        md_bg_color: "white"
+        pos_hint: {"center_y": .5, "center_x": .5}
+
+<HelpUsDecideScreen>:
+    name: "helpusdecide"
+    md_bg_color: "purple"
+
+    MDFlatButton:
+        text: "aici helpusdecide"
+        on_release: app.root.current = 'home'
+        md_bg_color: "white"
+        pos_hint: {"center_y": .5, "center_x": .5}
