@@ -1,0 +1,36 @@
+{
+    "user_accounts": [
+        {
+            "username": "bogdan",
+            "password": "parola",
+            "first_name": "bogdan",
+            "last_name": "bogdan",
+            "e-mail": "ceva@email.ro",
+            "nickname": "bogdan"
+        },
+        {
+            "username": "ionelus",
+            "password": "parolamea",
+            "first_name": "ionel",
+            "last_name": "gigel",
+            "e-mail": "arond@yahoo.com",
+            "nickname": "gigelus"
+        },
+        {
+            "username": "contul3",
+            "password": "altaparola",
+            "first_name": "nume",
+            "last_name": "nume",
+            "e-mail": "nume@yha.com",
+            "nickname": "gigi"
+        },
+        {
+            "username": "bogdan1",
+            "password": "parolamead",
+            "first_name": "unu",
+            "last_name": "unu",
+            "e-mail": "ceva@altcv.com",
+            "nickname": "unu"
+        }
+    ]
+}
