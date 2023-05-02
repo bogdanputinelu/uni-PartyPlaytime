@@ -1,0 +1,1 @@
+words = ["banana", "ananans", "Ghilgames", "Uzbekistan"]
