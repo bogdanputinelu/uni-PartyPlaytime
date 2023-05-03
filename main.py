@@ -24,12 +24,10 @@ email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 class Game(MDBoxLayout):
     def __init__(self, *args, **kwargs):
-
         super().__init__(*args, **kwargs)
         self.register_event_type("on_release")
 
     def on_release(self, *args):
-
         args[0].current = args[1]
 
 
@@ -88,7 +86,6 @@ class RegisterScreen(MDScreen):
         animate.start(widget)
 
     def create_account(self, screen_manager):
-
         wrong_input = False
         global email_regex
 
@@ -196,7 +193,20 @@ class BoardBlitzScreen(MDScreen):
 
 
 class HeadSpinScreen(MDScreen):
+    def go_back(self, screen_manager):
+        screen_manager.current = "home"
+
+    def play_game(self, screen_manager):
+        screen_manager.current = "headspinPlay"
+
+
+class HeadSpinSettings(MDFloatLayout):
     pass
+
+
+class HeadSpinPlay(MDScreen):
+    def exit_game(self, screen_manager):
+        screen_manager.current = "headspin"
 
 
 class WordRushScreen(MDScreen):
@@ -217,6 +227,7 @@ class AccountInformation(MDFloatLayout):
 
 class PartyPlaytime(MDApp):
     account_dialog = None
+    headspin_dialog = None
 
     def build(self):
         return Builder.load_file('party.kv')
@@ -241,8 +252,47 @@ class PartyPlaytime(MDApp):
 
         self.account_dialog.open()
 
-    def exit_dialogue(self):
+    def headspin_settings(self):
+        if not self.headspin_dialog:
+            self.headspin_dialog = MDDialog(
+                type="custom",
+                content_cls=HeadSpinSettings(),
+            )
 
+        with open("headspin_settings.json", 'r+') as headspin_files:
+            settings = json.load(headspin_files)
+
+            for setting in settings["headspin_settings"]:
+                if setting["username"] == user_logged_in:
+                    self.headspin_dialog.content_cls.ids.round_information.text = setting["round"]
+                    self.headspin_dialog.content_cls.ids.team_information.text = setting["team"]
+                    self.headspin_dialog.content_cls.ids.words_information.text = setting["words"]
+                    self.headspin_dialog.content_cls.ids.timer_information.text = setting["timer"]
+                    break
+
+        self.headspin_dialog.open()
+
+    def headspin_settings_exit(self):
+        self.headspin_dialog.dismiss()
+
+    def headspin_save_settings(self):
+        with open("headspin_settings.json", 'r+') as headspin_settings:
+            settings = json.load(headspin_settings)
+
+            for setting in settings["headspin_settings"]:
+                if setting["username"] == user_logged_in:
+                    setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
+                    setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
+                    setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
+                    setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
+
+                    headspin_settings.seek(0)
+                    json.dump(settings, headspin_settings, indent=4)
+                    headspin_settings.truncate()
+                    self.headspin_dialog.dismiss()
+                    return
+
+    def exit_dialogue(self):
         self.account_dialog.dismiss()
 
     def animate_wrong_email(self, widget):
@@ -296,8 +346,6 @@ class PartyPlaytime(MDApp):
                         accounts_file.truncate()
                         self.account_dialog.dismiss()
                         return
-
-
 
 
 if __name__ == '__main__':
