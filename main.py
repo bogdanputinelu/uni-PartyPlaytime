@@ -1,16 +1,18 @@
 from kivy.animation import Animation
+from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import FadeTransition
 from kivymd.app import MDApp
 from kivymd.uix.behaviors import ScaleBehavior, CommonElevationBehavior
+from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.label import MDLabel
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.screenmanager import MDScreenManager
-from kivymd.uix.transition import MDFadeSlideTransition
+from kivymd.uix.transition import MDSlideTransition
 import json
 import re
 
@@ -22,13 +24,21 @@ user_logged_in = None
 email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
 
-class Game(MDBoxLayout):
+class GameCardBehavior(MDBoxLayout, FocusBehavior):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.register_event_type("on_release")
 
     def on_release(self, *args):
         args[0].current = args[1]
+
+    def change_cursor(self, cursor_name):
+
+        Window.set_system_cursor(cursor_name)
+
+
+class Game(MDBoxLayout):
+    pass
 
 
 class ElevatedBox(CommonElevationBehavior, MDFloatLayout):
@@ -181,7 +191,7 @@ class LoginScreen(MDScreen):
 
 class WelcomeScreen(MDScreen):
     def change_transition(self, screen_manager):
-        screen_manager.transition = MDFadeSlideTransition(duration=0.5)
+        screen_manager.transition = MDSlideTransition()
 
     def change_transition_for_welcome(self, screen_manager):
         screen_manager.transition = FadeTransition()
@@ -189,6 +199,7 @@ class WelcomeScreen(MDScreen):
 
 class BoardBlitzScreen(MDScreen):
     def go_back(self, screen_manager):
+        screen_manager.transition.direction = 'right'
         screen_manager.current = "home"
 
 
@@ -225,9 +236,14 @@ class AccountInformation(MDFloatLayout):
     pass
 
 
+class GameInformation(MDFloatLayout):
+    pass
+
+
 class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
+    information_dialog = None
 
     def build(self):
         return Builder.load_file('party.kv')
@@ -294,6 +310,19 @@ class PartyPlaytime(MDApp):
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()
+
+    def game_information(self):
+        if not self.information_dialog:
+            self.information_dialog = MDDialog(
+                type='custom',
+                content_cls=GameInformation()
+            )
+
+        self.information_dialog.open()
+
+    def exit_game_information(self):
+
+        self.information_dialog.dismiss()
 
     def animate_wrong_email(self, widget):
 
