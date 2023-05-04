@@ -5,7 +5,24 @@
             "round": "98",
             "team": "2",
             "words": "bogdan, iepuras",
-            "timer": "60"
+            "timer": "60",
+            "players": "Bogdan, Irina, Nicolae, Andreea"
+        },
+        {
+            "username": "i",
+            "round": 4,
+            "team": 2,
+            "words": "",
+            "timer": 60,
+            "players": "John, Linda, William, Andreea"
+        },
+        {
+            "username": "iri",
+            "round": "4",
+            "team": "2",
+            "words": "",
+            "timer": "60",
+            "players": "John, Linda, William, Andreea"
         }
     ]
 }

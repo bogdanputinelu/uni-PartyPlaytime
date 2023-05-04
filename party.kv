@@ -1024,13 +1024,13 @@ WindowManager:
 
         MDFloatLayout:
             id: details_box
-            size_hint_y: .75
+            size_hint_y: .50
 
             MDTextField:
                 id: timer_information
                 mode: "rectangle"
                 hint_text: "Timer"
-                icon_right: "clock"
+                icon_right: "clock-outline"
                 hint_text_color_focus: 0, 0, 0, 1
                 line_color_focus: 0, 0, 0, 1
                 text_color_focus: 0, 0, 0, 1
@@ -1050,6 +1050,22 @@ WindowManager:
                 width: "326dp"
                 y: details_box.top - self.height * 2 - dp(4)
                 x: details_box.x + (details_box.width - self.width) / 2
+
+        MDFloatLayout:
+            id: players_box
+            size_hint_y: .25
+
+            MDTextField:
+                id: players_information
+                mode: "rectangle"
+                hint_text: "Players"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "326dp"
+                y: players_box.top - self.height
+                x: players_box.x + (players_box.width - self.width) / 2
 
     MDFloatLayout:
         size_hint: 1.16, None

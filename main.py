@@ -33,7 +33,6 @@ class GameCardBehavior(MDBoxLayout, FocusBehavior):
         args[0].current = args[1]
 
     def change_cursor(self, cursor_name):
-
         Window.set_system_cursor(cursor_name)
 
 
@@ -133,6 +132,21 @@ class RegisterScreen(MDScreen):
                 accounts_file.seek(0)
                 json.dump(accounts, accounts_file, indent=4)
                 screen_manager.current = 'login'
+
+                with open("headspin_settings.json", 'r+') as headspin_settings_default_file:
+                    settings = json.load(headspin_settings_default_file)
+
+                    default_settings = {"username": self.ids.username_register.text,
+                                        "round": "4",
+                                        "team": "2",
+                                        "words": "Kilimanjaro",
+                                        "timer": "60",
+                                        "players": "John, Linda, William, Andreea"
+                                        }
+                    settings["headspin_settings"].append(default_settings)
+                    headspin_settings_default_file.seek(0)
+                    json.dump(settings, headspin_settings_default_file, indent=4)
+                    screen_manager.current = 'login'
 
 
 class LoginScreen(MDScreen):
@@ -284,6 +298,7 @@ class PartyPlaytime(MDApp):
                     self.headspin_dialog.content_cls.ids.team_information.text = setting["team"]
                     self.headspin_dialog.content_cls.ids.words_information.text = setting["words"]
                     self.headspin_dialog.content_cls.ids.timer_information.text = setting["timer"]
+                    self.headspin_dialog.content_cls.ids.players_information.text = setting["players"]
                     break
 
         self.headspin_dialog.open()
@@ -301,6 +316,7 @@ class PartyPlaytime(MDApp):
                     setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
                     setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
                     setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
+                    setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
 
                     headspin_settings.seek(0)
                     json.dump(settings, headspin_settings, indent=4)
