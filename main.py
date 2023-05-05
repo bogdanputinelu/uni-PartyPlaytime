@@ -7,6 +7,7 @@ from kivymd.app import MDApp
 from kivymd.uix.behaviors import ScaleBehavior, CommonElevationBehavior
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.label import MDLabel
@@ -32,6 +33,16 @@ class GameCardBehavior(MDBoxLayout, FocusBehavior):
     def on_release(self, *args):
         args[0].current = args[1]
 
+    def change_cursor(self, cursor_name):
+
+        Window.set_system_cursor(cursor_name)
+
+
+class BoardBlitzStart(MDFloatLayout):
+    pass
+
+
+class BoardBlitzButton(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
 
         Window.set_system_cursor(cursor_name)
@@ -203,6 +214,10 @@ class BoardBlitzScreen(MDScreen):
         screen_manager.current = "home"
 
 
+class BoardBlitzGame(MDScreen):
+    pass
+
+
 class HeadSpinScreen(MDScreen):
     def go_back(self, screen_manager):
         screen_manager.current = "home"
@@ -232,6 +247,10 @@ class HelpUsDecideScreen(MDScreen):
     pass
 
 
+class GameRulesInformation(MDFloatLayout):
+    pass
+
+
 class AccountInformation(MDFloatLayout):
     pass
 
@@ -244,6 +263,10 @@ class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
     information_dialog = None
+    boardblitz_rules = None
+    boardblitz_start = None
+    boardblitz_exit_game = None
+    player_button_selected = "players_button_2"
 
     def build(self):
         return Builder.load_file('party.kv')
@@ -324,7 +347,113 @@ class PartyPlaytime(MDApp):
 
         self.information_dialog.dismiss()
 
-    def animate_wrong_email(self, widget):
+    def open_rules(self):
+        if not self.boardblitz_rules:
+            self.boardblitz_rules = MDDialog(
+                type="custom",
+                content_cls=GameRulesInformation()
+            )
+
+        self.boardblitz_rules.open()
+
+    def exit_game_rules(self):
+        self.boardblitz_rules.dismiss()
+
+    def boardblitz_players(self, *args):
+        if args[0] == "start_game":
+            empty_nickname = False
+            for i in range(1, int(PartyPlaytime.player_button_selected[-1])):
+                if self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)].text == "":
+                    empty_nickname = True
+                    self.animate_wrong_widget(self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)])
+
+            if not empty_nickname:
+                self.boardblitz_start.dismiss()
+                print("start ")
+                self.root.current = 'boardblitz_game'
+
+        elif args[0] != "choose_names_and_play":
+            screen = self.root.get_screen("boardblitz")
+
+            if not self.boardblitz_start:
+                self.boardblitz_start = MDDialog(
+                    type="custom",
+                    content_cls=BoardBlitzStart()
+                )
+
+            screen.ids[PartyPlaytime.player_button_selected].md_bg_color = "white"
+            screen.ids[PartyPlaytime.player_button_selected].unfocus_color = "white"
+
+            self.boardblitz_start.content_cls.ids[PartyPlaytime.player_button_selected + "_2"].md_bg_color = "white"
+            self.boardblitz_start.content_cls.ids[PartyPlaytime.player_button_selected + "_2"].unfocus_color = "white"
+
+            screen.ids[args[1]].md_bg_color = (1, 1, 1, .8)
+            screen.ids[args[1]].unfocus_color = (1, 1, 1, .8)
+
+            self.boardblitz_start.content_cls.ids[args[1] + "_2"].md_bg_color = (1, 1, 1, .8)
+            self.boardblitz_start.content_cls.ids[args[1] + "_2"].unfocus_color = (1, 1, 1, .8)
+
+            PartyPlaytime.player_button_selected = args[1]
+
+            self.update_nickname_boxes()
+        else:
+            self.open_boardblitz_start()
+
+    def update_nickname_boxes(self):
+        if PartyPlaytime.player_button_selected[-1] == '2':
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .5}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": 3}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": 3}
+
+        elif PartyPlaytime.player_button_selected[-1] == '3':
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .6}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": .4}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": 3}
+        else:
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .7}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": .5}
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": .3}
+
+    def open_boardblitz_start(self):
+        if not self.boardblitz_start:
+            self.boardblitz_start = MDDialog(
+                type="custom",
+                content_cls=BoardBlitzStart()
+            )
+
+        self.boardblitz_start.open()
+
+    def exit_boardblitz_start(self):
+
+        self.boardblitz_start.dismiss()
+
+    def exit_boardblitz_game(self):
+        if not self.boardblitz_exit_game:
+            self.boardblitz_exit_game = MDDialog(
+                title="Do you want to exit this game?",
+                buttons=[
+                    MDFlatButton(
+                        text="NO",
+                        on_release=self.dismiss_boardblitz_game
+                    ),
+                    MDFlatButton(
+                        text="YES",
+                        on_release=self.exit_current_boardblitz_game
+                    ),
+                ]
+            )
+
+        self.boardblitz_exit_game.open()
+
+    def dismiss_boardblitz_game(self, *args):
+        self.boardblitz_exit_game.dismiss()
+
+    def exit_current_boardblitz_game(self, *args):
+        self.boardblitz_exit_game.dismiss()
+        print("implementeaza")
+        self.root.current = 'home'
+
+    def animate_wrong_widget(self, widget):
 
         animate = Animation(
             duration=0.2,
@@ -358,7 +487,7 @@ class PartyPlaytime(MDApp):
         global email_regex
 
         if not re.fullmatch(email_regex, self.account_dialog.content_cls.ids.email_information.text):
-            self.animate_wrong_email(self.account_dialog.content_cls.ids.email_information)
+            self.animate_wrong_widget(self.account_dialog.content_cls.ids.email_information)
         else:
             with open("user_accounts.json", 'r+') as accounts_file:
                 accounts = json.load(accounts_file)
