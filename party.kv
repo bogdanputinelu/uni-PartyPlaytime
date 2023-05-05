@@ -9,6 +9,15 @@ WindowManager:
     WordRushScreen:
     TicTacToeScreen:
     HelpUsDecideScreen:
+    BoardBlitzGame:
+
+<RoadArrow@MDIcon>:
+    pos_hint: {"center_x": .5, "center_y": .5}
+    font_size: "35sp"
+
+<RoadStar@MDIcon>:
+    icon: "star-outline"
+    font_size: "30sp"
 
 <GameInformationCard@MDFloatLayout>:
     size_hint_y: .2
@@ -46,6 +55,30 @@ WindowManager:
         on_release:
             app.root.transition.direction = 'left'
             root.dispatch("on_release", app.root, root.next_screen)
+
+<BoardBlitzButton>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.boardblitz_players(root.button_event, root.button_id)
 
 <GameCard@Game>:
     size_hint_y: None
@@ -107,6 +140,202 @@ WindowManager:
                 pos_hint: {"center_x": .5, "center_y": .5}
                 radius: 10
                 next_screen: root.next_screen
+
+<BoardBlitzStart>:
+    id: game_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: game_box.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "window-close"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_boardblitz_start()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "ENTER NICKNAMES"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: game_box.width * 1.1
+        color: "black"
+        y: game_box.top - dp(10)
+
+    MDRelativeLayout:
+        pos_hint: {"center_x": .5, "center_y": .48}
+        size_hint_y: .98
+
+        MDBoxLayout:
+            id: players_button_box
+            size_hint: 1.2, .12
+            pos_hint: {"center_x": .5, "top": 1}
+            padding: "10dp"
+            spacing: "10dp"
+
+            BoardBlitzButton:
+                id: players_button_2_2
+                button_id: "players_button_2"
+                font_dim: "10dp"
+                md_bg_color: 1, 1, 1, .8
+                unfocus_color: 1, 1, 1, .8
+                button_name: "2 PLAYERS"
+                button_event: "2_players"
+                radius: 10
+
+            BoardBlitzButton:
+                id: players_button_3_2
+                button_id: "players_button_3"
+                font_dim: "10dp"
+                md_bg_color: "white"
+                unfocus_color: "white"
+                button_name: "3 PLAYERS"
+                button_event: "3_players"
+                radius: 10
+
+            BoardBlitzButton:
+                id: players_button_4_2
+                button_id: "players_button_4"
+                font_dim: "10dp"
+                md_bg_color: "white"
+                unfocus_color: "white"
+                button_name: "4 PLAYERS"
+                button_event: "4_players"
+                radius: 10
+
+        MDRelativeLayout:
+            id: game_nickname_boxes
+            size_hint_y: .7
+            y: players_button_box.top - players_button_box.height - self.height
+
+            MDTextField:
+                id: boardblitz_nickname_1
+                mode: "rectangle"
+                hint_text: "Player 2"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                x: game_nickname_boxes.x + (game_nickname_boxes.width - self.width) / 2
+                pos_hint: {"center_y": .5}
+                icon_right: "account"
+
+            MDTextField:
+                id: boardblitz_nickname_2
+                mode: "rectangle"
+                hint_text: "Player 3"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                x: game_nickname_boxes.x + (game_nickname_boxes.width - self.width) / 2
+                y: dp(1000)
+                icon_right: "account"
+
+            MDTextField:
+                id: boardblitz_nickname_3
+                mode: "rectangle"
+                hint_text: "Player 4"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                y: dp(1000)
+                x: game_nickname_boxes.x + (game_nickname_boxes.width - self.width) / 2
+                icon_right: "account"
+
+        MDBoxLayout:
+            size_hint_y: .18
+            padding: "5dp"
+
+            BoardBlitzButton:
+                font_dim: "14dp"
+                md_bg_color: "white"
+                unfocus_color: "white"
+                button_name: "START GAME"
+                button_event: "start_game"
+                radius: 10
+
+<GameRulesInformation>:
+    id: game_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: game_box.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "window-close"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_game_rules()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "GAME RULES"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: game_box.width * 1.1
+        color: "black"
+        y: game_box.top - dp(10)
+
+    MDRelativeLayout:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint_y: .9
+
+        MDLabel:
+            text: "- Players take turns in a clockwise order; highest throw of the die starts.\n\n- Each throw, the player decides which piece to move. A piece simply moves in a clockwise direction around the track given by the number thrown. If no piece can legally move according to the number thrown, play passes to the next player.\n\n- A throw of 6 gives another turn.\n\n- A player must throw a 6 to move a piece from the starting circle onto the first square on the track. The piece moves 6 squares around the circuit beginning with the appropriately coloured start square (and the player then has another turn).\n\n- If a piece lands on a piece of a different colour, the piece jumped upon is returned to its starting circle.\n\n- If a piece lands upon a piece of the same colour, this forms a block. This block cannot be passed or landed on by any opposing piece."
+            bold: True
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "12sp"
 
 <AccountInformation>:
     id: account_box
@@ -399,7 +628,7 @@ WindowManager:
 
             ScaleLabel:
                 text: "WELCOME"
-                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
                 bold: True
                 font_size: "40sp"
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -523,7 +752,7 @@ WindowManager:
             ScaleLabel:
                 text: "Sign Up!"
                 font_size: "30sp"
-                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
                 bold: True
                 pos_hint: {"center_x": .5, "center_y": .5}
                 bold: True
@@ -564,7 +793,6 @@ WindowManager:
                 y: register_account_box.top - self.height * 1.5
                 x: register_account_box.x + (register_account_box.width - self.width) / 2
                 icon_right: "lock"
-
 
             MDFlatButton:
                 size_hint: None, None
@@ -718,6 +946,7 @@ WindowManager:
 
 <BoardBlitzScreen>:
     name: "boardblitz"
+    id: boardblitz
     md_bg_color: "white"
 
     MDBoxLayout:
@@ -727,120 +956,1036 @@ WindowManager:
             md_bg_color: root.md_bg_color
             specific_text_color: "black"
             elevation: 0
-            right_action_items: [["magnify", lambda x: x]]
+            right_action_items: [['text-box-outline', lambda x: app.open_rules()]]
             left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
 
-        MDBoxLayout:
-            adaptive_height: True
-            spacing: "18dp"
-            padding: 0, 0, "24dp", 0
-
-            MDSeparator:
-                size_hint_x: None
-                width: "36dp"
-                color: "black"
-                pos_hint: {"center_y": .5}
-
-            MDIcon:
-                icon: "weather-sunny"
-                pos_hint: {"center_y": .5}
+        MDRelativeLayout:
 
             MDBoxLayout:
-                size_hint: None, None
-                size: "140dp", "42dp"
-
-                MDRelativeLayout:
-                    size_hint: None, None
-                    size: "140dp", "42dp"
-
-                    ScaleLabel:
-                        text: "PartyPlaytime"
-                        font_size: "18sp"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        bold: True
-                        adaptive_size: True
-
-        MDWidget:
-            size_hint_y: None
-            height: "12dp"
-
-        MDFloatLayout:
-            id: float_box
-            size_hint: .8, .6
-
-            MDBoxLayout:
-                size_hint: None, None
-                size: float_box.size
-                pos_hint: {"top": 1}
+                id: game_picture
+                size_hint: .8, .4
+                radius: 10
+                pos_hint: {"center_x": .5, "top": .95}
 
                 FitImage:
                     source: "logos/Board_Blitz_-_Logo.png"
+                    radius: 10
 
-            MDBoxLayout:
-                size_hint: None, None
-                size: "80dp", "80dp"
-                pos_hint: {"right": 1}
-                md_bg_color: "black"
-                y: float_box.top - self.height / 2
-
-        MDFloatLayout:
-            id: bottom_box
-            size_hint_y: .4
-            md_bg_color: "red"
-
-            MDBoxLayout:
-                size_hint: None, None
-                size: "180dp", "72dp"
-                y: bottom_box.top - self.height / 2
-                md_bg_color: "yellow"
-
-                ScaleLabel:
-                    text: "BoardBlitz"
-                    bold: True
-                    font_style: "H3"
-                    font_size: "42sp"
-                    scale_value_x: .6
-                    scale_value_y: .6
-                    adaptive_size: True
-                    pos_hint: {"center_y": .7}
-
-
-            MDBoxLayout:
-                orientation: "vertical"
-                adaptive_size: True
-                y: bottom_box.top - self.height
+            ElevatedBox:
+                id: game_page_description
+                md_bg_color: 1, 252/255, 127/255, 1
+                radius: 10
+                size_hint: .9, .35
+                pos_hint: {"center_x": .5}
+                y: game_picture.top - game_picture.height - self.height - dp(10)
+                elevation: 4
+                shadow_softness: 2
+                shadow_offset: 0, 1
 
                 MDLabel:
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis ultrices mi. Praesent ornare ante eleifend porta imperdiet. Vestibulum quis tincidunt ligula. Nam ut sapien ut lacus vehicula interdum at in nunc."
-                    adaptive_size: True
-                    text_size: root.width - dp(100), None
-                    padding_x: "28dp"
-                    theme_text_color: "Hint"
+                    id: how_to_play
+                    text: "How to Play:"
+                    size_hint: None, None
+                    size: "250dp", "50dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "22sp"
+                    x: game_page_description.x + dp(12)
+                    y: game_page_description.top - self.height - dp(12)
 
-                MDBoxLayout:
-                    adaptive_height: True
-                    spacing: "12dp"
-                    padding: "12dp"
+                MDLabel:
+                    id: game_rules
+                    text: "- Check out the rules of the game\n\n- Select by clicking on the buttons down below the number of players\n\n- Introduce the nicknames of the other players\n\n- Press play and have fun!"
+                    size_hint: None, None
+                    size: "320dp", "180dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "14sp"
+                    x: game_page_description.x + dp(15)
+                    y: how_to_play.top - how_to_play.height - self.height
 
-                    MDIconButton:
-                        icon: "map-marker-outline"
+                MDIconButton:
+                    icon: "text-box-outline"
+                    size_hint: None, None
+                    size: "30dp", "30dp"
+                    y: game_page_description.top - game_rules.height / 1.6 + dp(5)
+                    x: game_rules.x + game_rules.width - dp(24)
+                    on_release: app.open_rules()
 
-                    MDIconButton:
-                        icon: "map-search-outline"
+            BoardBlitzButton:
+                md_bg_color: "green"
+                unfocus_color: "green"
+                button_event: "choose_names_and_play"
+                button_name: "CHOOSE NICKNAMES AND PLAY!"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .9, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - self.height - dp(10)
 
-                    MDIconButton:
-                        icon: "home-outline"
+            MDBoxLayout:
+                size_hint_y: .08
+                pos_hint: {"center_x": .5}
+                padding: "10dp"
+                spacing: "10dp"
 
-                    MDFlatButton:
-                        text: "[b]More[/b]"
-                        pos_hint: {"center_y": .5}
+                BoardBlitzButton:
+                    id: players_button_2
+                    button_id: "players_button_2"
+                    md_bg_color: 1, 1, 1, .8
+                    unfocus_color: 1, 1, 1, .8
+                    button_name: "2 PLAYERS"
+                    button_event: "2_players"
+                    radius: 10
+
+                BoardBlitzButton:
+                    id: players_button_3
+                    button_id: "players_button_3"
+                    md_bg_color: "white"
+                    unfocus_color: "white"
+                    button_name: "3 PLAYERS"
+                    button_event: "3_players"
+                    radius: 10
+
+                BoardBlitzButton:
+                    id: players_button_4
+                    button_id: "players_button_4"
+                    md_bg_color: "white"
+                    unfocus_color: "white"
+                    button_name: "4 PLAYERS"
+                    button_event: "4_players"
+                    radius: 10
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+        MDLabel:
+            text: "BoardBlitz"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (boardblitz.top - self.height * 1.7)
+            x: (boardblitz.width - self.width) / 2
+
+<BoardBlitzGame>:
+    name: "boardblitz_game"
+    id: boardblitz
 
     MDBoxLayout:
-        size_hint: None, None
-        size: "144dp", "48dp"
-        pos_hint: {"right": 1}
-        md_bg_color: "black"
+        orientation: "vertical"
 
+        MDTopAppBar:
+            md_bg_color: "white"
+            specific_text_color: "black"
+            elevation: 0
+            left_action_items: [["window-close", lambda x: app.exit_boardblitz_game()]]
+
+        MDSeparator:
+            width: "80dp"
+            color: "black"
+
+        MDRelativeLayout:
+            id: game_page_space
+            md_bg_color: 0, 0, 0, .1
+
+            MDRelativeLayout:
+                id: boardblitz_table
+                md_bg_color: "white"
+                size_hint: None, None
+                size: game_page_space.width, game_page_space.width
+                pos_hint: {"center_y": .5}
+
+                MDFloatLayout:
+                    id: red_box
+                    size_hint: None, None
+                    md_bg_color: "red"
+                    line_color: "black"
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 2.5
+
+                    MDRelativeLayout:
+                        id: inside_red_box
+                        size_hint: None, None
+                        md_bg_color: "white"
+                        radius: 10
+                        size: red_box.width / 1.4, red_box.width / 1.4
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                        MDRelativeLayout:
+                            md_bg_color: "red"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_red_box.width / 3.3, inside_red_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "red"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_red_box.width / 3.3, inside_red_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "red"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_red_box.width / 3.3, inside_red_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .25}
+
+                        MDRelativeLayout:
+                            md_bg_color: "red"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_red_box.width / 3.3, inside_red_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .25}
+
+                MDFloatLayout:
+                    id: blue_box
+                    size_hint: None, None
+                    md_bg_color: "blue"
+                    line_color: "black"
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 2.5
+                    pos_hint: {"right": 1}
+
+                    MDRelativeLayout:
+                        id: inside_blue_box
+                        size_hint: None, None
+                        md_bg_color: "white"
+                        radius: 10
+                        size: blue_box.width / 1.4, blue_box.width / 1.4
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                        MDRelativeLayout:
+                            md_bg_color: "blue"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_blue_box.width / 3.3, inside_blue_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "blue"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_blue_box.width / 3.3, inside_blue_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "blue"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_blue_box.width / 3.3, inside_blue_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .25}
+
+                        MDRelativeLayout:
+                            md_bg_color: "blue"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_blue_box.width / 3.3, inside_blue_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .25}
+
+                MDFloatLayout:
+                    id: green_box
+                    size_hint: None, None
+                    md_bg_color: "green"
+                    line_color: "black"
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 2.5
+                    pos_hint: {"top": 1}
+
+                    MDRelativeLayout:
+                        id: inside_green_box
+                        size_hint: None, None
+                        md_bg_color: "white"
+                        radius: 10
+                        size: green_box.width / 1.4, green_box.width / 1.4
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                        MDRelativeLayout:
+                            md_bg_color: "green"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_green_box.width / 3.3, inside_green_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "green"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_green_box.width / 3.3, inside_green_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "green"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_green_box.width / 3.3, inside_green_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .25}
+
+                        MDRelativeLayout:
+                            md_bg_color: "green"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_green_box.width / 3.3, inside_green_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .25}
+
+                MDFloatLayout:
+                    id: yellow_box
+                    size_hint: None, None
+                    md_bg_color: "yellow"
+                    line_color: "black"
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 2.5
+                    pos_hint: {"right": 1, "top": 1}
+
+                    MDRelativeLayout:
+                        id: inside_yellow_box
+                        size_hint: None, None
+                        md_bg_color: "white"
+                        radius: 10
+                        size: yellow_box.width / 1.4, yellow_box.width / 1.4
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                        MDRelativeLayout:
+                            md_bg_color: "yellow"
+                            radius: 100
+                            size_hint: None, None
+                            size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "yellow"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .75}
+
+                        MDRelativeLayout:
+                            md_bg_color: "yellow"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
+                            pos_hint: {"center_x": .25, "center_y": .25}
+
+                        MDRelativeLayout:
+                            md_bg_color: "yellow"
+                            size_hint: None, None
+                            radius: 100
+                            size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
+                            pos_hint: {"center_x": .75, "center_y": .25}
+
+                MDRelativeLayout:
+                    id: down_road
+                    size_hint: None, None
+                    size: boardblitz_table.width / 5, boardblitz_table.width / 2.5
+                    pos_hint: {"center_x": .5}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5}
+
+                        RoadArrow:
+                            icon: "chevron-up"
+                            color: "red"
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1}
+
+                    MDFloatLayout:
+                        id: red_star
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_y": .25}
+
+                        RoadStar:
+                            x: red_star.x - dp(1.5)
+                            y: red_star.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_y": .417}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .417}
+
+                    MDFloatLayout:
+                        id: grey_star_1
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "grey"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .417}
+
+                        RoadStar:
+                            x: grey_star_1.x - dp(1)
+                            y: grey_star_1.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_y": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_y": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_y": .918}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "red"
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .918}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: down_road.width / 3, down_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .918}
+
+                MDRelativeLayout:
+                    id: up_road
+                    size_hint: None, None
+                    size: boardblitz_table.width / 5, boardblitz_table.width / 2.5
+                    pos_hint: {"center_x": .5, "top": 1}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .417}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .417}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .417}
+
+                    MDFloatLayout:
+                        id: grey_star_2
+                        md_bg_color: "grey"
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .582}
+
+                        RoadStar:
+                            x: grey_star_2.x - dp(1)
+                            y: grey_star_2.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .75}
+
+                    MDFloatLayout:
+                        id: yellow_star
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "yellow"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .75}
+
+                        RoadStar:
+                            x: yellow_star.x - dp(1.5)
+                            y: yellow_star.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .918}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .5, "center_y": .918}
+
+                        RoadArrow:
+                            icon: "chevron-down"
+                            color: "yellow"
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"right": 1, "center_y": .918}
+
+                MDRelativeLayout:
+                    id: left_road
+                    size_hint: None, None
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 5
+                    pos_hint: {"center_y": .5}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5}
+
+                        RoadArrow:
+                            icon: "chevron-right"
+                            color: "green"
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .25}
+
+                    MDFloatLayout:
+                        id: green_star
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .25}
+
+                        RoadStar:
+                            x: green_star.x - dp(1.5)
+                            y: green_star.y - dp(1)
+
+                    MDFloatLayout:
+                        id: grey_star_3
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .417}
+                        md_bg_color: "grey"
+
+                        RoadStar:
+                            x: grey_star_3.x - dp(1)
+                            y: grey_star_3.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .417}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .417}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .75}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .918}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "green"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .918}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .918}
+
+                MDRelativeLayout:
+                    id: right_road
+                    size_hint: None, None
+                    size: boardblitz_table.width / 2.5, boardblitz_table.width / 5
+                    pos_hint: {"center_y": .5, "right": 1}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .25}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .25}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .25}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .417}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .417}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .417}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .582}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .582}
+
+                    MDFloatLayout:
+                        id: grey_star_4
+                        md_bg_color: "grey"
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .582}
+
+                        RoadStar:
+                            x: grey_star_4.x - dp(1)
+                            y: grey_star_4.y - dp(1)
+
+                    MDFloatLayout:
+                        id: blue_star
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .75}
+
+                        RoadStar:
+                            x: blue_star.x - dp(1.5)
+                            y: blue_star.y - dp(1)
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        md_bg_color: "blue"
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .75}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .75}
+
+                    MDBoxLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_x": .918}
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"center_y": .5, "center_x": .918}
+
+                        RoadArrow:
+                            icon: "chevron-left"
+                            color: "blue"
+
+                    MDFloatLayout:
+                        line_color: "black"
+                        size_hint: None, None
+                        size: up_road.width / 3, up_road.width / 3
+                        pos_hint: {"top": 1, "center_x": .918}
+
+                MDFloatLayout:
+                    size_hint: None, None
+                    size: boardblitz_table.width / 5, boardblitz_table.width / 5
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+                    FitImage:
+                        source: "logos/center.png"
+                        size_hint: 1, 1
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+    ElevatedBox:
+        id: first_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .15, "center_x": .2}
+
+        ElevatedBox:
+            id: avatar_box_1
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: first_avatar_box.top - self.height - dp(6)
+            x: first_avatar_box.x + dp(6)
+
+            FitImage:
+                id: first_player_avatar
+                source: "boardblitz_characters/panini.png"
+                radius: 10
+                y: avatar_box_1.top - self.height
+                x: avatar_box_1.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"right": 1, "center_y": .5}
+
+            MDLabel:
+                id: first_player_nickname
+                text: "nickname 1"
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    ElevatedBox:
+        id: second_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .15, "right": 1}
+
+        ElevatedBox:
+            id: avatar_box_2
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: second_avatar_box.top - self.height - dp(6)
+            x: second_avatar_box.right - self.width - dp(6)
+
+            FitImage:
+                id: second_player_avatar
+                source: "boardblitz_characters/chowder.png"
+                radius: 10
+                y: avatar_box_2.top - self.height
+                x: avatar_box_2.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"center_y": .5}
+            x: second_avatar_box.x
+
+            MDLabel:
+                id: second_player_nickname
+                text: "Nickname 2"
+                size_hint_x: None
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"right": .85, "center_y": .5}
+
+    ElevatedBox:
+        id: third_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .77, "center_x": .2}
+
+        ElevatedBox:
+            id: avatar_box_3
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: third_avatar_box.top - self.height - dp(6)
+            x: third_avatar_box.x + dp(6)
+
+            FitImage:
+                id: third_player_avatar
+                source: "boardblitz_characters/truffles.png"
+                radius: 10
+                y: avatar_box_3.top - self.height
+                x: avatar_box_3.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"right": 1, "center_y": .5}
+
+            MDLabel:
+                id: third_player_nickname
+                text: "nickname 3"
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    ElevatedBox:
+        id: fourth_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .77, "right": 1}
+
+        ElevatedBox:
+            id: avatar_box_4
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: fourth_avatar_box.top - self.height - dp(6)
+            x: fourth_avatar_box.right - self.width - dp(6)
+
+            FitImage:
+                id: fourth_player_avatar
+                source: "boardblitz_characters/gazpacho.png"
+                radius: 10
+                y: avatar_box_4.top - self.height
+                x: avatar_box_4.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"center_y": .5}
+            x: fourth_avatar_box.x
+
+            MDLabel:
+                id: fourth_player_nickname
+                text: "Nickname 4"
+                size_hint_x: None
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"right": .85, "center_y": .5}
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+        MDLabel:
+            text: "BoardBlitz"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (boardblitz.top - self.height * 1.7)
+            x: (boardblitz.width - self.width) / 2
 
 <HeadSpinScreen>:
     name: "headspin"
