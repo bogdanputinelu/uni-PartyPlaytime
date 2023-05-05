@@ -42,7 +42,6 @@ class GameCardBehavior(MDBoxLayout, FocusBehavior):
         args[0].current = args[1]
 
     def change_cursor(self, cursor_name):
-
         Window.set_system_cursor(cursor_name)
 
 
@@ -153,6 +152,21 @@ class RegisterScreen(MDScreen):
                 json.dump(accounts, accounts_file, indent=4)
                 screen_manager.current = 'login'
 
+                with open("headspin_settings.json", 'r+') as headspin_settings_default_file:
+                    settings = json.load(headspin_settings_default_file)
+
+                    default_settings = {"username": self.ids.username_register.text,
+                                        "round": "4",
+                                        "team": "2",
+                                        "words": "Kilimanjaro",
+                                        "timer": "60",
+                                        "players": "John, Linda, William, Andreea"
+                                        }
+                    settings["headspin_settings"].append(default_settings)
+                    headspin_settings_default_file.seek(0)
+                    json.dump(settings, headspin_settings_default_file, indent=4)
+                    screen_manager.current = 'login'
+
 
 class LoginScreen(MDScreen):
     def switch_password_mode(self):
@@ -239,6 +253,10 @@ class HeadSpinSettings(MDFloatLayout):
     pass
 
 
+class HeadSpinRules(MDFloatLayout):
+    pass
+
+
 class HeadSpinPlay(MDScreen):
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
@@ -271,6 +289,7 @@ class GameInformation(MDFloatLayout):
 class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
+    headspin_rules_dialog = None
     information_dialog = None
     boardblitz_rules = None
     boardblitz_start = None
@@ -316,6 +335,7 @@ class PartyPlaytime(MDApp):
                     self.headspin_dialog.content_cls.ids.team_information.text = setting["team"]
                     self.headspin_dialog.content_cls.ids.words_information.text = setting["words"]
                     self.headspin_dialog.content_cls.ids.timer_information.text = setting["timer"]
+                    self.headspin_dialog.content_cls.ids.players_information.text = setting["players"]
                     break
 
         self.headspin_dialog.open()
@@ -324,21 +344,39 @@ class PartyPlaytime(MDApp):
         self.headspin_dialog.dismiss()
 
     def headspin_save_settings(self):
-        with open("headspin_settings.json", 'r+') as headspin_settings:
-            settings = json.load(headspin_settings)
+        nicknames = self.headspin_dialog.content_cls.ids.players_information.text.split(',')
+        number = int(self.headspin_dialog.content_cls.ids.team_information.text)
 
-            for setting in settings["headspin_settings"]:
-                if setting["username"] == user_logged_in:
-                    setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
-                    setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
-                    setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
-                    setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
+        if len(nicknames) != number * 2:
+            self.animate_wrong_widget(self.headspin_dialog.content_cls.ids.players_information)
+        else:
+            with open("headspin_settings.json", 'r+') as headspin_settings:
+                settings = json.load(headspin_settings)
 
-                    headspin_settings.seek(0)
-                    json.dump(settings, headspin_settings, indent=4)
-                    headspin_settings.truncate()
-                    self.headspin_dialog.dismiss()
-                    return
+                for setting in settings["headspin_settings"]:
+                    if setting["username"] == user_logged_in:
+                        setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
+                        setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
+                        setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
+                        setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
+                        setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
+
+                        headspin_settings.seek(0)
+                        json.dump(settings, headspin_settings, indent=4)
+                        headspin_settings.truncate()
+                        self.headspin_dialog.dismiss()
+                        return
+
+    def headspin_rules(self):
+        if not self.headspin_rules_dialog:
+            self.headspin_rules_dialog = MDDialog(
+                type='custom',
+                content_cls=HeadSpinRules()
+            )
+        self.headspin_rules_dialog.open()
+
+    def exit_headspin_rules(self):
+        self.headspin_rules_dialog.dismiss()
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()
@@ -353,8 +391,8 @@ class PartyPlaytime(MDApp):
         self.information_dialog.open()
 
     def exit_game_information(self):
-
         self.information_dialog.dismiss()
+
 
     def open_rules(self):
         if not self.boardblitz_rules:
@@ -518,6 +556,8 @@ class PartyPlaytime(MDApp):
 
     def animate_wrong_widget(self, widget):
 
+
+    def animate_wrong_widget(self, widget):
         animate = Animation(
             duration=0.2,
             line_color_normal=(1, 0, 0, 1),

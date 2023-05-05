@@ -1,11 +1,12 @@
 {
     "headspin_settings": [
         {
-            "username": "bogdan",
-            "round": "98",
-            "team": "2",
-            "words": "bogdan, iepuras",
-            "timer": "60"
+            "username": "irina",
+            "round": "4",
+            "team": "3",
+            "words": "Kilimanjaro",
+            "timer": "60",
+            "players": "John, Linda, William, Andreea, Ion, Ion"
         }
     ]
 }
