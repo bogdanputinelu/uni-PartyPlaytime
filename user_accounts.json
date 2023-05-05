@@ -34,43 +34,11 @@
         },
         {
             "username": "irina",
-            "password": "iirriinnaa1",
-            "first_name": "irina",
-            "last_name": "irina",
-            "e-mail": "irina1@irina.com",
-            "nickname": "irina"
-        },
-        {
-            "username": "irina2",
-            "password": "ciscoenapa55",
+            "password": "parola.1",
             "first_name": "Irina",
-            "last_name": "Irina",
-            "e-mail": "irina@irina.com",
+            "last_name": "Enescu",
+            "e-mail": "irina@gmail.com",
             "nickname": "Irina"
-        },
-        {
-            "username": "irina3",
-            "password": "cisco333",
-            "first_name": "",
-            "last_name": "",
-            "e-mail": "iri@irina.com",
-            "nickname": ""
-        },
-        {
-            "username": "i",
-            "password": "123iifdwed432",
-            "first_name": "",
-            "last_name": "",
-            "e-mail": "i@i.com",
-            "nickname": ""
-        },
-        {
-            "username": "iri",
-            "password": "1234parola",
-            "first_name": "",
-            "last_name": "",
-            "e-mail": "i@i.com",
-            "nickname": ""
         }
     ]
 }

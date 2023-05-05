@@ -229,6 +229,10 @@ class HeadSpinSettings(MDFloatLayout):
     pass
 
 
+class HeadSpinRules(MDFloatLayout):
+    pass
+
+
 class HeadSpinPlay(MDScreen):
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
@@ -257,6 +261,7 @@ class GameInformation(MDFloatLayout):
 class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
+    headspin_rules_dialog = None
     information_dialog = None
 
     def build(self):
@@ -307,22 +312,39 @@ class PartyPlaytime(MDApp):
         self.headspin_dialog.dismiss()
 
     def headspin_save_settings(self):
-        with open("headspin_settings.json", 'r+') as headspin_settings:
-            settings = json.load(headspin_settings)
+        nicknames = self.headspin_dialog.content_cls.ids.players_information.text.split(',')
+        number = int(self.headspin_dialog.content_cls.ids.team_information.text)
 
-            for setting in settings["headspin_settings"]:
-                if setting["username"] == user_logged_in:
-                    setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
-                    setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
-                    setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
-                    setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
-                    setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
+        if len(nicknames) != number * 2:
+            self.animate_wrong_widget(self.headspin_dialog.content_cls.ids.players_information)
+        else:
+            with open("headspin_settings.json", 'r+') as headspin_settings:
+                settings = json.load(headspin_settings)
 
-                    headspin_settings.seek(0)
-                    json.dump(settings, headspin_settings, indent=4)
-                    headspin_settings.truncate()
-                    self.headspin_dialog.dismiss()
-                    return
+                for setting in settings["headspin_settings"]:
+                    if setting["username"] == user_logged_in:
+                        setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
+                        setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
+                        setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
+                        setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
+                        setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
+
+                        headspin_settings.seek(0)
+                        json.dump(settings, headspin_settings, indent=4)
+                        headspin_settings.truncate()
+                        self.headspin_dialog.dismiss()
+                        return
+
+    def headspin_rules(self):
+        if not self.headspin_rules_dialog:
+            self.headspin_rules_dialog = MDDialog(
+                type='custom',
+                content_cls=HeadSpinRules()
+            )
+        self.headspin_rules_dialog.open()
+
+    def exit_headspin_rules(self):
+        self.headspin_rules_dialog.dismiss()
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()
@@ -337,11 +359,9 @@ class PartyPlaytime(MDApp):
         self.information_dialog.open()
 
     def exit_game_information(self):
-
         self.information_dialog.dismiss()
 
-    def animate_wrong_email(self, widget):
-
+    def animate_wrong_widget(self, widget):
         animate = Animation(
             duration=0.2,
             line_color_normal=(1, 0, 0, 1),
@@ -374,7 +394,7 @@ class PartyPlaytime(MDApp):
         global email_regex
 
         if not re.fullmatch(email_regex, self.account_dialog.content_cls.ids.email_information.text):
-            self.animate_wrong_email(self.account_dialog.content_cls.ids.email_information)
+            self.animate_wrong_widget(self.account_dialog.content_cls.ids.email_information)
         else:
             with open("user_accounts.json", 'r+') as accounts_file:
                 accounts = json.load(accounts_file)
