@@ -51,7 +51,16 @@ class BoardBlitzStart(MDFloatLayout):
 
 class BoardBlitzButton(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
 
+
+class HeadSpinButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
+
+
+class HeadSpinButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
 
@@ -294,6 +303,7 @@ class PartyPlaytime(MDApp):
     boardblitz_rules = None
     boardblitz_start = None
     boardblitz_exit_game = None
+    headspin_exit_game = None
     player_button_selected = "players_button_2"
 
     def build(self):
@@ -378,6 +388,31 @@ class PartyPlaytime(MDApp):
     def exit_headspin_rules(self):
         self.headspin_rules_dialog.dismiss()
 
+    def exit_headspin_game(self):
+        if not self.headspin_exit_game:
+            self.headspin_exit_game = MDDialog(
+                title="Do you want to exit this game?",
+                buttons=[
+                    MDFlatButton(
+                        text="NO",
+                        on_release=self.dismiss_headspin_game
+                    ),
+                    MDFlatButton(
+                        text="YES",
+                        on_release=self.exit_current_headspin_game
+                    ),
+                ]
+            )
+
+        self.headspin_exit_game.open()
+
+    def dismiss_headspin_game(self, *args):
+        self.headspin_exit_game.dismiss()
+
+    def exit_current_headspin_game(self, *args):
+        self.headspin_exit_game.dismiss()
+        self.root.current = 'headspin'
+
     def exit_dialogue(self):
         self.account_dialog.dismiss()
 
@@ -392,7 +427,6 @@ class PartyPlaytime(MDApp):
 
     def exit_game_information(self):
         self.information_dialog.dismiss()
-
 
     def open_rules(self):
         if not self.boardblitz_rules:

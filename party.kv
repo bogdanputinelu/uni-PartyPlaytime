@@ -357,7 +357,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_dialogue()
 
@@ -377,14 +377,11 @@ WindowManager:
             size_hint: None, None
             size: top_bar.height, top_bar.height
 
-            MDRectangleFlatIconButton:
-                icon: "check"
-                text: "SAVE"
+            MDIconButton:
+                icon: "check-bold"
                 ripple_alpha: 0
-                font_name: "fonts/BrunoAce-Regular.ttf"
                 pos_hint: {"center_x": .3, "center_y": .5}
                 icon_color: "black"
-                text_color: "black"
                 line_color: 0, 0, 0, 0
                 on_release: app.save_changes_made()
 
@@ -1987,6 +1984,7 @@ WindowManager:
             y: (boardblitz.top - self.height * 1.7)
             x: (boardblitz.width - self.width) / 2
 
+
 <HeadSpinScreen>:
     name: "headspin"
     id: headspin
@@ -1999,94 +1997,143 @@ WindowManager:
             md_bg_color: root.md_bg_color
             specific_text_color: "black"
             elevation: 0
-            right_action_items: [["'text-box-outline'", lambda x: app.headspin_rules()]]
+            right_action_items: [["text-box-outline", lambda x: app.headspin_rules()]]
             left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
 
-        MDBoxLayout:
-            adaptive_height: True
-            spacing: "18dp"
-            padding: 0, 0, "24dp", 0
-
-            MDSeparator:
-                size_hint_x: None
-                width: "36dp"
-                color: "black"
-                pos_hint: {"center_y": .5}
-
-            MDIcon:
-                icon: "weather-sunny"
-                pos_hint: {"center_y": .5}
+        MDRelativeLayout:
 
             MDBoxLayout:
-                size_hint: None, None
-                size: "140dp", "42dp"
-
-                MDRelativeLayout:
-                    size_hint: None, None
-                    size: "140dp", "42dp"
-
-                    ScaleLabel:
-                        text: "  PartyPlaytime"
-                        font_size: "18sp"
-                        font_name: "fonts/BrunoAce-Regular.ttf"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        bold: True
-                        adaptive_size: True
-
-        MDWidget:
-            size_hint_y: None
-            height: "12dp"
-
-        MDFloatLayout:
-            id: float_box
-            size_hint: .8, .6
-
-            MDBoxLayout:
-                size_hint: None, None
-                size: float_box.size
-                pos_hint: {"top": 1}
+                id: game_picture
+                size_hint: .8, .4
+                radius: 10
+                pos_hint: {"center_x": .5, "top": .95}
 
                 FitImage:
                     source: "logos/Headspin_-_Logo.png"
+                    radius: 10
 
-        MDFloatLayout:
-            id: bottom_box
-            size_hint_y: .4
-            md_bg_color: "white"
-
-            MDBoxLayout:
-                orientation: "vertical"
-                adaptive_size: True
-                y: bottom_box.top - self.height
+            ElevatedBox:
+                id: game_page_description
+                md_bg_color: 1, 252/255, 127/255, 1
+                radius: 10
+                size_hint: .9, .25
+                pos_hint: {"center_x": .5}
+                y: game_picture.top - game_picture.height - self.height - dp(10)
+                elevation: 4
+                shadow_softness: 2
+                shadow_offset: 0, 1
 
                 MDLabel:
-                    text: "How many words can you guess in one minute? Test your skills and become better and better at Headspin!"
-                    adaptive_size: True
+                    id: how_to_play
+                    text: "How to Play:"
+                    size_hint: None, None
+                    size: "200dp", "50dp"
+                    bold: True
                     font_name: "fonts/BrunoAce-Regular.ttf"
-                    text_size: root.width - dp(100), None
-                    padding_x: "10dp"
-                    halign: "left"
-                    font_size: "20sp"
-                    text_color: (0, 0, 0, 0)
+                    font_size: "22sp"
+                    x: game_page_description.x + dp(12)
+                    y: game_page_description.top - self.height - dp(12)
 
-                MDBoxLayout:
-                    adaptive_height: True
-                    spacing: "10dp"
-                    padding: "10dp"
+                MDLabel:
+                    id: game_rules
+                    text: "- Check out the rules of the game\n\n- Change the game settings\n\n- Press play and have fun!"
+                    size_hint: None, None
+                    size: "320dp", "100dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "14sp"
+                    x: game_page_description.x + dp(15)
+                    y: how_to_play.top - how_to_play.height - self.height
 
-                    MDIconButton:
-                        icon: "file-document-outline"
-                        on_release: app.headspin_rules()
-                        elevation: 0
+            HeadSpinButtonSettings:
+                id: settings_button
+                md_bg_color: 0, 0, 0, .4
+                unfocus_color: 0, 0, 0, .4
+                button_event: "open_headspin_settings"
+                button_name: "SETTINGS"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .5, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - self.height - dp(10)
 
-                    MDIconButton:
-                        icon: "cog"
-                        on_release: app.headspin_settings()
-                        elevation: 0
+            HeadSpinButtonPlay:
+                md_bg_color: "green"
+                unfocus_color: "green"
+                button_event: "headspinPlay"
+                button_name: "PLAY!"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .9, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - settings_button.height - self.height - dp(20)
 
-                    MDIconButton:
-                        icon: "play-circle"
-                        on_release: app.root.current = 'headspinPlay'
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+
+        MDLabel:
+            text: "Headspin"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (headspin.top - self.height * 1.7)
+            x: (headspin.width - self.width) / 2
+
+
+<HeadSpinButtonSettings>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.headspin_settings()
+
+<HeadSpinButtonPlay>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.root.current = 'headspinPlay'
+
 
 <HeadSpinSettings>:
     id: headspin_settings
@@ -2148,7 +2195,7 @@ WindowManager:
         orientation: "vertical"
         size_hint: 1.16, None
         height: "250dp"
-        y: headspin_settings.top - self.height - dp(10)
+        y: headspin_settings.top - self.height - dp(20)
         pos_hint: {"center_x": .5}
         radius: 10
 
@@ -2325,16 +2372,38 @@ WindowManager:
 
 <HeadSpinPlay>:
     name: "headspinPlay"
+    id: headspin
     md_bg_color: "white"
 
     MDBoxLayout:
         orientation: "vertical"
 
         MDTopAppBar:
-            md_bg_color: root.md_bg_color
+            md_bg_color: "white"
             specific_text_color: "black"
             elevation: 0
-            left_action_items: [["chevron-left", lambda x: root.exit_game(app.root)]]
+            left_action_items: [["window-close", lambda x: app.exit_headspin_game()]]
+
+        MDSeparator:
+            width: "80dp"
+            color: "black"
+
+        MDRelativeLayout:
+            id: game_page_space
+            md_bg_color: 0, 0, 0, .1
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+
+        MDLabel:
+            text: "Headspin"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (headspin.top - self.height * 1.7)
+            x: (headspin.width - self.width) / 2
 
 <WordRushScreen>:
     name: "wordrush"
