@@ -586,7 +586,7 @@ WindowManager:
             size_hint: 0.5, 0.5
             on_eos:
                 root.change_transition_for_welcome(app.root)
-                app.root.current = 'login'
+                app.root.current = 'headspin'
                 root.change_transition(app.root)
 
 <LoginScreen>:
@@ -2404,6 +2404,102 @@ WindowManager:
             adaptive_size: True
             y: (headspin.top - self.height * 1.7)
             x: (headspin.width - self.width) / 2
+
+    MDAnchorLayout:
+        anchor: "center"
+        size_hint_y: None
+        height: "180dp"
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+        ElevatedBox:
+            id: game_card_box
+            md_bg_color: "white"
+            size_hint_x: .8
+            radius: 10
+            elevation: 4
+
+            FitImage:
+                source: "logos/Headspin_Question.png"
+                size_hint: None, None
+                size: "100dp", "100dp"
+                pos_hint: {"center_x": .2, "center_y": .6}
+                radius: 10
+
+            MDLabel:
+                text: "CUVANT"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "26sp"
+                size_hint: None, None
+                size: "180dp", "100dp"
+                pos_hint: {"center_x": .7, "center_y": .6}
+
+            MDRelativeLayout:
+                id: game_title_box
+                radius: 0, 0, 10, 10
+                y: game_card_box.top - game_card_box.height
+                x: game_card_box.x
+                size_hint_y: None
+                height: "50dp"
+
+                MDLabel:
+                    text: "Guess the word!"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    x: game_title_box.x
+                    size_hint_x: None
+                    width: "220dp"
+
+    MDGridLayout:
+        size_hint_y: None
+        id: grid
+        height: "180dp"
+        cols: 2
+        md_bg_color: "red"
+        pos_hint: {"center_x": .5, "center_y": .175}
+
+        ElevatedBox:
+            id: game_card_box
+            md_bg_color: "white"
+            size_hint_x: .2
+            width: "30dp"
+            height: "30dp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            radius: 10
+            elevation: 4
+
+            MDRectangleFlatIconButton:
+                icon: "check"
+                text: "CHECK"
+                icon_size: "40dp"
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                icon_color: "black"
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+
+        ElevatedBox:
+            id: game_card_box
+            md_bg_color: "white"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            width: grid.width / 2 - dp(10)
+            height: grid.height / 2 - dp(10)
+            size_hint_x: .2
+            radius: 10
+            elevation: 4
+
+            MDRectangleFlatIconButton:
+                icon: "window-close"
+                text: "PASS"
+                icon_size: "40dp"
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                icon_color: "black"
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+
 
 <WordRushScreen>:
     name: "wordrush"
