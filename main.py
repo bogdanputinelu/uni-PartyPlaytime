@@ -13,6 +13,15 @@ from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.transition import MDFadeSlideTransition
 import json
 import re
+import random
+import time
+from cuvinte import words
+from kivy.clock import Clock
+from kivy.app import App
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
+from kivy.properties import ListProperty, NumericProperty
+
 
 Window.size = (400, 780)
 Window.top = 30
@@ -202,10 +211,174 @@ class HeadSpinScreen(MDScreen):
 class WordRushScreen(MDScreen):
     pass
 
+class WordRushRulesScreen(MDScreen):
+    pass
+
+
+class WordRushSettingsScreen(MDScreen):
+    gameMode = 0 # Default, game mode este 0, adica POINTS. ROUNDS este 1
+    nrPoints = 10 # Default, se joaca pana prima echipa obtine 10 puncte
+    nrRounds = 10 # Default, se joaca 10 runde
+    nrTeams = 2 # Default, numarul de echipe este 0.
+    timeLeft = 60 # Default, echipele au 60 de secunde sa raspunda
+
+    def buton_gameMode(self, widget): # Functie care ne schimba game mode-ul
+        if widget.text == "Points":
+            widget.text = "Rounds"
+            WordRushSettingsScreen.gameMode = 1
+        else:
+            widget.text = "Points"
+            WordRushSettingsScreen.gameMode = 0
+    def slider_nrEchipe(self, widget): # Functie care ne schimba numarul de echipe
+        WordRushSettingsScreen.nrTeams = int(widget.value)
+    def slider_timeLeft(self, widget):
+        WordRushSettingsScreen.timeLeft = int(widget.value)
+    def slider_nrRounds(self, widget):
+        WordRushSettingsScreen.nrRounds = int(widget.value)
+    def slider_nrPoints(self, widget):
+        WordRushSettingsScreen.nrPoints = int(widget.value)
+
+
+
+    def getGamemode(self):
+        return WordRushSettingsScreen.gameMode
+    def getNrTeams(self):
+        return WordRushSettingsScreen.nrTeams
+    def getTimeLeft(self):
+        return WordRushSettingsScreen.timeLeft
+
+
+class WordRushPlayScreen(MDScreen):
+    gameMode = WordRushSettingsScreen.gameMode
+    nrTeams = WordRushSettingsScreen.nrTeams
+    nrPoints = WordRushSettingsScreen.nrPoints
+    nrRounds = WordRushSettingsScreen.nrRounds
+    timeLeft = WordRushSettingsScreen.timeLeft
+    teamPoints = [0 for contor in range(0, nrTeams + 1)]
+    teamPasses = [3 for contor in range(0, nrTeams + 1)]
+    round = 0
+    team = 0
+
+    def update_clock(self, *args):
+        # Acum se apeleaza cum trebuie. Trebuie doar samodific lable-urile cum trebuie
+        WordRushPlayScreen.timeLeft = WordRushPlayScreen.timeLeft - 1
+        #WordRushPlayScreen.ids.timeLabel.text = str(WordRushPlayScreen.timeLeft)
+
+    def passWord(self):
+        self.teamPasses[self.team] -= 1
+
+
+    def joc(self):
+        self.gameMode = WordRushSettingsScreen.gameMode
+        self.nrTeams = WordRushSettingsScreen.nrTeams
+        self.nrPoints = WordRushSettingsScreen.nrPoints
+        self.nrRounds = WordRushSettingsScreen.nrRounds
+        self.timeLeft = WordRushSettingsScreen.timeLeft
+        if self.gameMode == 0:
+            for self.round in range(1, self.nrRounds + 1):
+                self.ids.roundLabel.text = "Round " + str(self.round)
+                for self.team in range(1, self.nrTeams + 1):
+                    self.ids.echipa.text = "Team " + str(self.team)
+                    self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")"
+                    print(self.round)
+                    print(self.team)
+                    print("\n")
+                    roundType = random.randint(1, 4)
+                    indexWord = random.randint(0,len(words)-1)
+                    cuvant =  words[indexWord]# extragem din lista cuvantul
+                    if roundType == 1:
+                        self.ids.test.text = "DESCRIBE \n" + cuvant
+                    elif roundType == 2:
+                        self.ids.test.text = "MIME \n" + cuvant
+                    else:
+                        self.ids.test.text = "DRAW \n" + cuvant
+
+                    while(self.teamPasses[self.team] != 0 and 0):  # Un while pe care il folosesc pentru a permite alegerea altui cuvant
+                        pasam = 1
+                        if pasam == 1:
+                            self.teamPasses[self.team] = self.teamPasses[self.team] - 1
+                            roundType = random.randint(1, 4)
+                            indexWord = random.randint(0, len(words) - 1)
+                            cuvant = words[indexWord]  # extragem din lista cuvantul
+                            if roundType == 1:
+                                self.ids.test.text = "DESCRIBE \n" + cuvant
+                            elif roundType == 2:
+                                self.ids.test.text = "MIME \n" + cuvant
+                            else:
+                                self.ids.test.text = "DRAW \n" + cuvant
+                        else:
+                            break
+                    # Aici trebuie sa pun un buton ca sa ii dau ocazia celui care joaca sa dea ready, nu sa inceapa instant runda
+                    # pornesc timer 60 de secunde de raspuns
+                    #while(timpInceput <= timpSfarsit): #Nu merge
+                    #    print(timpInceput)
+                    #    timpInceput = time.time()
+
+
+                    #self.timeLeft = WordRushSettingsScreen.timeLeft
+                    # opresc timer
+                    #print("A ghicit echipa cuvantul/expresia? Tastati 0 pentru nu sau 1 pentru da")
+                    #punct = int(input())
+                    #punct = 1
+                    #self.teamPoints[self.team] += punct
+        else:
+            endGame = 0  # E o valoare care ne ajuta sa ne dam seama daca jocul s-a terminat (adica daca o echipa a ajuns la punctajul dorit)
+            winner = -1  # Aici salvam care e echipa castigatoare
+            while (1):
+                for team in range(1, self.nrTeams + 1):
+                    self.ids.echipa.text = "Team " + str(self.team)
+                    self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")"
+                    print(self.round)
+                    print(self.team)
+                    print("\n")
+                    roundType = random.randint(1, 4)
+                    indexWord = random.randint(0, len(words) - 1)
+                    cuvant = words[indexWord]  # extragem din lista cuvantul
+                    if roundType == 1:
+                        self.ids.test.text = "DESCRIBE \n" + cuvant
+                    elif roundType == 2:
+                        self.ids.test.text = "MIME \n" + cuvant
+                    else:
+                        self.ids.test.text = "DRAW \n" + cuvant
+
+                    while(self.teamPasses[self.team] != 0):  # Un while pe care il folosesc pentru a permite alegerea altui cuvant
+                        pasam = 0
+                        if pasam == 1:
+                            self.teamPasses[self.team] = self.teamPasses[self.team] - 1
+                            self.ids.echipa.text = "Team " + str(self.team)
+                            self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")"
+                            print(self.round)
+                            print(self.team)
+                            print("\n")
+                            roundType = random.randint(1, 4)
+                            indexWord = random.randint(0, len(words) - 1)
+                            cuvant = words[indexWord]  # extragem din lista cuvantul
+                            if roundType == 1:
+                                self.ids.test.text = "DESCRIBE \n" + cuvant
+                            elif roundType == 2:
+                                self.ids.test.text = "MIME \n" + cuvant
+                            else:
+                                self.ids.test.text = "DRAW \n" + cuvant
+                        else:
+                            break
+                    # aici as pune o pauza de 5 secunde ca sa ii dau timp celui care joaca sa retina ce cuvant are de jucat
+                    # pornesc timer 60 de secunde de raspuns
+                    # opresc timer
+                    #print("A ghicit echipa cuvantul/expresia? Tastati 0 pentru nu sau 1 pentru da")
+                    punct = int(input())
+                    self.teamPoints[self.team] += punct
+                    if (self.teamPoints[self.team] == self.nrPoints):
+                        endGame = 1
+                        winner = team
+                        break
+                if (endGame == 1):
+                    break
+            print("Echipa ", winner, " a castigat!")
+            # cumva ar trebui sa trimit inapoi la aplicatie
+
 
 class TicTacToeScreen(MDScreen):
     pass
-
 
 class HelpUsDecideScreen(MDScreen):
     pass
@@ -219,6 +392,7 @@ class PartyPlaytime(MDApp):
     account_dialog = None
 
     def build(self):
+        #Clock.schedule_interval(WordRushPlayScreen.update_clock, 1)
         return Builder.load_file('party.kv')
 
     def account_info(self):
