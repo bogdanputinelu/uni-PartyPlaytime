@@ -555,9 +555,6 @@ class PartyPlaytime(MDApp):
         self.root.current = 'boardblitz'
 
     def animate_wrong_widget(self, widget):
-
-
-    def animate_wrong_widget(self, widget):
         animate = Animation(
             duration=0.2,
             line_color_normal=(1, 0, 0, 1),
