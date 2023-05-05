@@ -1838,6 +1838,7 @@ WindowManager:
             x: first_avatar_box.x + dp(6)
 
             FitImage:
+                id: first_player_avatar
                 source: "boardblitz_characters/panini.png"
                 radius: 10
                 y: avatar_box_1.top - self.height
@@ -1849,6 +1850,7 @@ WindowManager:
             pos_hint: {"right": 1, "center_y": .5}
 
             MDLabel:
+                id: first_player_nickname
                 text: "nickname 1"
                 font_name: "fonts/LuckiestGuy-Regular.ttf"
                 font_size: "14sp"
@@ -1874,6 +1876,7 @@ WindowManager:
             x: second_avatar_box.right - self.width - dp(6)
 
             FitImage:
+                id: second_player_avatar
                 source: "boardblitz_characters/chowder.png"
                 radius: 10
                 y: avatar_box_2.top - self.height
@@ -1886,11 +1889,13 @@ WindowManager:
             x: second_avatar_box.x
 
             MDLabel:
-                text: "nickname 2"
+                id: second_player_nickname
+                text: "Nickname 2"
+                size_hint_x: None
                 font_name: "fonts/LuckiestGuy-Regular.ttf"
                 font_size: "14sp"
                 adaptive_size: True
-                pos_hint: {"center_x": .5, "center_y": .5}
+                pos_hint: {"right": .85, "center_y": .5}
 
     ElevatedBox:
         id: third_avatar_box
@@ -1911,6 +1916,7 @@ WindowManager:
             x: third_avatar_box.x + dp(6)
 
             FitImage:
+                id: third_player_avatar
                 source: "boardblitz_characters/truffles.png"
                 radius: 10
                 y: avatar_box_3.top - self.height
@@ -1922,6 +1928,7 @@ WindowManager:
             pos_hint: {"right": 1, "center_y": .5}
 
             MDLabel:
+                id: third_player_nickname
                 text: "nickname 3"
                 font_name: "fonts/LuckiestGuy-Regular.ttf"
                 font_size: "14sp"
@@ -1947,6 +1954,7 @@ WindowManager:
             x: fourth_avatar_box.right - self.width - dp(6)
 
             FitImage:
+                id: fourth_player_avatar
                 source: "boardblitz_characters/gazpacho.png"
                 radius: 10
                 y: avatar_box_4.top - self.height
@@ -1959,11 +1967,13 @@ WindowManager:
             x: fourth_avatar_box.x
 
             MDLabel:
-                text: "nickname 4"
+                id: fourth_player_nickname
+                text: "Nickname 4"
+                size_hint_x: None
                 font_name: "fonts/LuckiestGuy-Regular.ttf"
                 font_size: "14sp"
                 adaptive_size: True
-                pos_hint: {"center_x": .5, "center_y": .5}
+                pos_hint: {"right": .85, "center_y": .5}
 
     MDFloatLayout:
         size_hint: None, None

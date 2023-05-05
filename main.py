@@ -1,5 +1,4 @@
 from kivy.animation import Animation
-from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.screenmanager import FadeTransition
@@ -16,13 +15,22 @@ from kivymd.uix.screenmanager import MDScreenManager
 from kivymd.uix.transition import MDSlideTransition
 import json
 import re
+import random
 
 Window.size = (400, 780)
 Window.top = 30
 Window.left = 1000
 
 user_logged_in = None
+nickname_user_logged_in = None
 email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+boardblitz_avatars = [
+    "boardblitz_characters/chowder.png", "boardblitz_characters/endive.png",
+    "boardblitz_characters/gazpacho.png", "boardblitz_characters/gorgonzola.png",
+    "boardblitz_characters/mungdaal.png", "boardblitz_characters/panini.png",
+    "boardblitz_characters/shnitzel.png", "boardblitz_characters/truffles.png"
+]
 
 
 class GameCardBehavior(MDBoxLayout, FocusBehavior):
@@ -163,8 +171,9 @@ class LoginScreen(MDScreen):
             for user in accounts["user_accounts"]:
                 if user["username"] == self.ids.username_login.text \
                         and user["password"] == self.ids.password_login.text:
-                    global user_logged_in
+                    global user_logged_in, nickname_user_logged_in
                     user_logged_in = user["username"]
+                    nickname_user_logged_in = user["nickname"]
                     screen_manager.current = "home"
                     break
             else:
@@ -361,15 +370,18 @@ class PartyPlaytime(MDApp):
 
     def boardblitz_players(self, *args):
         if args[0] == "start_game":
-            empty_nickname = False
+            forbidden_nickname = False
             for i in range(1, int(PartyPlaytime.player_button_selected[-1])):
-                if self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)].text == "":
-                    empty_nickname = True
+                if self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)].text == "" \
+                        or len(self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)].text) >= 12:
+                    forbidden_nickname = True
                     self.animate_wrong_widget(self.boardblitz_start.content_cls.ids["boardblitz_nickname_" + str(i)])
 
-            if not empty_nickname:
+            if not forbidden_nickname:
                 self.boardblitz_start.dismiss()
-                print("start ")
+
+                self.start_boardlitz_game()
+
                 self.root.current = 'boardblitz_game'
 
         elif args[0] != "choose_names_and_play":
@@ -448,10 +460,61 @@ class PartyPlaytime(MDApp):
     def dismiss_boardblitz_game(self, *args):
         self.boardblitz_exit_game.dismiss()
 
+    def choose_avatars_for_boardblitz(self):
+        avatars = []
+
+        while len(avatars) < 4:
+            chosen_avatar = random.randint(0, 7)
+
+            while chosen_avatar in avatars:
+                chosen_avatar = random.randint(0, 7)
+
+            avatars.append(chosen_avatar)
+
+        return avatars
+
+    def start_boardlitz_game(self):
+        boardblitz_game_screen = self.root.get_screen("boardblitz_game")
+
+        boardblitz_game_screen.ids.first_player_nickname.text = nickname_user_logged_in
+        boardblitz_game_screen.ids.second_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
+        nickname_2_length = 8.5 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
+        boardblitz_game_screen.ids.second_player_nickname.width = str(nickname_2_length) + "dp"
+
+        chosen_avatar_list = self.choose_avatars_for_boardblitz()
+
+        boardblitz_game_screen.ids.first_player_avatar.source = boardblitz_avatars[chosen_avatar_list[0]]
+        boardblitz_game_screen.ids.second_player_avatar.source = boardblitz_avatars[chosen_avatar_list[1]]
+
+        if PartyPlaytime.player_button_selected[-1] == '2':
+            boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": 3, "center_x": .2}
+            boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
+
+        elif PartyPlaytime.player_button_selected[-1] == '3':
+            boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
+            boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
+
+            boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+
+            boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
+
+        else:
+            boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
+            boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": .77, "right": 1}
+
+            boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+
+            boardblitz_game_screen.ids.fourth_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
+            nickname_4_length = 8.5 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
+            boardblitz_game_screen.ids.fourth_player_nickname.width = str(nickname_4_length) + "dp"
+
+            boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
+            boardblitz_game_screen.ids.fourth_player_avatar.source = boardblitz_avatars[chosen_avatar_list[3]]
+
     def exit_current_boardblitz_game(self, *args):
         self.boardblitz_exit_game.dismiss()
         print("implementeaza")
-        self.root.current = 'home'
+        self.root.current = 'boardblitz'
 
     def animate_wrong_widget(self, widget):
 
