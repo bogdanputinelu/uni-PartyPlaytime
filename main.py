@@ -1,12 +1,15 @@
 from kivy.animation import Animation
+from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.metrics import sp
 from kivy.uix.screenmanager import FadeTransition
 from kivymd.app import MDApp
-from kivymd.uix.behaviors import ScaleBehavior, CommonElevationBehavior
+from kivymd.material_resources import dp
+from kivymd.uix.behaviors import ScaleBehavior, CommonElevationBehavior, RotateBehavior
 from kivymd.uix.behaviors.focus_behavior import FocusBehavior
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivymd.uix.button import MDFlatButton
+from kivymd.uix.button import MDFlatButton, MDIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.label import MDLabel
@@ -16,6 +19,8 @@ from kivymd.uix.transition import MDSlideTransition
 import json
 import re
 import random
+from functools import partial
+from boardblitz_helpers import boardblitz_avatars, next_dice, coordinates, start_boxes, inner_corners, outer_corners
 
 Window.size = (400, 780)
 Window.top = 30
@@ -25,12 +30,43 @@ user_logged_in = None
 nickname_user_logged_in = None
 email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
 
-boardblitz_avatars = [
-    "boardblitz_characters/chowder.png", "boardblitz_characters/endive.png",
-    "boardblitz_characters/gazpacho.png", "boardblitz_characters/gorgonzola.png",
-    "boardblitz_characters/mungdaal.png", "boardblitz_characters/panini.png",
-    "boardblitz_characters/shnitzel.png", "boardblitz_characters/truffles.png"
-]
+dice_clicked = {
+    1: False,
+    2: False,
+    3: False,
+    4: False,
+}
+
+aliens_state = {
+    "red_alien_1": 0,
+    "red_alien_2": 0,
+    "red_alien_3": 0,
+    "red_alien_4": 0,
+
+    "yellow_alien_1": 0,
+    "yellow_alien_2": 0,
+    "yellow_alien_3": 0,
+    "yellow_alien_4": 0,
+
+    "green_alien_1": 0,
+    "green_alien_2": 0,
+    "green_alien_3": 0,
+    "green_alien_4": 0,
+
+    "blue_alien_1": 0,
+    "blue_alien_2": 0,
+    "blue_alien_3": 0,
+    "blue_alien_4": 0
+}
+
+
+def reset_aliens_state():
+    for alien in aliens_state.keys():
+        aliens_state[alien] = 0
+
+
+class Dice(MDIconButton, RotateBehavior):
+    pass
 
 
 class GameCardBehavior(MDBoxLayout, FocusBehavior):
@@ -294,6 +330,11 @@ class PartyPlaytime(MDApp):
     boardblitz_rules = None
     boardblitz_start = None
     boardblitz_exit_game = None
+    player_chosen_to_start_boardblitz = False
+    current_player_boardblitz = None
+    number_of_players_boardblitz = None
+    boardblitz_miscellaneous = []
+
     player_button_selected = "players_button_2"
 
     def build(self):
@@ -511,12 +552,655 @@ class PartyPlaytime(MDApp):
 
         return avatars
 
+    def send_away_aliens(self, screen, colors):
+        for color in colors:
+            for alien_number in "1234":
+                screen.ids[color + "_alien_" + alien_number].pos = (dp(1000), dp(1000))
+
+    def bring_in_aliens(self, screen, colors):
+        for color in colors:
+            for alien_number in "1234":
+                current_alien = color + "_alien_" + alien_number
+                screen.ids[current_alien].pos = (dp(coordinates[current_alien]["width"]), dp(coordinates[current_alien]["height"]))
+
+    def blockage(self, alien, color, dice_rolled):
+        starting_point = {
+            "red": 7, "green": 20, "yellow": 33, "blue": 46
+        }
+
+        blocking_aliens = 0
+
+        if aliens_state[alien] == 0:
+            for blocking_alien in aliens_state:
+                if not blocking_alien.startswith(color):
+                    if aliens_state[blocking_alien] == starting_point[color]:
+                        blocking_aliens += 1
+        elif aliens_state[alien] > 0:
+            if 53 <= aliens_state[alien] <= 57 and 58 - aliens_state[alien] < dice_rolled:
+                return True
+            elif 58 <= aliens_state[alien] <= 62 and 63 - aliens_state[alien] < dice_rolled:
+                return True
+            elif 63 <= aliens_state[alien] <= 67 and 68 - aliens_state[alien] < dice_rolled:
+                return True
+            elif 68 <= aliens_state[alien] <= 72 and 73 - aliens_state[alien] < dice_rolled:
+                return True
+            elif color == "red" and 46 <= aliens_state[alien] <= 51 and aliens_state[alien] + dice_rolled >= 52:
+                return False
+            elif color == "green" and 7 <= aliens_state[alien] <= 12 and aliens_state[alien] + dice_rolled >= 13:
+                return False
+            elif color == "yellow" and 20 <= aliens_state[alien] <= 25 and aliens_state[alien] + dice_rolled >= 26:
+                return False
+            elif color == "blue" and 33 <= aliens_state[alien] <= 38 and aliens_state[alien] + dice_rolled >= 39:
+                return False
+            else:
+                for blocking_alien in aliens_state:
+                    if not blocking_alien.startswith(color):
+                        if aliens_state[blocking_alien] == aliens_state[alien] + dice_rolled:
+                            blocking_aliens += 1
+
+        return True if blocking_aliens >= 2 else False
+
+    def find_alien_moves(self, turn, dice_rolled):
+        alien_moves = []
+        player_turn = ["red", "blue", "green", "yellow"]
+
+        alien_color = player_turn[turn - 1]
+
+        for i in "1234":
+            current_alien = alien_color + "_alien_" + i
+
+            if aliens_state[current_alien] == 0 and dice_rolled == 6 and self.blockage(current_alien, alien_color, dice_rolled) == False:
+                alien_moves.append(current_alien)
+            elif aliens_state[current_alien] > 0 and self.blockage(current_alien, alien_color, dice_rolled) == False:
+                alien_moves.append(current_alien)
+
+        return alien_moves
+
+    def go_to_next_turn(self, dice, next_player_dice, dice_number, *args):
+        PartyPlaytime.boardblitz_miscellaneous = []
+        disappear_animation = Animation(
+            duration=0.2,
+            opacity=0
+        )
+
+        appear_animation = Animation(
+            duration=0.2,
+            opacity=1
+        )
+
+        dice_clicked[dice_number] = False
+        disappear_animation.start(dice)
+        appear_animation.start(next_player_dice)
+
+    def alien_is_pressed(self, alien_id):
+        screen = self.root.get_screen("boardblitz_game")
+
+        alien_moves = PartyPlaytime.boardblitz_miscellaneous[4]
+        normal_color = PartyPlaytime.boardblitz_miscellaneous[3]
+        dice_rolled = PartyPlaytime.boardblitz_miscellaneous[5]
+
+        for alien in alien_moves:
+            screen.ids[alien].disabled = True
+            screen.ids[alien].icon_color = normal_color
+
+        if aliens_state[alien_id] == 0:
+            start_box = coordinates[start_boxes[alien_id]]
+            box_number = start_boxes[alien_id].split('_')[1]
+            first_corner = "box_" + str(int(box_number) + 4)
+            second_corner = "box_" + str(int(box_number) + 5)
+            destination = "box_" + str(int(box_number) + 6)
+            print("home")
+
+            animation = Animation(
+                duration=0.3,
+                pos=(dp(start_box["width"]), dp(start_box["height"]))
+            ) + Animation(
+                duration=0.3,
+                pos=(dp(coordinates[first_corner]["width"]), dp(coordinates[first_corner]["height"]))
+            ) + Animation(
+                duration=0.2,
+                pos=(dp(coordinates[second_corner]["width"]), dp(coordinates[second_corner]["height"]))
+            ) + Animation(
+                duration=0.2,
+                pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+            )
+
+            animation.start(screen.ids[alien_id])
+            aliens_state[alien_id] = int(box_number) + 6
+            things = PartyPlaytime.boardblitz_miscellaneous
+            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 1)
+        else:
+            current_box_number = aliens_state[alien_id]
+
+            if 53 <= current_box_number <= 72:
+                if current_box_number + dice_rolled in [58, 63, 68, 73]:
+                    print("finish")
+                    finish = alien_id + "_finish"
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[finish]["width"]), dp(coordinates[finish]["height"])),
+                        icon_size=sp(22)
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = -1
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+
+                else:
+                    print("finish but not finish")
+                    box_number = "box_" + str(current_box_number + dice_rolled)
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[box_number]["width"]), dp(coordinates[box_number]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+            elif normal_color == "red" and 46 <= current_box_number <= 51 and current_box_number + dice_rolled >= 52:
+                print("interval red")
+                if 46 <= current_box_number <= 49:
+                    print("red 1")
+                    destination = "box_" + str(current_box_number + dice_rolled + 1)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_50"]["width"]), dp(coordinates["box_50"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_51"]["width"]), dp(coordinates["box_51"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 1
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                elif current_box_number == 50:
+                    print("red 2")
+                    destination = "box_" + str(current_box_number + dice_rolled + 1)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_51"]["width"]), dp(coordinates["box_51"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 1
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                else:
+                    print("red 3")
+                    box = alien_id + "_finish" if dice_rolled == 6 else "box_" + str(current_box_number + dice_rolled + 1)
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[box]["width"]), dp(coordinates[box]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = -1 if dice_rolled == 6 else current_box_number + dice_rolled + 1
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+            elif normal_color == "blue" and 33 <= current_box_number <= 38 and current_box_number + dice_rolled >= 39:
+                print("interval blue")
+                if 33 <= current_box_number <= 36:
+                    print("blue 1")
+                    destination = "box_" + str(current_box_number + dice_rolled + 29)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_37"]["width"]), dp(coordinates["box_37"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_38"]["width"]), dp(coordinates["box_38"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 29
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                elif current_box_number == 37:
+                    print("blue 2")
+                    destination = "box_" + str(current_box_number + dice_rolled + 29)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_38"]["width"]), dp(coordinates["box_38"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 29
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                else:
+                    print("blue 3")
+                    box = alien_id + "_finish" if dice_rolled == 6 else "box_" + str(
+                        current_box_number + dice_rolled + 29)
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[box]["width"]), dp(coordinates[box]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = -1 if dice_rolled == 6 else current_box_number + dice_rolled + 29
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+            elif normal_color == "green" and 7 <= current_box_number <= 12 and current_box_number + dice_rolled >= 13:
+                print("interval green")
+                if 7 <= current_box_number <= 10:
+                    print("green 1")
+                    destination = "box_" + str(current_box_number + dice_rolled + 45)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_11"]["width"]), dp(coordinates["box_11"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_12"]["width"]), dp(coordinates["box_12"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 45
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                elif current_box_number == 11:
+                    print("green 2")
+                    destination = "box_" + str(current_box_number + dice_rolled + 45)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_12"]["width"]), dp(coordinates["box_12"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 45
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                else:
+                    print("green 3")
+                    box = alien_id + "_finish" if dice_rolled == 6 else "box_" + str(
+                        current_box_number + dice_rolled + 45)
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[box]["width"]), dp(coordinates[box]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = -1 if dice_rolled == 6 else current_box_number + dice_rolled + 45
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+
+            elif normal_color == "yellow" and 20 <= current_box_number <= 25 and current_box_number + dice_rolled >= 26:
+                print("interval yellow")
+                if 20 <= current_box_number <= 23:
+                    print("yellow 1")
+                    destination = "box_" + str(current_box_number + dice_rolled + 37)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_24"]["width"]), dp(coordinates["box_24"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_25"]["width"]), dp(coordinates["box_25"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 37
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                elif current_box_number == 24:
+                    print("yellow 2")
+                    destination = "box_" + str(current_box_number + dice_rolled + 37)
+                    animation = Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates["box_25"]["width"]), dp(coordinates["box_25"]["height"]))
+                    ) + Animation(
+                        duration=0.2,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled + 37
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                else:
+                    print("yellow 3")
+                    box = alien_id + "_finish" if dice_rolled == 6 else "box_" + str(
+                        current_box_number + dice_rolled + 37)
+                    animation = Animation(
+                        duration=0.4,
+                        pos=(dp(coordinates[box]["width"]), dp(coordinates[box]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = -1 if dice_rolled == 6 else current_box_number + dice_rolled + 37
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+            else:
+                print("caz normal")
+                inner_counter, outer_counter = [], []
+                for i in range(current_box_number, current_box_number + dice_rolled + 1):
+                    if i in inner_corners:
+                        inner_counter.append(i)
+                    elif i in outer_corners:
+                        outer_counter.append(i)
+                if current_box_number + dice_rolled > 52:
+                    print("caz special")
+                    if 47 <= current_box_number <= 49:
+                        print("bengane 1")
+                        destination = "box_" + str((current_box_number + dice_rolled) % 52)
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates["box_50"]["width"]), dp(coordinates["box_50"]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates["box_52"]["width"]), dp(coordinates["box_52"]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = (current_box_number + dice_rolled) % 52
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                    elif 50 <= current_box_number <= 51:
+                        print("bengane 2")
+                        destination = "box_" + str((current_box_number + dice_rolled) % 52)
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates["box_52"]["width"]), dp(coordinates["box_52"]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = (current_box_number + dice_rolled) % 52
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                    else:
+                        print("bengane 3")
+                        destination = "box_" + str((current_box_number + dice_rolled) % 52)
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = (current_box_number + dice_rolled) % 52
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.2)
+                elif (len(inner_counter) == 1 and len(outer_counter) == 0) or (len(inner_counter) == 0 and len(outer_counter) == 0):
+                    print("1i sau 0 amandoua")
+                    destination = "box_" + str(current_box_number + dice_rolled)
+                    animation = Animation(
+                        duration=0.3,
+                        pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                    )
+                    animation.start(screen.ids[alien_id])
+                    aliens_state[alien_id] = current_box_number + dice_rolled
+                    things = PartyPlaytime.boardblitz_miscellaneous
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.3)
+
+                elif len(inner_counter) == 0 and len(outer_counter) == 1:
+                    print("1o")
+                    if outer_counter[0] == current_box_number or outer_counter[0] == current_box_number + dice_rolled:
+                        print("incepe sau se termina cu el")
+                        destination = "box_" + str(current_box_number + dice_rolled)
+                        animation = Animation(
+                            duration=0.3,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.3)
+                    else:
+                        print("la mijloc")
+                        destination = "box_" + str(current_box_number + dice_rolled)
+                        corner = "box_" + str(outer_counter[0])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                elif len(inner_counter) == 2 and len(outer_counter) == 1:
+                    print("2i 1o")
+                    if current_box_number == outer_counter[0]:
+                        print("incepe cu o")
+                        corner = "box_" + str(inner_counter[0])
+                        destination = "box_" + str(inner_counter[1])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                    else:
+                        print("altfel")
+                        corner = "box_" + str(inner_counter[1])
+                        destination = "box_" + str(outer_counter[0])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+
+                elif len(inner_counter) == 2:
+                    print("2i")
+                    if current_box_number == inner_counter[0]:
+                        print("incepe")
+                        destination = "box_" + str(current_box_number + dice_rolled)
+                        corner = "box_" + str(inner_counter[1])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(
+                            dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                    elif current_box_number + dice_rolled == inner_counter[1]:
+                        print("se termina")
+                        destination = "box_" + str(inner_counter[1])
+                        corner = "box_" + str(inner_counter[0])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(
+                                dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+                    else:
+                        print("alt caz")
+                        second_corner = "box_" + str(inner_counter[1])
+                        corner = "box_" + str(inner_counter[0])
+                        destination = "box_" + str(current_box_number + dice_rolled)
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(
+                                dp(coordinates[second_corner]["width"]), dp(coordinates[second_corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                        )
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.6)
+                elif len(outer_counter) == 2:
+                    print("2o")
+                    if current_box_number != outer_counter[0]:
+                        duration = 0
+                        corner = "box_" + str(outer_counter[0])
+                        second_corner = "box_" + str(outer_counter[1])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        ) + Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[second_corner]["width"]), dp(coordinates[second_corner]["height"]))
+                        )
+                        if outer_counter[1] != current_box_number + dice_rolled:
+                            destination = "box_" + str(current_box_number + dice_rolled)
+                            animation += Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                            )
+                            duration = 0.2
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4 + duration)
+                    else:
+                        duration = 0
+                        second_corner = "box_" + str(outer_counter[1])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[second_corner]["width"]), dp(coordinates[second_corner]["height"]))
+                        )
+                        if outer_counter[1] != current_box_number + dice_rolled:
+                            destination = "box_" + str(current_box_number + dice_rolled)
+                            animation += Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                            )
+                            duration = 0.2
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]),
+                                            0.2 + duration)
+
+                else:
+                    print("altcv")
+                    if current_box_number == inner_counter[0]:
+                        print("ncepe cu i")
+                        duration = 0.2
+                        corner = "box_" + str(outer_counter[0])
+                        animation = Animation(
+                            duration=0.2,
+                            pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                        )
+                        if outer_counter[0] == current_box_number + dice_rolled:
+                            print("se termina cu o")
+                            destination = "box_" + str(current_box_number + dice_rolled)
+                            animation += Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                            )
+                            duration += 0.2
+                        animation.start(screen.ids[alien_id])
+                        aliens_state[alien_id] = current_box_number + dice_rolled
+                        things = PartyPlaytime.boardblitz_miscellaneous
+                        Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), duration)
+                    else:
+                        if current_box_number == outer_counter[0]:
+                            print("incepe cu o")
+                            corner = "box_" + str(inner_counter[0])
+                            animation = Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                            )
+                            animation.start(screen.ids[alien_id])
+                            aliens_state[alien_id] = current_box_number + dice_rolled
+                            things = PartyPlaytime.boardblitz_miscellaneous
+                            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.2)
+                        else:
+                            corner = "box_" + str(outer_counter[0])
+                            destination = "box_" + str(inner_counter[0])
+                            animation = Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[corner]["width"]), dp(coordinates[corner]["height"]))
+                            ) + Animation(
+                                duration=0.2,
+                                pos=(dp(coordinates[destination]["width"]), dp(coordinates[destination]["height"]))
+                            )
+                            animation.start(screen.ids[alien_id])
+                            aliens_state[alien_id] = current_box_number + dice_rolled
+                            things = PartyPlaytime.boardblitz_miscellaneous
+                            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.4)
+
+    def animate_dice(self, dice, dice_number):
+        if dice.opacity == 0 or dice_clicked[dice_number]:
+            return
+        dice_clicked[dice_number] = True
+
+        def rotate_back_dice(dt):
+            nonlocal dice, dice_number
+            screen = self.root.get_screen("boardblitz_game")
+            next_player_dice = screen.ids["dice_player_" + str(next_dice[PartyPlaytime.number_of_players_boardblitz][dice_number])]
+
+            dice.rotate_value_angle = 0
+
+            # dice_rolled = random.randint(1, 6)
+            dice_rolled = 6
+
+            dice.icon = "dice-" + str(dice_rolled)
+            next_player_dice.icon = dice.icon
+
+            alien_moves = self.find_alien_moves(dice_number, dice_rolled)
+
+            if len(alien_moves) != 0:
+                normal_color = screen.ids[alien_moves[0]].icon_color
+
+                PartyPlaytime.boardblitz_miscellaneous = [
+                    dice,
+                    next_player_dice,
+                    dice_number,
+                    normal_color,
+                    alien_moves,
+                    dice_rolled
+                ]
+
+                for alien in alien_moves:
+                    screen.ids[alien].disabled = False
+                    screen.ids[alien].icon_color = "black"
+            else:
+                self.go_to_next_turn(dice, next_player_dice, dice_number)
+
+        animation = Animation(
+            duration=0.4,
+            rotate_value_angle=360
+        )
+        animation.start(dice)
+        Clock.schedule_once(rotate_back_dice, 0.5)
+
     def start_boardlitz_game(self):
         boardblitz_game_screen = self.root.get_screen("boardblitz_game")
+        PartyPlaytime.number_of_players_boardblitz = int(PartyPlaytime.player_button_selected[-1])
 
         boardblitz_game_screen.ids.first_player_nickname.text = nickname_user_logged_in
         boardblitz_game_screen.ids.second_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
-        nickname_2_length = 8.5 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
+        nickname_2_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
         boardblitz_game_screen.ids.second_player_nickname.width = str(nickname_2_length) + "dp"
 
         chosen_avatar_list = self.choose_avatars_for_boardblitz()
@@ -528,6 +1212,9 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": 3, "center_x": .2}
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
 
+            self.send_away_aliens(boardblitz_game_screen, ["green", "yellow"])
+            self.bring_in_aliens(boardblitz_game_screen, ["red", "blue"])
+
         elif PartyPlaytime.player_button_selected[-1] == '3':
             boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
@@ -536,6 +1223,9 @@ class PartyPlaytime(MDApp):
 
             boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
 
+            self.send_away_aliens(boardblitz_game_screen, ["yellow"])
+            self.bring_in_aliens(boardblitz_game_screen, ["green", "red", "blue"])
+
         else:
             boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": .77, "right": 1}
@@ -543,14 +1233,41 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.fourth_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
-            nickname_4_length = 8.5 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
+            nickname_4_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
             boardblitz_game_screen.ids.fourth_player_nickname.width = str(nickname_4_length) + "dp"
 
             boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
             boardblitz_game_screen.ids.fourth_player_avatar.source = boardblitz_avatars[chosen_avatar_list[3]]
 
+            self.bring_in_aliens(boardblitz_game_screen, ["green", "yellow", "red", "blue"])
+
+    def reset_dice(self):
+        boardblitz_game_screen = self.root.get_screen("boardblitz_game")
+        boardblitz_game_screen.ids.dice_player_1.opacity = 1
+
+        for i in "234":
+            boardblitz_game_screen.ids["dice_player_" + i].opacity = 0
+
+        for i in range(1,5):
+            dice_clicked[i] = False
+
+    def reset_alien_size(self):
+        screen = self.root.get_screen("boardblitz_game")
+        for color in ["red", "blue", "green", "yellow"]:
+            for alien_number in "1234":
+                current_alien = color + "_alien_" + alien_number
+                screen.ids[current_alien].icon_size = "30sp"
+
     def exit_current_boardblitz_game(self, *args):
         self.boardblitz_exit_game.dismiss()
+        PartyPlaytime.player_chosen_to_start_boardblitz = False
+        PartyPlaytime.current_player_boardblitz = None
+        PartyPlaytime.number_of_players_boardblitz = None
+        self.reset_dice()
+        reset_aliens_state()
+        PartyPlaytime.boardblitz_miscellaneous = []
+        self.reset_alien_size()
+
         print("implementeaza")
         self.root.current = 'boardblitz'
 
