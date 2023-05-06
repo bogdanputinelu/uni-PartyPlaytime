@@ -5,6 +5,13 @@ boardblitz_avatars = [
     "boardblitz_characters/shnitzel.png", "boardblitz_characters/truffles.png"
 ]
 
+players_color = {
+    "red": 1,
+    "green": 3,
+    "yellow": 4,
+    "blue": 2
+}
+
 next_dice = {
     2: {
         1: 2,

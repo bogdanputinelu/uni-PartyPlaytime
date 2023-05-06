@@ -20,7 +20,8 @@ import json
 import re
 import random
 from functools import partial
-from boardblitz_helpers import boardblitz_avatars, next_dice, coordinates, start_boxes, corners
+from boardblitz_helpers import boardblitz_avatars, coordinates, start_boxes, corners, players_color
+from boardblitz_helpers import next_dice as nd
 
 Window.size = (400, 780)
 Window.top = 30
@@ -29,6 +30,8 @@ Window.left = 1000
 user_logged_in = None
 nickname_user_logged_in = None
 email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+next_dice = nd
 
 dice_clicked = {
     1: False,
@@ -58,6 +61,11 @@ aliens_state = {
     "blue_alien_3": 0,
     "blue_alien_4": 0
 }
+
+
+def reset_next_dice():
+    global next_dice
+    next_dice = nd
 
 
 def reset_aliens_state():
@@ -334,6 +342,9 @@ class PartyPlaytime(MDApp):
     current_player_boardblitz = None
     number_of_players_boardblitz = None
     boardblitz_miscellaneous = []
+    boardblitz_finish_aliens = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
+    number_of_players_finished = 0
+    boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
 
     player_button_selected = "players_button_2"
 
@@ -433,7 +444,6 @@ class PartyPlaytime(MDApp):
 
     def exit_game_information(self):
         self.information_dialog.dismiss()
-
 
     def open_rules(self):
         if not self.boardblitz_rules:
@@ -616,21 +626,26 @@ class PartyPlaytime(MDApp):
 
         return alien_moves
 
-    def go_to_next_turn(self, dice, next_player_dice, dice_number, *args):
+    def go_to_next_turn(self, dice, next_player_dice, dice_number, dice_rolled, *args):
         PartyPlaytime.boardblitz_miscellaneous = []
-        disappear_animation = Animation(
-            duration=0.2,
-            opacity=0
-        )
 
-        appear_animation = Animation(
-            duration=0.2,
-            opacity=1
-        )
+        if dice_rolled != 6:
 
+            disappear_animation = Animation(
+                duration=0.2,
+                opacity=0
+            )
+
+            appear_animation = Animation(
+                duration=0.2,
+                opacity=1
+            )
+            disappear_animation.start(dice)
+            appear_animation.start(next_player_dice)
         dice_clicked[dice_number] = False
-        disappear_animation.start(dice)
-        appear_animation.start(next_player_dice)
+
+    def end_game(self):
+        print("da")
 
     def alien_is_pressed(self, alien_id):
         screen = self.root.get_screen("boardblitz_game")
@@ -669,12 +684,32 @@ class PartyPlaytime(MDApp):
             animation.start(screen.ids[alien_id])
             aliens_state[alien_id] = int(box_number) + 6
             things = PartyPlaytime.boardblitz_miscellaneous
-            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 1)
+            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled), 1)
         elif aliens_state[alien_id] >= 53:
             current_box_number = aliens_state[alien_id]
-
+            end = False
             if current_box_number + dice_rolled in [58, 63, 68, 73]:
                 destination = alien_id + "_finish"
+
+                PartyPlaytime.boardblitz_finish_aliens[color_name] += 1
+                if PartyPlaytime.boardblitz_finish_aliens[color_name] == 4:
+
+                    PartyPlaytime.number_of_players_finished += 1
+                    PartyPlaytime.boardblitz_ranking[color_name] = PartyPlaytime.number_of_players_finished
+
+                    if PartyPlaytime.number_of_players_boardblitz - PartyPlaytime.number_of_players_finished >= 2:
+                        players = PartyPlaytime.number_of_players_boardblitz
+                        next_dice[players] = {
+                            i: next_dice[players][i]
+                            if next_dice[players][i] != players_color[color_name]
+                            else next_dice[players][next_dice[players][i]]
+                            for i in next_dice[players].keys()
+                        }
+
+                        next_dice[players].pop(players_color[color_name])
+
+                    if PartyPlaytime.number_of_players_finished + 1 == PartyPlaytime.number_of_players_boardblitz:
+                        end = True
             else:
                 destination = "box_" + str(current_box_number + dice_rolled)
 
@@ -690,12 +725,17 @@ class PartyPlaytime(MDApp):
             )
 
             animation.start(screen.ids[alien_id])
-            aliens_state[alien_id] = -1 if destination.endswith("finish") else int(destination.split('_')[-1])
-            things = PartyPlaytime.boardblitz_miscellaneous
-            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), 0.2)
+
+            if end:
+                self.end_game()
+            else:
+                aliens_state[alien_id] = -1 if destination.endswith("finish") else int(destination.split('_')[-1])
+                things = PartyPlaytime.boardblitz_miscellaneous
+                Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled), 0.2)
         else:
             offset = {"red": 1, "blue": 29, "green": 45, "yellow": 37}
             current_box_number = aliens_state[alien_id]
+            finish = False
 
             corners_to_surpass = [
                 i for i in range(current_box_number, current_box_number + dice_rolled + 1) if i in corners
@@ -711,6 +751,9 @@ class PartyPlaytime(MDApp):
                 (color_name == "blue" and current_box_number + dice_rolled > 38 and 33 <= current_box_number <= 38) or \
                 (color_name == "green" and current_box_number + dice_rolled > 12 and 7 <= current_box_number <= 12) or\
                 (color_name == "yellow" and current_box_number + dice_rolled > 25 and 20 <= current_box_number <= 25):
+
+                if dice_rolled == 6 and current_box_number in [12, 25, 38, 51]:
+                    finish = True
 
                 destination_number = number + offset[color_name]
                 corners_to_surpass = [current_box_number] if current_box_number in [12, 25, 38, 51] else corners_to_surpass[:-1] + [corners_to_surpass[-1] - 1]
@@ -737,7 +780,7 @@ class PartyPlaytime(MDApp):
             animation.start(screen.ids[alien_id])
             aliens_state[alien_id] = destination_number
             things = PartyPlaytime.boardblitz_miscellaneous
-            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2]), duration)
+            Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled), duration)
 
     def animate_dice(self, dice, dice_number):
         if dice.opacity == 0 or dice_clicked[dice_number]:
@@ -775,7 +818,10 @@ class PartyPlaytime(MDApp):
                     screen.ids[alien].disabled = False
                     screen.ids[alien].icon_color = "black"
             else:
-                self.go_to_next_turn(dice, next_player_dice, dice_number)
+                if dice_rolled == 6:
+                    dice_clicked[dice_number] = False
+                else:
+                    self.go_to_next_turn(dice, next_player_dice, dice_number, dice_rolled)
 
         animation = Animation(
             duration=0.4,
@@ -838,7 +884,7 @@ class PartyPlaytime(MDApp):
         for i in "234":
             boardblitz_game_screen.ids["dice_player_" + i].opacity = 0
 
-        for i in range(1,5):
+        for i in range(1, 5):
             dice_clicked[i] = False
 
     def reset_alien_size(self):
@@ -848,6 +894,11 @@ class PartyPlaytime(MDApp):
                 current_alien = color + "_alien_" + alien_number
                 screen.ids[current_alien].icon_size = "30sp"
 
+    def reset_ranking(self):
+        PartyPlaytime.boardblitz_finish_aliens = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
+        PartyPlaytime.number_of_players_finished = 0
+        PartyPlaytime.boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
+
     def exit_current_boardblitz_game(self, *args):
         self.boardblitz_exit_game.dismiss()
         PartyPlaytime.player_chosen_to_start_boardblitz = False
@@ -855,8 +906,10 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.number_of_players_boardblitz = None
         self.reset_dice()
         reset_aliens_state()
+        reset_next_dice()
         PartyPlaytime.boardblitz_miscellaneous = []
         self.reset_alien_size()
+        self.reset_ranking()
 
         self.root.current = 'boardblitz'
 
