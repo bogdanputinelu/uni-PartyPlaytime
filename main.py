@@ -262,7 +262,15 @@ class HeadSpinSettings(MDFloatLayout):
     pass
 
 
+class HelpUsDecideSettings(MDFloatLayout):
+    pass
+
+
 class HeadSpinRules(MDFloatLayout):
+    pass
+
+
+class HelpUsDecideRules(MDFloatLayout):
     pass
 
 
@@ -280,7 +288,11 @@ class TicTacToeScreen(MDScreen):
 
 
 class HelpUsDecideScreen(MDScreen):
-    pass
+    def go_back(self, screen_manager):
+        screen_manager.current = "home"
+
+    def play_game(self, screen_manager):
+        screen_manager.current = "helpusdecidePlay"
 
 
 class GameRulesInformation(MDFloatLayout):
@@ -298,7 +310,9 @@ class GameInformation(MDFloatLayout):
 class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
+    helpusdecide_dialog = None
     headspin_rules_dialog = None
+    helpusdecide_rules_dialog = None
     information_dialog = None
     boardblitz_rules = None
     boardblitz_start = None
@@ -350,8 +364,29 @@ class PartyPlaytime(MDApp):
 
         self.headspin_dialog.open()
 
+    def helpusdecide_settings(self):
+        if not self.helpusdecide_dialog:
+            self.helpusdecide_dialog = MDDialog(
+                type="custom",
+                content_cls=HelpUsDecideSettings(),
+            )
+
+        with open("helpusdecide_settings.json", 'r+') as helpusdecide_files:
+            settings = json.load(helpusdecide_files)
+
+            for setting in settings["helpusdecide_settings"]:
+                if setting["username"] == user_logged_in:
+                    self.headspin_dialog.content_cls.ids.options_information.text = setting["options"]
+                    self.headspin_dialog.content_cls.ids.players_information.text = setting["players"]
+                    break
+
+        self.helpusdecide_dialog.open()
+
     def headspin_settings_exit(self):
         self.headspin_dialog.dismiss()
+
+    def helpusdecide_settings_exit(self):
+        self.helpusdecide_dialog.dismiss()
 
     def headspin_save_settings(self):
         nicknames = self.headspin_dialog.content_cls.ids.players_information.text.split(',')
@@ -377,6 +412,21 @@ class PartyPlaytime(MDApp):
                         self.headspin_dialog.dismiss()
                         return
 
+    def helpusdecide_save_settings(self):
+        with open("helpusdecide_settings.json", 'r+') as helpusdecide_settings:
+            settings = json.load(helpusdecide_settings)
+
+            for setting in settings["helpusdecide_settings"]:
+                if setting["username"] == user_logged_in:
+                    setting["options"] = self.helpusdecide_dialog.content_cls.ids.options_information.text
+                    setting["players"] = self.helpusdecide_dialog.content_cls.ids.players_information.text
+
+                    helpusdecide_settings.seek(0)
+                    json.dump(settings, helpusdecide_settings, indent=4)
+                    helpusdecide_settings.truncate()
+                    self.headspin_dialog.dismiss()
+                    return
+
     def headspin_rules(self):
         if not self.headspin_rules_dialog:
             self.headspin_rules_dialog = MDDialog(
@@ -384,6 +434,14 @@ class PartyPlaytime(MDApp):
                 content_cls=HeadSpinRules()
             )
         self.headspin_rules_dialog.open()
+
+    def helpusdecide_rules(self):
+        if not self.helpusdecide_rules_dialog:
+            self.helpusdecide_rules_dialog = MDDialog(
+                type='custom',
+                content_cls=HelpUsDecideRules()
+            )
+        self.helpusdecide_rules_dialog.open()
 
     def exit_headspin_rules(self):
         self.headspin_rules_dialog.dismiss()

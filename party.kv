@@ -586,7 +586,7 @@ WindowManager:
             size_hint: 0.5, 0.5
             on_eos:
                 root.change_transition_for_welcome(app.root)
-                app.root.current = 'headspin'
+                app.root.current = 'helpusdecide'
                 root.change_transition(app.root)
 
 <LoginScreen>:
@@ -2462,8 +2462,8 @@ WindowManager:
             id: game_card_box
             md_bg_color: "white"
             size_hint_x: .2
-            width: "30dp"
-            height: "30dp"
+            width: "10dp"
+            height: "20dp"
             pos_hint: {"center_x": .5, "center_y": .5}
             radius: 10
             elevation: 4
@@ -2483,8 +2483,8 @@ WindowManager:
             id: game_card_box
             md_bg_color: "white"
             pos_hint: {"center_x": .5, "center_y": .5}
-            width: grid.width / 2 - dp(10)
-            height: grid.height / 2 - dp(10)
+            width: "20dp"
+            height: "20dp"
             size_hint_x: .2
             radius: 10
             elevation: 4
@@ -2523,10 +2523,167 @@ WindowManager:
 
 <HelpUsDecideScreen>:
     name: "helpusdecide"
-    md_bg_color: "purple"
+    md_bg_color: "white"
+    id: helpusdecide
 
-    MDFlatButton:
-        text: "aici helpusdecide"
-        on_release: app.root.current = 'home'
-        md_bg_color: "white"
-        pos_hint: {"center_y": .5, "center_x": .5}
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            md_bg_color: root.md_bg_color
+            specific_text_color: "black"
+            elevation: 0
+            right_action_items: [["text-box-outline", lambda x: app.helpusdecide_rules()]]
+            left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
+
+        MDRelativeLayout:
+
+            MDBoxLayout:
+                id: game_picture
+                size_hint: .8, .4
+                radius: 10
+                pos_hint: {"center_x": .5, "top": .95}
+
+                FitImage:
+                    source: "logos/Help_Us_Decide_-_Logo.png"
+                    radius: 10
+
+            ElevatedBox:
+                id: game_page_description
+                md_bg_color: 1, 252/255, 127/255, 1
+                radius: 10
+                size_hint: .9, .25
+                pos_hint: {"center_x": .5}
+                y: game_picture.top - game_picture.height - self.height - dp(10)
+                elevation: 4
+                shadow_softness: 2
+                shadow_offset: 0, 1
+
+                MDLabel:
+                    id: how_to_play
+                    text: "How to make a Poll:"
+                    size_hint: None, None
+                    size: "200dp", "50dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "22sp"
+                    x: game_page_description.x + dp(12)
+                    y: game_page_description.top - self.height - dp(12)
+
+                MDLabel:
+                    id: game_rules
+                    text: "- Check out the poll settings and instructions \n\n- Change the names of the participants and the options \n\n- Press 'Make a poll!' and start voting!"
+                    size_hint: None, None
+                    size: "320dp", "100dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "14sp"
+                    x: game_page_description.x + dp(15)
+                    y: how_to_play.top - how_to_play.height - self.height
+
+            HelpUsDecideButtonSettings:
+                id: settings_button
+                md_bg_color: 0, 0, 0, .4
+                unfocus_color: 0, 0, 0, .4
+                button_event: "open_headspin_settings"
+                button_name: "SETTINGS"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .5, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - self.height - dp(10)
+
+
+<HelpUsDecideButtonSettings>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.helpusdecide_settings()
+
+<HelpUsDecideSettings>:
+    id: helpusdecide_settings
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: helpusdecide_settings.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.helpusdecide_settings_exit()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "HELPUSDECIDE SETTINGS"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "check-bold"
+                pos_hint: {"center_x": .6, "center_y": .5}
+                icon_color: "black"
+                font_size: "20dp"
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+                on_release: app.helpusdecide_save_settings()
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: helpusdecide_settings_settings.width * 1.1
+        color: "black"
+        y: helpusdecide_settings.top - dp(10)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "250dp"
+        y: helpusdecide_settings.top - self.height - dp(20)
+        pos_hint: {"center_x": .5}
+        radius: 10
+
+        MDFloatLayout:
+            id: rounds_and_teams_box
+            size_hint_y: .25
