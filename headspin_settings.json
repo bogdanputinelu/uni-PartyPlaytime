@@ -7,6 +7,22 @@
             "words": "Kilimanjaro",
             "timer": "60",
             "players": "John, Linda, William, Andreea, Ion, Ion"
+        },
+        {
+            "username": "irina1",
+            "round": "4",
+            "team": "2",
+            "words": "Kilimanjaro",
+            "timer": "60",
+            "players": "John, Linda, William, Andreea"
+        },
+        {
+            "username": "irina2",
+            "round": "4",
+            "team": "2",
+            "words": "Kilimanjaro",
+            "timer": "60",
+            "players": "John, Linda, William, Andreea"
         }
     ]
 }

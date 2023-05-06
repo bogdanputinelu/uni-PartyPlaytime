@@ -59,7 +59,17 @@ class HeadSpinButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior
         Window.set_system_cursor(cursor_name)
 
 
+class HelpUsDecideButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
+
+
 class HeadSpinButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
+
+
+class HelpUsDecideButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
@@ -176,6 +186,18 @@ class RegisterScreen(MDScreen):
                     json.dump(settings, headspin_settings_default_file, indent=4)
                     screen_manager.current = 'login'
 
+                with open("helpusdecide_settings.json", 'r+') as helpusdecide_settings_default_file:
+                    settings = json.load(helpusdecide_settings_default_file)
+
+                    default_settings = {"username": self.ids.username_register.text,
+                                        "options": "Option 1, Option 2",
+                                        "players": "John, Linda, William, Andreea"
+                                        }
+                    settings["helpusdecide_settings"].append(default_settings)
+                    helpusdecide_settings_default_file.seek(0)
+                    json.dump(settings, helpusdecide_settings_default_file, indent=4)
+                    screen_manager.current = 'login'
+
 
 class LoginScreen(MDScreen):
     def switch_password_mode(self):
@@ -279,6 +301,11 @@ class HeadSpinPlay(MDScreen):
         screen_manager.current = "headspin"
 
 
+class HelpUsDecidePlay(MDScreen):
+    def exit_game(self, screen_manager):
+        screen_manager.current = "helpusdecide"
+
+
 class WordRushScreen(MDScreen):
     pass
 
@@ -318,6 +345,7 @@ class PartyPlaytime(MDApp):
     boardblitz_start = None
     boardblitz_exit_game = None
     headspin_exit_game = None
+    helpusdecide_exit_game = None
     player_button_selected = "players_button_2"
 
     def build(self):
@@ -376,8 +404,8 @@ class PartyPlaytime(MDApp):
 
             for setting in settings["helpusdecide_settings"]:
                 if setting["username"] == user_logged_in:
-                    self.headspin_dialog.content_cls.ids.options_information.text = setting["options"]
-                    self.headspin_dialog.content_cls.ids.players_information.text = setting["players"]
+                    self.helpusdecide_dialog.content_cls.ids.options_information.text = setting["options"]
+                    self.helpusdecide_dialog.content_cls.ids.players_information.text = setting["players"]
                     break
 
         self.helpusdecide_dialog.open()
@@ -424,7 +452,7 @@ class PartyPlaytime(MDApp):
                     helpusdecide_settings.seek(0)
                     json.dump(settings, helpusdecide_settings, indent=4)
                     helpusdecide_settings.truncate()
-                    self.headspin_dialog.dismiss()
+                    self.helpusdecide_dialog.dismiss()
                     return
 
     def headspin_rules(self):
@@ -446,6 +474,9 @@ class PartyPlaytime(MDApp):
     def exit_headspin_rules(self):
         self.headspin_rules_dialog.dismiss()
 
+    def exit_helpusdecide_rules(self):
+        self.helpusdecide_rules_dialog.dismiss()
+
     def exit_headspin_game(self):
         if not self.headspin_exit_game:
             self.headspin_exit_game = MDDialog(
@@ -464,12 +495,37 @@ class PartyPlaytime(MDApp):
 
         self.headspin_exit_game.open()
 
+    def exit_helpusdecide_game(self):
+        if not self.helpusdecide_exit_game:
+            self.helpusdecide_exit_game = MDDialog(
+                title="Do you want to leave this poll?",
+                buttons=[
+                    MDFlatButton(
+                        text="NO",
+                        on_release=self.dismiss_helpusdecide_game
+                    ),
+                    MDFlatButton(
+                        text="YES",
+                        on_release=self.exit_current_helpusdecide_game
+                    ),
+                ]
+            )
+
+        self.helpusdecide_exit_game.open()
+
     def dismiss_headspin_game(self, *args):
         self.headspin_exit_game.dismiss()
+
+    def dismiss_helpusdecide_game(self, *args):
+        self.helpusdecide_exit_game.dismiss()
 
     def exit_current_headspin_game(self, *args):
         self.headspin_exit_game.dismiss()
         self.root.current = 'headspin'
+
+    def exit_current_helpusdecide_game(self, *args):
+        self.helpusdecide_exit_game.dismiss()
+        self.root.current = 'helpusdecide'
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()

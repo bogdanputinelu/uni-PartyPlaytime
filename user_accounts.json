@@ -39,6 +39,22 @@
             "last_name": "Enescu",
             "e-mail": "irina@gmail.com",
             "nickname": "Irina"
+        },
+        {
+            "username": "irina1",
+            "password": "parola.1",
+            "first_name": "Irina",
+            "last_name": "Irina",
+            "e-mail": "irina@irina.com",
+            "nickname": "Irina"
+        },
+        {
+            "username": "irina2",
+            "password": "parola.1",
+            "first_name": "Irina",
+            "last_name": "Irina",
+            "e-mail": "irina@irina.com",
+            "nickname": "Irina"
         }
     ]
 }
