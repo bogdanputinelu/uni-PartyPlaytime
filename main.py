@@ -326,6 +326,10 @@ class AccountInformation(MDFloatLayout):
     pass
 
 
+class RankingInformation(MDFloatLayout):
+    pass
+
+
 class GameInformation(MDFloatLayout):
     pass
 
@@ -345,6 +349,7 @@ class PartyPlaytime(MDApp):
     boardblitz_finish_aliens = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
     number_of_players_finished = 0
     boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
+    boardblitz_ranking_dialog = None
 
     player_button_selected = "players_button_2"
 
@@ -501,19 +506,49 @@ class PartyPlaytime(MDApp):
             self.open_boardblitz_start()
 
     def update_nickname_boxes(self):
+        if self.boardblitz_ranking_dialog is None:
+            self.boardblitz_ranking_dialog = MDDialog(
+                type="custom",
+                content_cls=RankingInformation(),
+                auto_dismiss=False,
+                buttons=[
+                    MDFlatButton(
+                        text="back",
+                        font_name="fonts/LuckiestGuy-Regular.ttf",
+                        font_size="30sp",
+                        on_release=self.go_home
+                    )
+                ]
+            )
+
         if PartyPlaytime.player_button_selected[-1] == '2':
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .5}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": 3}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": 3}
 
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.pos_hint = {"center_x": .5,
+                                                                                          "center_y": 20.3}
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_4.pos_hint = {"center_x": .5,
+                                                                                          "center_y": 20.1}
+
         elif PartyPlaytime.player_button_selected[-1] == '3':
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .6}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": .4}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": 3}
+
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.pos_hint = {"center_x": .5,
+                                                                                          "center_y": .3}
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_4.pos_hint = {"center_x": .5,
+                                                                                          "center_y": 20.1}
         else:
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.pos_hint = {"center_y": .7}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.pos_hint = {"center_y": .5}
             self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.pos_hint = {"center_y": .3}
+
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.pos_hint = {"center_x": .5,
+                                                                                          "center_y": .3}
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_4.pos_hint = {"center_x": .5,
+                                                                                          "center_y": .1}
 
     def open_boardblitz_start(self):
         if not self.boardblitz_start:
@@ -644,8 +679,27 @@ class PartyPlaytime(MDApp):
             appear_animation.start(next_player_dice)
         dice_clicked[dice_number] = False
 
+    def go_home(self, *args):
+        self.boardblitz_ranking_dialog.dismiss()
+        self.reset_boardblitz()
+        self.root.current = 'boardblitz'
+
     def end_game(self):
-        print("da")
+        if not self.boardblitz_ranking_dialog:
+            self.boardblitz_ranking_dialog = MDDialog(
+                type="custom",
+                content_cls=RankingInformation(),
+                auto_dismiss=False,
+                buttons=[
+                    MDFlatButton(
+                        text="back",
+                        font_name="fonts/LuckiestGuy-Regular.ttf",
+                        font_size="30sp",
+                        on_release=self.go_home
+                    )
+                ]
+            )
+        self.boardblitz_ranking_dialog.open()
 
     def alien_is_pressed(self, alien_id):
         screen = self.root.get_screen("boardblitz_game")
@@ -870,11 +924,28 @@ class PartyPlaytime(MDApp):
         Clock.schedule_once(rotate_back_dice, 0.5)
 
     def start_boardlitz_game(self):
+        if self.boardblitz_ranking_dialog is None:
+            self.boardblitz_ranking_dialog = MDDialog(
+                type="custom",
+                content_cls=RankingInformation(),
+                auto_dismiss=False,
+                buttons=[
+                    MDFlatButton(
+                        text="back",
+                        font_name="fonts/LuckiestGuy-Regular.ttf",
+                        font_size="30sp",
+                        on_release=self.go_home
+                    )
+                ]
+            )
+
         boardblitz_game_screen = self.root.get_screen("boardblitz_game")
         PartyPlaytime.number_of_players_boardblitz = int(PartyPlaytime.player_button_selected[-1])
 
         boardblitz_game_screen.ids.first_player_nickname.text = nickname_user_logged_in
+        self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_1.text = "#1 " + nickname_user_logged_in
         boardblitz_game_screen.ids.second_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
+        self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_2.text = "#2 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
         nickname_2_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
         boardblitz_game_screen.ids.second_player_nickname.width = str(nickname_2_length) + "dp"
 
@@ -895,6 +966,7 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
 
             boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.text = "#3 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
 
@@ -906,8 +978,10 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": .77, "right": 1}
 
             boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.text = "#3 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.fourth_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
+            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_4.text = "#4 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
             nickname_4_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
             boardblitz_game_screen.ids.fourth_player_nickname.width = str(nickname_4_length) + "dp"
 
@@ -938,8 +1012,7 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.number_of_players_finished = 0
         PartyPlaytime.boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
 
-    def exit_current_boardblitz_game(self, *args):
-        self.boardblitz_exit_game.dismiss()
+    def reset_boardblitz(self):
         PartyPlaytime.player_chosen_to_start_boardblitz = False
         PartyPlaytime.current_player_boardblitz = None
         PartyPlaytime.number_of_players_boardblitz = None
@@ -949,6 +1022,11 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.boardblitz_miscellaneous = []
         self.reset_alien_size()
         self.reset_ranking()
+
+    def exit_current_boardblitz_game(self, *args):
+        self.boardblitz_exit_game.dismiss()
+
+        self.reset_boardblitz()
 
         self.root.current = 'boardblitz'
 
