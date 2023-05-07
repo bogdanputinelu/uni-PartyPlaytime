@@ -12,6 +12,11 @@ WindowManager:
     HelpUsDecideScreen:
     BoardBlitzGame:
 
+<Dice>:
+    icon: "dice-1"
+    icon_size: "55dp"
+    ripple_alpha: 0
+
 <RoadArrow@MDIcon>:
     pos_hint: {"center_x": .5, "center_y": .5}
     font_size: "35sp"
@@ -333,10 +338,68 @@ WindowManager:
         size_hint_y: .9
 
         MDLabel:
-            text: "- Players take turns in a clockwise order; highest throw of the die starts.\n\n- Each throw, the player decides which piece to move. A piece simply moves in a clockwise direction around the track given by the number thrown. If no piece can legally move according to the number thrown, play passes to the next player.\n\n- A throw of 6 gives another turn.\n\n- A player must throw a 6 to move a piece from the starting circle onto the first square on the track. The piece moves 6 squares around the circuit beginning with the appropriately coloured start square (and the player then has another turn).\n\n- If a piece lands on a piece of a different colour, the piece jumped upon is returned to its starting circle.\n\n- If a piece lands upon a piece of the same colour, this forms a block. This block cannot be passed or landed on by any opposing piece."
+            text: "- Players take turns in a clockwise order; highest throw of the die starts.\n\n- Each throw, the player decides which piece to move. A piece simply moves in a clockwise direction around the track given by the number thrown. If no piece can legally move according to the number thrown, play passes to the next player.\n\n- A throw of 6 gives another turn.\n\n- A player must throw a 6 to move a piece from the starting circle onto the first square on the track. The piece moves 6 squares around the circuit beginning with the appropriately coloured start square (and the player then has another turn).\n\n- If a piece lands on a piece of a different colour, the piece jumped upon is returned to its starting circle.\n\n- If a piece lands upon a piece of the same colour, this forms a block. This block cannot be landed on by any opposing piece."
             bold: True
             font_name: "fonts/BrunoAce-Regular.ttf"
             font_size: "12sp"
+
+<RankingInformation>:
+    id: ranking_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+    nickname_1: "#1 Nickname 1"
+    nickname_2: "#2 Nickname 2"
+    nickname_3: "#3 Nickname 3"
+    nickname_4: "#4 Nickname 4"
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box.top - dp(16)
+        pos_hint: {"center_x": .5}
+
+        MDLabel:
+            text: "RANKING"
+            adaptive_size: True
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "56sp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDFloatLayout:
+        size_hint_y: 0.7
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDLabel:
+            id: ranking_nickname_1
+            text: root.nickname_1
+            adaptive_size: True
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "40sp"
+            pos_hint: {"center_x": .5, "center_y": .7}
+
+        MDLabel:
+            id: ranking_nickname_2
+            text: root.nickname_2
+            adaptive_size: True
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "40sp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDLabel:
+            id: ranking_nickname_3
+            text: root.nickname_3
+            adaptive_size: True
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "40sp"
+            pos_hint: {"center_x": .5, "center_y": 20.3}
+
+        MDLabel:
+            id: ranking_nickname_4
+            text: root.nickname_4
+            adaptive_size: True
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "40sp"
+            pos_hint: {"center_x": .5, "center_y": 20.1}
 
 <AccountInformation>:
     id: account_box
@@ -1162,6 +1225,7 @@ WindowManager:
                             size: inside_blue_box.width / 3.3, inside_blue_box.width / 3.3
                             pos_hint: {"center_x": .25, "center_y": .75}
 
+
                         MDRelativeLayout:
                             md_bg_color: "blue"
                             size_hint: None, None
@@ -1230,7 +1294,7 @@ WindowManager:
                 MDFloatLayout:
                     id: yellow_box
                     size_hint: None, None
-                    md_bg_color: "yellow"
+                    md_bg_color: "#FFE013"
                     line_color: "black"
                     size: boardblitz_table.width / 2.5, boardblitz_table.width / 2.5
                     pos_hint: {"right": 1, "top": 1}
@@ -1244,28 +1308,28 @@ WindowManager:
                         pos_hint: {"center_x": .5, "center_y": .5}
 
                         MDRelativeLayout:
-                            md_bg_color: "yellow"
+                            md_bg_color: "#FFE013"
                             radius: 100
                             size_hint: None, None
                             size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
                             pos_hint: {"center_x": .25, "center_y": .75}
 
                         MDRelativeLayout:
-                            md_bg_color: "yellow"
+                            md_bg_color: "#FFE013"
                             size_hint: None, None
                             radius: 100
                             size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
                             pos_hint: {"center_x": .75, "center_y": .75}
 
                         MDRelativeLayout:
-                            md_bg_color: "yellow"
+                            md_bg_color: "#FFE013"
                             size_hint: None, None
                             radius: 100
                             size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
                             pos_hint: {"center_x": .25, "center_y": .25}
 
                         MDRelativeLayout:
-                            md_bg_color: "yellow"
+                            md_bg_color: "#FFE013"
                             size_hint: None, None
                             radius: 100
                             size: inside_yellow_box.width / 3.3, inside_yellow_box.width / 3.3
@@ -1277,12 +1341,14 @@ WindowManager:
                     size: boardblitz_table.width / 5, boardblitz_table.width / 2.5
                     pos_hint: {"center_x": .5}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_52
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
 
                     MDFloatLayout:
+                        id: box_51
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
@@ -1292,14 +1358,15 @@ WindowManager:
                             icon: "chevron-up"
                             color: "red"
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_50
                         line_color: "black"
                         size_hint: None, None
-                        size: down_road.width / 3, down_road.width / 3
+                        size: down_road.width / 3 , down_road.width / 3
                         pos_hint: {"right": 1}
 
                     MDFloatLayout:
-                        id: red_star
+                        id: box_1
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
@@ -1307,29 +1374,33 @@ WindowManager:
                         pos_hint: {"center_y": .25}
 
                         RoadStar:
-                            x: red_star.x - dp(1.5)
-                            y: red_star.y - dp(1)
+                            x: box_1.x - dp(1.5)
+                            y: box_1.y - dp(1)
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_53
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_49
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"right": 1, "center_y": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_2
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_y": .417}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_54
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
@@ -1337,69 +1408,73 @@ WindowManager:
                         pos_hint: {"center_x": .5, "center_y": .417}
 
                     MDFloatLayout:
-                        id: grey_star_1
+                        id: box_48
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "grey"
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"right": 1, "center_y": .417}
 
-                        RoadStar:
-                            x: grey_star_1.x - dp(1)
-                            y: grey_star_1.y - dp(1)
-
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_3
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_y": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_55
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_47
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"right": 1, "center_y": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_4
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_y": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_56
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_46
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"right": 1, "center_y": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_5
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_y": .918}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_57
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "red"
                         size: down_road.width / 3, down_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .918}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_45
                         line_color: "black"
                         size_hint: None, None
                         size: down_road.width / 3, down_road.width / 3
@@ -1411,119 +1486,129 @@ WindowManager:
                     size: boardblitz_table.width / 5, boardblitz_table.width / 2.5
                     pos_hint: {"center_x": .5, "top": 1}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_19
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
 
                     MDFloatLayout:
+                        id: box_67
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .5}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_31
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"right": 1}
 
                     MDFloatLayout:
+                        id: box_20
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_66
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_30
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"right": 1, "center_y": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_21
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .417}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_65
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .417}
 
                     MDFloatLayout:
+                        id: box_29
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"right": 1, "center_y": .417}
 
                     MDFloatLayout:
-                        id: grey_star_2
-                        md_bg_color: "grey"
+                        id: box_22
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .582}
 
-                        RoadStar:
-                            x: grey_star_2.x - dp(1)
-                            y: grey_star_2.y - dp(1)
-
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_64
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_28
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"right": 1, "center_y": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_23
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_63
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .5, "center_y": .75}
 
                     MDFloatLayout:
-                        id: yellow_star
+                        id: box_27
                         line_color: "black"
                         size_hint: None, None
-                        md_bg_color: "yellow"
+                        md_bg_color: "#FFE013"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"right": 1, "center_y": .75}
 
                         RoadStar:
-                            x: yellow_star.x - dp(1.5)
-                            y: yellow_star.y - dp(1)
+                            x: box_27.x - dp(1.5)
+                            y: box_27.y - dp(1)
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_24
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .918}
 
                     MDFloatLayout:
+                        id: box_25
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1531,9 +1616,10 @@ WindowManager:
 
                         RoadArrow:
                             icon: "chevron-down"
-                            color: "yellow"
+                            color: "#FFE013"
 
                     MDFloatLayout:
+                        id: box_26
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1545,12 +1631,14 @@ WindowManager:
                     size: boardblitz_table.width / 2.5, boardblitz_table.width / 5
                     pos_hint: {"center_y": .5}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_11
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
 
                     MDFloatLayout:
+                        id: box_12
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1560,19 +1648,22 @@ WindowManager:
                             icon: "chevron-right"
                             color: "green"
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_13
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1}
 
                     MDFloatLayout:
+                        id: box_10
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_58
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
@@ -1580,7 +1671,7 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .25}
 
                     MDFloatLayout:
-                        id: green_star
+                        id: box_14
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
@@ -1588,22 +1679,18 @@ WindowManager:
                         pos_hint: {"top": 1, "center_x": .25}
 
                         RoadStar:
-                            x: green_star.x - dp(1.5)
-                            y: green_star.y - dp(1)
+                            x: box_14.x - dp(1.5)
+                            y: box_14.y - dp(1)
 
                     MDFloatLayout:
-                        id: grey_star_3
+                        id: box_9
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .417}
-                        md_bg_color: "grey"
 
-                        RoadStar:
-                            x: grey_star_3.x - dp(1)
-                            y: grey_star_3.y - dp(1)
-
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_59
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
@@ -1611,37 +1698,43 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .417}
 
                     MDFloatLayout:
+                        id: box_15
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .417}
 
                     MDFloatLayout:
+                        id: box_8
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_60
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .5, "center_x": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_16
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_7
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_61
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
@@ -1649,18 +1742,21 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .75}
 
                     MDFloatLayout:
+                        id: box_17
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_6
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .918}
 
                     MDFloatLayout:
+                        id: box_62
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "green"
@@ -1668,6 +1764,7 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .918}
 
                     MDFloatLayout:
+                        id: box_18
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1679,31 +1776,36 @@ WindowManager:
                     size: boardblitz_table.width / 2.5, boardblitz_table.width / 5
                     pos_hint: {"center_y": .5, "right": 1}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_44
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
 
                     MDFloatLayout:
+                        id: box_72
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_y": .5}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_32
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1}
 
                     MDFloatLayout:
+                        id: box_43
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .25}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_71
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
@@ -1711,18 +1813,21 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .25}
 
                     MDFloatLayout:
+                        id: box_33
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .25}
 
                     MDFloatLayout:
+                        id: box_42
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .417}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_70
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
@@ -1730,18 +1835,21 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .417}
 
                     MDFloatLayout:
+                        id: box_34
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .417}
 
                     MDFloatLayout:
+                        id: box_41
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .582}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_69
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
@@ -1749,19 +1857,14 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .582}
 
                     MDFloatLayout:
-                        id: grey_star_4
-                        md_bg_color: "grey"
+                        id: box_35
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .582}
 
-                        RoadStar:
-                            x: grey_star_4.x - dp(1)
-                            y: grey_star_4.y - dp(1)
-
                     MDFloatLayout:
-                        id: blue_star
+                        id: box_40
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
@@ -1769,10 +1872,11 @@ WindowManager:
                         pos_hint: {"center_x": .75}
 
                         RoadStar:
-                            x: blue_star.x - dp(1.5)
-                            y: blue_star.y - dp(1)
+                            x: box_40.x - dp(1.5)
+                            y: box_40.y - dp(1)
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_68
                         line_color: "black"
                         size_hint: None, None
                         md_bg_color: "blue"
@@ -1780,18 +1884,21 @@ WindowManager:
                         pos_hint: {"center_y": .5, "center_x": .75}
 
                     MDFloatLayout:
+                        id: box_36
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"top": 1, "center_x": .75}
 
-                    MDBoxLayout:
+                    MDFloatLayout:
+                        id: box_39
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
                         pos_hint: {"center_x": .918}
 
                     MDFloatLayout:
+                        id: box_38
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1802,6 +1909,7 @@ WindowManager:
                             color: "blue"
 
                     MDFloatLayout:
+                        id: box_37
                         line_color: "black"
                         size_hint: None, None
                         size: up_road.width / 3, up_road.width / 3
@@ -1884,7 +1992,7 @@ WindowManager:
             size_hint_x: None
             width: "100dp"
             pos_hint: {"center_y": .5}
-            x: second_avatar_box.x
+            x: second_avatar_box.x + dp(10)
 
             MDLabel:
                 id: second_player_nickname
@@ -1962,7 +2070,7 @@ WindowManager:
             size_hint_x: None
             width: "100dp"
             pos_hint: {"center_y": .5}
-            x: fourth_avatar_box.x
+            x: fourth_avatar_box.x + dp(10)
 
             MDLabel:
                 id: fourth_player_nickname
@@ -1972,6 +2080,249 @@ WindowManager:
                 font_size: "14sp"
                 adaptive_size: True
                 pos_hint: {"right": .85, "center_y": .5}
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: "50dp", "50dp"
+        y: first_avatar_box.top - first_avatar_box.height - self.height
+        x: avatar_box_1.x + dp(3)
+
+        Dice:
+            id: dice_player_1
+            icon: "dice-1"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.animate_dice(self, 1)
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: "50dp", "50dp"
+        y: second_avatar_box.top - second_avatar_box.height - self.height
+        x: avatar_box_2.x + dp(3)
+
+        Dice:
+            id: dice_player_2
+            opacity: 0
+            icon: "dice-1"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.animate_dice(self, 2)
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: "50dp", "50dp"
+        y: third_avatar_box.top
+        x: avatar_box_3.x + dp(3)
+
+        Dice:
+            id: dice_player_3
+            opacity: 0
+            icon: "dice-1"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.animate_dice(self, 3)
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: "50dp", "50dp"
+        y: fourth_avatar_box.top
+        x: avatar_box_4.x + dp(3)
+
+        Dice:
+            id: dice_player_4
+            opacity: 0
+            icon: "dice-1"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.animate_dice(self, 4)
+
+    MDIconButton:
+        id: red_alien_1
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#ffa07a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "24dp", "240dp"
+        disabled: True
+        disabled_color: "#ffa07a"
+        on_release: app.alien_is_pressed("red_alien_1")
+
+    MDIconButton:
+        id: red_alien_2
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#ffa07a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "81dp", "240dp"
+        disabled: True
+        disabled_color: "#ffa07a"
+        on_release: app.alien_is_pressed("red_alien_2")
+
+    MDIconButton:
+        id: red_alien_3
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#ffa07a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "24dp", "182dp"
+        disabled: True
+        disabled_color: "#ffa07a"
+        on_release: app.alien_is_pressed("red_alien_3")
+
+    MDIconButton:
+        id: red_alien_4
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#ffa07a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "81dp", "182dp"
+        disabled: True
+        disabled_color: "#ffa07a"
+        on_release: app.alien_is_pressed("red_alien_4")
+
+    MDIconButton:
+        id: blue_alien_1
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#72bcd4"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "264dp", "240dp"
+        disabled: True
+        disabled_color: "#72bcd4"
+        on_release: app.alien_is_pressed("blue_alien_1")
+
+    MDIconButton:
+        id: blue_alien_2
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#72bcd4"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "322dp", "240dp"
+        disabled: True
+        disabled_color: "#72bcd4"
+        on_release: app.alien_is_pressed("blue_alien_2")
+
+    MDIconButton:
+        id: blue_alien_3
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#72bcd4"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "264dp", "182dp"
+        disabled: True
+        disabled_color: "#72bcd4"
+        on_release: app.alien_is_pressed("blue_alien_3")
+
+    MDIconButton:
+        id: blue_alien_4
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#72bcd4"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "322dp", "182dp"
+        disabled: True
+        disabled_color: "#72bcd4"
+        on_release: app.alien_is_pressed("blue_alien_4")
+
+    MDIconButton:
+        id: green_alien_1
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#7fff00"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "24dp", "479dp"
+        disabled: True
+        disabled_color: "#7fff00"
+        on_release: app.alien_is_pressed("green_alien_1")
+
+    MDIconButton:
+        id: green_alien_2
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#7fff00"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "81dp", "479dp"
+        disabled: True
+        disabled_color: "#7fff00"
+        on_release: app.alien_is_pressed("green_alien_2")
+
+    MDIconButton:
+        id: green_alien_3
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#7fff00"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "24dp", "422dp"
+        disabled: True
+        disabled_color: "#7fff00"
+        on_release: app.alien_is_pressed("green_alien_3")
+
+    MDIconButton:
+        id: green_alien_4
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#7fff00"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "81dp", "422dp"
+        disabled: True
+        disabled_color: "#7fff00"
+        on_release: app.alien_is_pressed("green_alien_4")
+
+    MDIconButton:
+        id: yellow_alien_1
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#d5b60a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "264dp", "479dp"
+        disabled: True
+        disabled_color: "#d5b60a"
+        on_release: app.alien_is_pressed("yellow_alien_1")
+
+    MDIconButton:
+        id: yellow_alien_2
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#d5b60a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "322dp", "479dp"
+        disabled: True
+        disabled_color: "#d5b60a"
+        on_release: app.alien_is_pressed("yellow_alien_2")
+
+    MDIconButton:
+        id: yellow_alien_3
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#d5b60a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "264dp", "422dp"
+        disabled: True
+        disabled_color: "#d5b60a"
+        on_release: app.alien_is_pressed("yellow_alien_3")
+
+    MDIconButton:
+        id: yellow_alien_4
+        icon: "alien"
+        theme_icon_color: "Custom"
+        icon_color: "#d5b60a"
+        icon_size: "30sp"
+        ripple_alpha: 0
+        pos: "322dp", "422dp"
+        disabled: True
+        disabled_color: "#d5b60a"
+        on_release: app.alien_is_pressed("yellow_alien_4")
 
     MDFloatLayout:
         size_hint: None, None
