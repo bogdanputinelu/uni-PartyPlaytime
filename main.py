@@ -463,6 +463,20 @@ class PartyPlaytime(MDApp):
         self.boardblitz_rules.dismiss()
 
     def boardblitz_players(self, *args):
+        if self.boardblitz_ranking_dialog is None:
+            self.boardblitz_ranking_dialog = MDDialog(
+                type="custom",
+                content_cls=RankingInformation(),
+                auto_dismiss=False,
+                buttons=[
+                    MDFlatButton(
+                        text="back",
+                        font_name="fonts/LuckiestGuy-Regular.ttf",
+                        font_size="30sp",
+                        on_release=self.go_home
+                    )
+                ]
+            )
         if args[0] == "start_game":
             forbidden_nickname = False
             for i in range(1, int(PartyPlaytime.player_button_selected[-1])):
@@ -699,6 +713,29 @@ class PartyPlaytime(MDApp):
                     )
                 ]
             )
+
+        players = {
+            "blue": "boardblitz_nickname_1",
+            "green": "boardblitz_nickname_2",
+            "yellow": "boardblitz_nickname_3"
+        }
+
+        if PartyPlaytime.number_of_players_boardblitz == 3:
+            PartyPlaytime.boardblitz_ranking.pop("yellow")
+        elif PartyPlaytime.number_of_players_boardblitz == 2:
+            PartyPlaytime.boardblitz_ranking.pop("yellow")
+            PartyPlaytime.boardblitz_ranking.pop("green")
+
+        for color in PartyPlaytime.boardblitz_ranking.items():
+            player_nickname = nickname_user_logged_in \
+                if color[0] == "red" \
+                else self.boardblitz_start.content_cls.ids[players[color[0]]].text
+
+            place = str(color[1]) if color[1] != 0 else str(PartyPlaytime.number_of_players_boardblitz)
+
+            self.boardblitz_ranking_dialog.content_cls.ids["ranking_nickname_" + place].text = \
+                "#" + place + " " + player_nickname
+
         self.boardblitz_ranking_dialog.open()
 
     def alien_is_pressed(self, alien_id):
@@ -749,6 +786,8 @@ class PartyPlaytime(MDApp):
                 if PartyPlaytime.boardblitz_finish_aliens[color_name] == 4:
 
                     PartyPlaytime.number_of_players_finished += 1
+
+
                     PartyPlaytime.boardblitz_ranking[color_name] = PartyPlaytime.number_of_players_finished
 
                     if PartyPlaytime.number_of_players_boardblitz - PartyPlaytime.number_of_players_finished >= 2:
@@ -814,6 +853,7 @@ class PartyPlaytime(MDApp):
                     if PartyPlaytime.boardblitz_finish_aliens[color_name] == 4:
 
                         PartyPlaytime.number_of_players_finished += 1
+
                         PartyPlaytime.boardblitz_ranking[color_name] = PartyPlaytime.number_of_players_finished
 
                         if PartyPlaytime.number_of_players_boardblitz - PartyPlaytime.number_of_players_finished >= 2:
@@ -924,28 +964,11 @@ class PartyPlaytime(MDApp):
         Clock.schedule_once(rotate_back_dice, 0.5)
 
     def start_boardlitz_game(self):
-        if self.boardblitz_ranking_dialog is None:
-            self.boardblitz_ranking_dialog = MDDialog(
-                type="custom",
-                content_cls=RankingInformation(),
-                auto_dismiss=False,
-                buttons=[
-                    MDFlatButton(
-                        text="back",
-                        font_name="fonts/LuckiestGuy-Regular.ttf",
-                        font_size="30sp",
-                        on_release=self.go_home
-                    )
-                ]
-            )
-
         boardblitz_game_screen = self.root.get_screen("boardblitz_game")
         PartyPlaytime.number_of_players_boardblitz = int(PartyPlaytime.player_button_selected[-1])
 
         boardblitz_game_screen.ids.first_player_nickname.text = nickname_user_logged_in
-        self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_1.text = "#1 " + nickname_user_logged_in
         boardblitz_game_screen.ids.second_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
-        self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_2.text = "#2 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
         nickname_2_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
         boardblitz_game_screen.ids.second_player_nickname.width = str(nickname_2_length) + "dp"
 
@@ -966,7 +989,6 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
 
             boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
-            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.text = "#3 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
 
@@ -978,10 +1000,8 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": .77, "right": 1}
 
             boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
-            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_3.text = "#3 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.fourth_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
-            self.boardblitz_ranking_dialog.content_cls.ids.ranking_nickname_4.text = "#4 " + self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
             nickname_4_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
             boardblitz_game_screen.ids.fourth_player_nickname.width = str(nickname_4_length) + "dp"
 
