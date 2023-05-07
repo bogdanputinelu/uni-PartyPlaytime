@@ -2379,6 +2379,7 @@ WindowManager:
         orientation: "vertical"
 
         MDTopAppBar:
+            id: top_bar
             md_bg_color: "white"
             specific_text_color: "black"
             elevation: 0
@@ -2405,101 +2406,164 @@ WindowManager:
             y: (headspin.top - self.height * 1.7)
             x: (headspin.width - self.width) / 2
 
-    MDAnchorLayout:
-        anchor: "center"
-        size_hint_y: None
-        height: "180dp"
-        pos_hint: {"center_x": .5, "center_y": .5}
+    MDBoxLayout:
+        id: all
+        size_hint_y: .920
 
-        ElevatedBox:
-            id: game_card_box
-            md_bg_color: "white"
-            size_hint_x: .8
-            radius: 10
-            elevation: 4
+        MDFloatLayout:
+            id: float
 
-            FitImage:
-                source: "logos/Headspin_Question.png"
-                size_hint: None, None
-                size: "100dp", "100dp"
-                pos_hint: {"center_x": .2, "center_y": .6}
+            ElevatedBox:
+                id: game_card_box
+                md_bg_color: "white"
+                size_hint_x: .8
                 radius: 10
-
-            MDLabel:
-                text: "CUVANT"
-                font_name: "fonts/BrunoAce-Regular.ttf"
-                font_size: "26sp"
-                size_hint: None, None
-                size: "180dp", "100dp"
-                pos_hint: {"center_x": .7, "center_y": .6}
-
-            MDRelativeLayout:
-                id: game_title_box
-                radius: 0, 0, 10, 10
-                y: game_card_box.top - game_card_box.height
-                x: game_card_box.x
-                size_hint_y: None
-                height: "50dp"
+                elevation: 4
+                size_hint: .4, .075
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 1.3
+                x: (float.width - self.width) / 2
 
                 MDLabel:
-                    text: "Guess the word!"
-                    bold: True
+                    text: "ROUND:"
                     font_name: "fonts/BrunoAce-Regular.ttf"
                     font_size: "18sp"
-                    x: game_title_box.x
-                    size_hint_x: None
-                    width: "220dp"
+                    size_hint: None, None
+                    size: "180dp", "100dp"
+                    pos_hint: {"center_x": .7, "center_y": .5}
 
-    MDGridLayout:
-        size_hint_y: None
-        id: grid
-        height: "180dp"
-        cols: 2
-        md_bg_color: "red"
-        pos_hint: {"center_x": .5, "center_y": .175}
+                MDLabel:
+                    id: round_number
+                    text: "1"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    size_hint: None, None
+                    size: "180dp", "100dp"
+                    pos_hint: {"center_x": 1.35, "center_y": .5}
 
-        ElevatedBox:
-            id: game_card_box
-            md_bg_color: "white"
-            size_hint_x: .2
-            width: "10dp"
-            height: "20dp"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            radius: 10
-            elevation: 4
+            ElevatedBox:
+                id: game_card_box
+                radius: 10
+                md_bg_color: 203/255, 221/255, 209/255, 1
+                elevation: 4
+                size_hint: .75, .075
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 2.5
+                x: (float.width - self.width) / 2
 
-            MDRectangleFlatIconButton:
-                icon: "check"
+                MDLabel:
+                    id: team_name
+                    text: "John & Linda"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    size_hint: None, None
+                    size: "300dp", "80dp"
+                    valign: "middle"
+                    halign: "center"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            ElevatedBox:
+                id: game_card_box
+                size_hint: .2, .075
+                y: float.top - self.height * 3.8
+                x: (float.width - self.width) / 2
+
+                MDLabel:
+                    text: "00:45"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    bold: True
+                    size_hint: None, None
+                    size: "300dp", "80dp"
+                    valign: "middle"
+                    halign: "center"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            ElevatedBox:
+                id: game_card_box
+                md_bg_color: "white"
+                radius: 10
+                elevation: 4
+                size_hint: .8, .25
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 2.2
+                x: (float.width - self.width) / 2
+
+                FitImage:
+                    source: "logos/Headspin_Question.png"
+                    size_hint: None, None
+                    size: "100dp", "100dp"
+                    pos_hint: {"center_x": .2, "center_y": .6}
+                    radius: 10
+
+                MDLabel:
+                    text: "Kilimanjaro"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "26sp"
+                    size_hint: None, None
+                    size: "180dp", "100dp"
+                    pos_hint: {"center_x": .7, "center_y": .6}
+
+                ElevatedBox:
+                    id: game_title_box
+                    size_hint: .2, .2
+                    y: game_card_box.top - self.height * 4.8
+                    x: (game_card_box.width - self.width) / 2
+
+                    MDLabel:
+                        text: "Guess the word!"
+                        bold: True
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        font_size: "18sp"
+                        x: game_title_box.x
+                        size_hint_x: None
+                        width: "220dp"
+                        pos_hint: {"center_x": .7, "center_y": .6}
+
+            MDRectangleFlatButton:
                 text: "CHECK"
-                icon_size: "40dp"
+                font_size: "30dp"
+                bold: True
+                size_hint: .47, .25
+                md_bg_color: 31/255, 80/255, 20/255, .9
                 ripple_alpha: 0
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                icon_color: "black"
-                text_color: "black"
+                pos_hint: {"center_x": .25, "center_y": .28}
+                text_color: "white"
                 line_color: 0, 0, 0, 0
+                on_press: self.md_bg_color = "grey"
+                on_release: self.md_bg_color = 31/255, 80/255, 20/255, .9
 
-        ElevatedBox:
-            id: game_card_box
-            md_bg_color: "white"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            width: "20dp"
-            height: "20dp"
-            size_hint_x: .2
-            radius: 10
-            elevation: 4
-
-            MDRectangleFlatIconButton:
-                icon: "window-close"
+            MDRectangleFlatButton:
                 text: "PASS"
-                icon_size: "40dp"
+                font_size: "30dp"
+                bold: True
+                size_hint: .47, .25
+                md_bg_color: 205/255, 33/255, 0/255, .9
                 ripple_alpha: 0
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                icon_color: "black"
+                pos_hint: {"center_x": .75, "center_y": .28}
+                text_color: "white"
+                line_color: 0, 0, 0, 0
+                on_press: self.md_bg_color = "grey"
+                on_release: self.md_bg_color = 205/255, 33/255, 0/255, .9
+
+            MDRectangleFlatButton:
+                text: "Next Team"
+                font_size: "20dp"
+                bold: True
+                size_hint: .1, .07
+                md_bg_color: 203/255, 221/255, 209/255, 1
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .5, "center_y": .075}
                 text_color: "black"
                 line_color: 0, 0, 0, 0
-
+                on_press: self.md_bg_color = "grey"
+                on_release: self.md_bg_color = 203/255, 221/255, 209/255, 1
 
 <WordRushScreen>:
     name: "wordrush"
