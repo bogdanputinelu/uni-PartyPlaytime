@@ -33,12 +33,20 @@
             "nickname": "Irina"
         },
         {
-            "username": "bogdan",
-            "password": "parola",
-            "first_name": "bogdan",
-            "last_name": "bogdan",
-            "e-mail": "ceva@gmail.com",
-            "nickname": "bogdan"
+            "username": "irina1",
+            "password": "parola.1",
+            "first_name": "Irina",
+            "last_name": "Irina",
+            "e-mail": "irina@irina.com",
+            "nickname": "Irina"
+        },
+        {
+            "username": "irina2",
+            "password": "parola.1",
+            "first_name": "Irina",
+            "last_name": "Irina",
+            "e-mail": "irina@irina.com",
+            "nickname": "Irina"
         }
     ]
 }
