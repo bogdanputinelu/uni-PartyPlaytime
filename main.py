@@ -16,6 +16,7 @@ from kivymd.uix.transition import MDSlideTransition
 import json
 import re
 import random
+from cuvinte import words
 
 Window.size = (400, 780)
 Window.top = 30
@@ -274,6 +275,7 @@ class BoardBlitzGame(MDScreen):
 
 class HeadSpinScreen(MDScreen):
     def go_back(self, screen_manager):
+        screen_manager.transition.direction = 'right'
         screen_manager.current = "home"
 
     def play_game(self, screen_manager):
@@ -300,6 +302,70 @@ class HeadSpinPlay(MDScreen):
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
 
+    # rounds_headspin = 2
+    # teams_headspin = 2
+    # words_headspin = ["Kilimanjaro"]
+    # timer_headspin = 60
+    # players_headspin = 4
+    # headspin_score = {}
+
+    def headspin_play(self):
+        with open("headspin_settings.json", 'r+') as headspin_files:
+            settings = json.load(headspin_files)
+
+            for setting in settings["headspin_settings"]:
+                if setting["username"] == user_logged_in:
+                    rounds_headspin = int(setting["round"])
+                    teams_headspin = int(setting["team"])
+                    words_headspin = setting["words"].split(",")
+                    timer_headspin = int(setting["timer"])
+                    players_headspin = setting["players"].split(",")
+                    break
+
+        players = []
+        for person in players_headspin:
+            new_person = person.strip()
+            players.append(new_person)
+
+        player_teams = []
+        while len(players) > 0:
+            first_player = random.choice(players)
+            players.remove(first_player)
+            second_player = random.choice(players)
+            players.remove(second_player)
+            player_teams.append((first_player, second_player))
+
+        final_words = words
+        for word in words_headspin:
+            new_word = word.strip()
+            final_words.append(str(new_word))
+
+        print(final_words)
+        print(player_teams)
+        print(rounds_headspin)
+        print(teams_headspin)
+        print(timer_headspin)
+
+        headspin_score = {}
+        for team in player_teams:
+            team_name = str(team[0] + " & " + team[1])
+            headspin_score[team_name] = 0
+
+        print(headspin_score)
+
+        # for round in range(rounds_headspin):
+        #     for team in player_teams:
+        #         pass
+
+    # def change_round(self, new_round):
+    #     self.ids.round_number.text = new_round
+    #
+    # def change_team(self, new_team_name):
+    #     self.ids.team_name.text = new_team_name
+    #
+    # def change_word(self, new_word):
+    #     self.ids.word_to_guess = new_word
+
 
 class HelpUsDecidePlay(MDScreen):
     def exit_game(self, screen_manager):
@@ -316,6 +382,7 @@ class TicTacToeScreen(MDScreen):
 
 class HelpUsDecideScreen(MDScreen):
     def go_back(self, screen_manager):
+        screen_manager.transition.direction = 'right'
         screen_manager.current = "home"
 
     def play_game(self, screen_manager):

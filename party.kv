@@ -2133,6 +2133,7 @@ WindowManager:
         line_color: 0, 0, 0, 0
         on_release:
             app.root.current = 'headspinPlay'
+            app.root.get_screen('headspinPlay').headspin_play()
 
 
 <HeadSpinSettings>:
@@ -2500,6 +2501,7 @@ WindowManager:
                     radius: 10
 
                 MDLabel:
+                    id: word_to_guess
                     text: "Kilimanjaro"
                     font_name: "fonts/BrunoAce-Regular.ttf"
                     font_size: "26sp"
