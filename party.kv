@@ -9,8 +9,24 @@ WindowManager:
     HelpUsDecidePlay:
     WordRushScreen:
     TicTacToeScreen:
-    HelpUsDecideScreen:
-    BoardBlitzGame:
+#    HelpUsDecideScreen:
+#    BoardBlitzGame:
+    TicTacToeGame:
+
+<TicTacToeBox>:
+    md_bg_color: "white"
+    button_value: ""
+    button_id: ""
+    button_disabled_color: "black"
+    Button:
+        background_color: 0, 0, 0, 0
+        text: root.button_value
+        disabled_color: root.button_disabled_color
+        font_name: "fonts/LuckiestGuy-Regular.ttf"
+        font_size: "160sp"
+        text_size: (100, 200)
+        size_hint: 1, 1
+        on_press: app.tictactoe_make_move(root.button_id)
 
 <Dice>:
     icon: "dice-1"
@@ -61,6 +77,53 @@ WindowManager:
         on_release:
             app.root.transition.direction = 'left'
             root.dispatch("on_release", app.root, root.next_screen)
+
+<TicTacToeOptionButton>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+    button_name: ""
+    font_dim: "12dp"
+    button_text_color: "black"
+    difficulty: ""
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/LuckiestGuy-Regular.ttf"
+        text_color: root.button_text_color
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release: app.set_tictactoe_difficulty(root.difficulty)
+
+<TicTacToeButton>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.tictactoe_options(root.button_event, root.button_id)
 
 <BoardBlitzButton>:
     focus_color: 1, 1, 1, .8
@@ -146,6 +209,153 @@ WindowManager:
                 pos_hint: {"center_x": .5, "center_y": .5}
                 radius: 10
                 next_screen: root.next_screen
+
+<TicTacToeOptions>:
+    id: game_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: game_box.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "window-close"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_tictactoe_options()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "CHOOSE OPTIONS"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: game_box.width * 1.1
+        color: "black"
+        y: game_box.top - dp(10)
+
+    MDRelativeLayout:
+        pos_hint: {"center_x": .5, "center_y": .48}
+        size_hint_y: .98
+
+        MDBoxLayout:
+            id: players_button_box
+            size_hint: 1.2, .12
+            pos_hint: {"center_x": .5, "top": 1}
+            padding: "10dp"
+            spacing: "10dp"
+
+            TicTacToeButton:
+                id: versus_bot_2
+                button_id: "versus_bot"
+                font_dim: "10dp"
+                md_bg_color: 1, 1, 1, .8
+                unfocus_color: 1, 1, 1, .8
+                button_name: "VERSUS BOT"
+                button_event: "versus_bot"
+                radius: 10
+
+            TicTacToeButton:
+                id: versus_player_2
+                button_id: "versus_player"
+                font_dim: "10dp"
+                md_bg_color: "white"
+                unfocus_color: "white"
+                button_name: "VERSUS PLAYER"
+                button_event: "versus_player"
+                radius: 10
+
+        MDRelativeLayout:
+            id: game_nickname_boxes
+            size_hint_y: .7
+            y: players_button_box.top - players_button_box.height - self.height
+
+            MDTextField:
+                id: tictactoe_nickname
+                mode: "rectangle"
+                hint_text: "Player's Nickname"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "280dp"
+                x: game_nickname_boxes.x + (game_nickname_boxes.width - self.width) / 2
+                pos_hint: {"center_y": 3.5}
+                icon_right: "account"
+
+            TicTacToeOptionButton:
+                id: easy_button
+                difficulty: "easy"
+                size_hint: None, None
+                size: "250dp", "50dp"
+                font_dim: "20dp"
+                md_bg_color: "#238823"
+                unfocus_color: "#238823"
+                focus_color: 35/255, 136/255, 35/255, .8
+                button_text_color: "black"
+                button_name: "EASY"
+                pos_hint: {"center_x": .5, "center_y": .7}
+                radius: 10
+
+            TicTacToeOptionButton:
+                id: medium_button
+                difficulty: "medium"
+                size_hint: None, None
+                size: "250dp", "50dp"
+                font_dim: "20dp"
+                md_bg_color: "#FFBF00"
+                unfocus_color: "#FFBF00"
+                focus_color: 1, 191/255, 0, .8
+                button_text_color: "white"
+                button_name: "MEDIUM"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                radius: 10
+
+            TicTacToeOptionButton:
+                id: hard_button
+                difficulty: "hard"
+                size_hint: None, None
+                size: "250dp", "50dp"
+                font_dim: "20dp"
+                md_bg_color: "#D2222D"
+                unfocus_color: "#D2222D"
+                focus_color: 210/255, 34/255, 45/255, .8
+                button_text_color: "white"
+                button_name: "HARD"
+                pos_hint: {"center_x": .5, "center_y": .3}
+                radius: 10
+
+        MDBoxLayout:
+            size_hint_y: .18
+            padding: "5dp"
+
+            TicTacToeButton:
+                font_dim: "14dp"
+                md_bg_color: "white"
+                unfocus_color: "white"
+                button_name: "START GAME"
+                button_event: "start_game"
+                radius: 10
 
 <BoardBlitzStart>:
     id: game_box
@@ -289,6 +499,59 @@ WindowManager:
                 button_name: "START GAME"
                 button_event: "start_game"
                 radius: 10
+
+<TicTacToeRulesInformation>:
+    id: game_box
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: game_box.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "window-close"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_tictactoe_rules()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "GAME RULES"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: game_box.width * 1.1
+        color: "black"
+        y: game_box.top - dp(10)
+
+    MDRelativeLayout:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint_y: .9
+
+        MDLabel:
+            text: "- The game is played on a grid that's 3 squares by 3 squares.\n\n- You are X, your friend (or the computer) is O. Players take turns putting their marks in empty squares.\n\n- The first player to get 3 of her marks in a row (up, down, across, or diagonally) is the winner.\n\n- When all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a tie."
+            bold: True
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "12sp"
 
 <GameRulesInformation>:
     id: game_box
@@ -2336,7 +2599,6 @@ WindowManager:
             y: (boardblitz.top - self.height * 1.7)
             x: (boardblitz.width - self.width) / 2
 
-
 <HeadSpinScreen>:
     name: "headspin"
     id: headspin
@@ -2930,13 +3192,309 @@ WindowManager:
 
 <TicTacToeScreen>:
     name: "tictactoe"
-    md_bg_color: "grey"
+    id: tictactoe
+    md_bg_color: "white"
 
-    MDFlatButton:
-        text: "aici tictactoe"
-        on_release: app.root.current = 'home'
-        md_bg_color: "white"
-        pos_hint: {"center_y": .5, "center_x": .5}
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            md_bg_color: root.md_bg_color
+            specific_text_color: "black"
+            elevation: 0
+            right_action_items: [['text-box-outline', lambda x: app.open_tictactoe_rules()]]
+            left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
+
+        MDRelativeLayout:
+
+            MDBoxLayout:
+                id: game_picture
+                size_hint: .8, .4
+                radius: 10
+                pos_hint: {"center_x": .5, "top": .95}
+
+                FitImage:
+                    source: "logos/Tic_Tac_Toe_-_Logo.png"
+                    radius: 10
+
+            ElevatedBox:
+                id: game_page_description
+                md_bg_color: 1, 252/255, 127/255, 1
+                radius: 10
+                size_hint: .9, .35
+                pos_hint: {"center_x": .5}
+                y: game_picture.top - game_picture.height - self.height - dp(10)
+                elevation: 4
+                shadow_softness: 2
+                shadow_offset: 0, 1
+
+                MDLabel:
+                    id: how_to_play
+                    text: "How to Play:"
+                    size_hint: None, None
+                    size: "250dp", "50dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "22sp"
+                    x: game_page_description.x + dp(12)
+                    y: game_page_description.top - self.height - dp(12)
+
+                MDLabel:
+                    id: game_rules
+                    text: "- Check out the rules of the game\n\n- Select by clicking on the buttons down below the oppponent\n\n- Choose the next options that follow the nature of the opponent\n\n- Press play and have fun!"
+                    size_hint: None, None
+                    size: "320dp", "180dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "14sp"
+                    x: game_page_description.x + dp(15)
+                    y: how_to_play.top - how_to_play.height - self.height
+
+                MDIconButton:
+                    icon: "text-box-outline"
+                    size_hint: None, None
+                    size: "30dp", "30dp"
+                    y: game_page_description.top - game_rules.height / 1.6 + dp(5)
+                    x: game_rules.x + game_rules.width - dp(24)
+                    on_release: app.open_tictactoe_rules()
+
+            TicTacToeButton:
+                md_bg_color: "green"
+                unfocus_color: "green"
+                button_event: "choose_options"
+                button_name: "CHOOSE OPTIONS AND PLAY!"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .9, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - self.height - dp(10)
+
+            MDBoxLayout:
+                size_hint_y: .08
+                pos_hint: {"center_x": .5}
+                padding: "10dp"
+                spacing: "10dp"
+
+                TicTacToeButton:
+                    id: versus_bot
+                    button_id: "versus_bot"
+                    md_bg_color: 1, 1, 1, .8
+                    unfocus_color: 1, 1, 1, .8
+                    button_name: "VERSUS BOT"
+                    button_event: "versus_bot"
+                    radius: 10
+
+                TicTacToeButton:
+                    id: versus_player
+                    button_id: "versus_player"
+                    md_bg_color: "white"
+                    unfocus_color: "white"
+                    button_name: "VERSUS PLAYER"
+                    button_event: "versus_player"
+                    radius: 10
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+        MDLabel:
+            text: "TicTacToe"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (tictactoe.top - self.height * 1.7)
+            x: (tictactoe.width - self.width) / 2
+
+<TicTacToeGame>:
+    name: "tictactoe_game"
+    id: tictactoe_game
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            md_bg_color: "white"
+            specific_text_color: "black"
+            elevation: 0
+            left_action_items: [["window-close", lambda x: app.exit_tictactoe_game()]]
+
+        MDSeparator:
+            width: "80dp"
+            color: "black"
+
+        MDFloatLayout:
+
+            MDGridLayout:
+                id: tac_grid
+                spacing: 2
+                md_bg_color: "black"
+                size_hint: None, None
+                size: root.width, root.width
+                pos_hint: {"center_y": .5}
+                rows: 3
+                cols: 3
+
+                TicTacToeBox:
+                    id: tac_box_1
+                    button_id: "tac_box_1"
+
+                TicTacToeBox:
+                    id: tac_box_2
+                    button_id: "tac_box_2"
+
+                TicTacToeBox:
+                    id: tac_box_3
+                    button_id: "tac_box_3"
+
+                TicTacToeBox:
+                    id: tac_box_4
+                    button_id: "tac_box_4"
+
+                TicTacToeBox:
+                    id: tac_box_5
+                    button_id: "tac_box_5"
+
+                TicTacToeBox:
+                    id: tac_box_6
+                    button_id: "tac_box_6"
+
+                TicTacToeBox:
+                    id: tac_box_7
+                    button_id: "tac_box_7"
+
+                TicTacToeBox:
+                    id: tac_box_8
+                    button_id: "tac_box_8"
+
+                TicTacToeBox:
+                    id: tac_box_9
+                    button_id: "tac_box_9"
+
+    ElevatedBox:
+        id: player_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .85, "center_x": .2}
+
+        ElevatedBox:
+            id: avatar_box_player
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: player_avatar_box.top - self.height - dp(6)
+            x: player_avatar_box.x + dp(6)
+
+            FitImage:
+                id: player_avatar
+                source: "boardblitz_characters/truffles.png"
+                radius: 10
+                y: avatar_box_player.top - self.height
+                x: avatar_box_player.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"right": 1, "center_y": .5}
+
+            MDLabel:
+                id: player_nickname
+                text: "nickname 1"
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+    ElevatedBox:
+        id: bot_avatar_box
+        size_hint: None, None
+        size: "160dp", "70dp"
+        pos_hint: {"center_y": .85, "right": 1}
+
+        ElevatedBox:
+            id: avatar_box_bot
+            size_hint: None, None
+            size: "60dp", "60dp"
+            md_bg_color: "black"
+            radius: 10
+            elevation: 4
+            shadow_softness: 2
+            shadow_offset: 0, 1
+            y: bot_avatar_box.top - self.height - dp(6)
+            x: bot_avatar_box.right - self.width - dp(6)
+
+            FitImage:
+                id: bot_avatar
+                source: "boardblitz_characters/gazpacho.png"
+                radius: 10
+                y: avatar_box_bot.top - self.height
+                x: avatar_box_bot.x
+
+        MDRelativeLayout:
+            size_hint_x: None
+            width: "100dp"
+            pos_hint: {"center_y": .5}
+            x: bot_avatar_box.x + dp(10)
+
+            MDLabel:
+                id: bot_nickname
+                text: "BOT"
+                size_hint_x: None
+                font_name: "fonts/LuckiestGuy-Regular.ttf"
+                font_size: "14sp"
+                adaptive_size: True
+                pos_hint: {"right": .8, "center_y": .5}
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+        MDLabel:
+            text: "TicTacToe"
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            font_size: "42sp"
+            bold: True
+            adaptive_size: True
+            y: (tictactoe_game.top - self.height * 1.4)
+            x: (tictactoe_game.width - self.width) / 2
+
+    MDFloatLayout:
+        id: game_ending
+        size_hint: None, None
+        size: "300dp", "50dp"
+        y: tac_grid.top
+        pos_hint: {"center_x": .5}
+        opacity: 0
+
+        MDFlatButton:
+            id: end_message
+            text: "bogdan won!!"
+            font_size: "40sp"
+            ripple_alpha: 0
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            pos_hint: {"center_y": .5, "center_x": .5}
+
+    MDFloatLayout:
+        id: ending_home_box
+        md_bg_color: "red"
+        size_hint: None,None
+        size: "250dp", "100dp"
+        radius: 10
+        pos_hint: {"center_x": .5, "center_y": .1}
+        opacity: 0
+
+        MDFlatButton:
+            id: ending_home
+            size_hint: 1, 1
+            text: "home"
+            font_size: "40sp"
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.tictactoe_go_home()
 
 <HelpUsDecideScreen>:
     name: "helpusdecide"
