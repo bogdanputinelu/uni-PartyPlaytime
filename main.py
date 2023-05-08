@@ -94,7 +94,25 @@ class BoardBlitzStart(MDFloatLayout):
     pass
 
 
+class TicTacToeOptions(MDFloatLayout):
+    pass
+
+
+class TicTacToeBox(MDBoxLayout):
+    pass
+
+
 class BoardBlitzButton(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
+
+
+class TicTacToeButton(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
+    def change_cursor(self, cursor_name):
+        Window.set_system_cursor(cursor_name)
+
+
+class TicTacToeOptionButton(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
@@ -317,6 +335,10 @@ class BoardBlitzGame(MDScreen):
     pass
 
 
+class TicTacToeGame(MDScreen):
+    pass
+
+
 class HeadSpinScreen(MDScreen):
     def go_back(self, screen_manager):
         screen_manager.transition.direction = 'right'
@@ -421,7 +443,9 @@ class WordRushScreen(MDScreen):
 
 
 class TicTacToeScreen(MDScreen):
-    pass
+    def go_back(self, screen_manager):
+        screen_manager.transition.direction = 'right'
+        screen_manager.current = "home"
 
 
 class HelpUsDecideScreen(MDScreen):
@@ -434,6 +458,10 @@ class HelpUsDecideScreen(MDScreen):
 
 
 class GameRulesInformation(MDFloatLayout):
+    pass
+
+
+class TicTacToeRulesInformation(MDFloatLayout):
     pass
 
 
@@ -469,7 +497,13 @@ class PartyPlaytime(MDApp):
     boardblitz_ranking_dialog = None
     headspin_exit_game = None
     helpusdecide_exit_game = None
+    tictactoe_rules = None
+    tictactoe_choose_options = None
     player_button_selected = "players_button_2"
+    tictactoe_mode = "bot"
+    tictactoe_difficulty = "easy"
+    tictactoe_exit_dialog = None
+    tictactoe_current_move = "x"
 
     def build(self):
         return Builder.load_file('party.kv')
@@ -664,6 +698,18 @@ class PartyPlaytime(MDApp):
 
     def exit_game_information(self):
         self.information_dialog.dismiss()
+
+    def open_tictactoe_rules(self):
+        if not self.tictactoe_rules:
+            self.tictactoe_rules = MDDialog(
+                type="custom",
+                content_cls=TicTacToeRulesInformation()
+            )
+
+        self.tictactoe_rules.open()
+
+    def exit_tictactoe_rules(self):
+        self.tictactoe_rules.dismiss()
 
     def open_rules(self):
         if not self.boardblitz_rules:
@@ -1264,6 +1310,126 @@ class PartyPlaytime(MDApp):
         self.reset_boardblitz()
 
         self.root.current = 'boardblitz'
+
+    def exit_tictactoe_game(self):
+        if not self.tictactoe_exit_dialog:
+            self.tictactoe_exit_dialog = MDDialog(
+                title="Do you want to exit this game?",
+                buttons=[
+                    MDFlatButton(
+                        text="NO",
+                        on_release=self.dismiss_tictactoe_game
+                    ),
+                    MDFlatButton(
+                        text="YES",
+                        on_release=self.exit_current_tictactoe_game
+                    ),
+                ]
+            )
+
+        self.tictactoe_exit_dialog.open()
+
+    def tictactoe_make_move(self, button_id):
+        print("move")
+
+    def reset_tictactoe(self):
+        print("implementeaza reset")
+        tictactoe_current_move = "x"
+
+    def exit_current_tictactoe_game(self, *args):
+        self.tictactoe_exit_dialog.dismiss()
+
+        self.reset_tictactoe()
+
+        self.root.current = 'tictactoe'
+
+    def dismiss_tictactoe_game(self, *args):
+        self.tictactoe_exit_dialog.dismiss()
+
+    def exit_tictactoe_options(self):
+
+        self.tictactoe_choose_options.dismiss()
+
+    def tictactoe_options(self, *args):
+        if args[0] == "start_game":
+            nickname_box = self.tictactoe_choose_options.content_cls.ids.tictactoe_nickname
+            if PartyPlaytime.tictactoe_mode == "player" \
+                    and (len(nickname_box.text) >= 12 or len(nickname_box.text) == 0):
+                self.animate_wrong_widget(nickname_box)
+            else:
+                self.root.current = "tictactoe_game"
+        elif args[0] != "choose_options":
+            if not self.tictactoe_choose_options:
+                self.tictactoe_choose_options = MDDialog(
+                    type="custom",
+                    content_cls=TicTacToeOptions()
+                )
+            button_pressed = args[1].split('_')[1]
+            old_button = PartyPlaytime.tictactoe_mode
+            PartyPlaytime.tictactoe_mode = button_pressed
+
+            screen = self.root.get_screen("tictactoe")
+
+            screen.ids["versus_" + old_button].\
+                md_bg_color = "white"
+            screen.ids["versus_" + old_button].\
+                unfocus_color = "white"
+
+            self.tictactoe_choose_options.content_cls.ids["versus_" + old_button + "_2"].\
+                md_bg_color = "white"
+            self.tictactoe_choose_options.content_cls.ids["versus_" + old_button + "_2"].\
+                unfocus_color = "white"
+
+            screen.ids["versus_" + button_pressed].\
+                md_bg_color = (1, 1, 1, .8)
+            screen.ids["versus_" + button_pressed].\
+                unfocus_color = (1, 1, 1, .8)
+
+            self.tictactoe_choose_options.content_cls.ids["versus_" + button_pressed + "_2"].\
+                md_bg_color = (1, 1, 1, .8)
+            self.tictactoe_choose_options.content_cls.ids["versus_" + button_pressed + "_2"].\
+                unfocus_color = (1, 1, 1, .8)
+
+            self.update_tictactoe_options()
+        else:
+            if not self.tictactoe_choose_options:
+                self.tictactoe_choose_options = MDDialog(
+                    type="custom",
+                    content_cls=TicTacToeOptions()
+                )
+
+            self.tictactoe_choose_options.open()
+
+    def update_tictactoe_options(self):
+        if PartyPlaytime.tictactoe_mode == "bot":
+            self.tictactoe_choose_options.content_cls.ids.tictactoe_nickname.\
+                pos_hint = {"center_y": 3.5}
+
+            self.tictactoe_choose_options.content_cls.ids.easy_button.\
+                pos_hint = {"center_x": .5, "center_y": .7}
+            self.tictactoe_choose_options.content_cls.ids.medium_button.\
+                pos_hint = {"center_x": .5, "center_y": .5}
+            self.tictactoe_choose_options.content_cls.ids.hard_button.\
+                pos_hint = {"center_x": .5, "center_y": .3}
+        else:
+            self.tictactoe_choose_options.content_cls.ids.tictactoe_nickname. \
+                pos_hint = {"center_y": .5}
+
+            self.tictactoe_choose_options.content_cls.ids.easy_button. \
+                pos_hint = {"center_x": .5, "center_y": 3.7}
+            self.tictactoe_choose_options.content_cls.ids.medium_button. \
+                pos_hint = {"center_x": .5, "center_y": 3.5}
+            self.tictactoe_choose_options.content_cls.ids.hard_button. \
+                pos_hint = {"center_x": .5, "center_y": 3.3}
+
+    def set_tictactoe_difficulty(self, difficulty):
+        self.tictactoe_choose_options.content_cls.ids[PartyPlaytime.tictactoe_difficulty + "_button"].\
+            button_text_color = "white"
+
+        PartyPlaytime.tictactoe_difficulty = difficulty
+
+        self.tictactoe_choose_options.content_cls.ids[PartyPlaytime.tictactoe_difficulty + "_button"]. \
+            button_text_color = "black"
 
     def animate_wrong_widget(self, widget):
         animate = Animation(

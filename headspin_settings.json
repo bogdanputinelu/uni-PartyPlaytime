@@ -15,7 +15,6 @@
             "words": "Kilimanjaro",
             "timer": "60",
             "players": "John, Linda, William, Andreea"
-
         },
         {
             "username": "irina2",
@@ -24,7 +23,14 @@
             "words": "Kilimanjaro, Friend",
             "timer": "50",
             "players": "John, Linda, William, Andreea, Paul, Oscar"
-
+        },
+        {
+            "username": "bogdan",
+            "round": "4",
+            "team": "2",
+            "words": "Kilimanjaro",
+            "timer": "60",
+            "players": "John, Linda, William, Andreea"
         }
     ]
 }
