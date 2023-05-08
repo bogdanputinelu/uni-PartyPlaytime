@@ -1,14 +1,14 @@
 WindowManager:
-#    WelcomeScreen:
-#    LoginScreen:
-#    RegisterScreen:
-#    HomeScreen:
-#    BoardBlitzScreen:
-#    HeadSpinScreen:
-#    HeadSpinPlay:
-#    HelpUsDecidePlay:
-#    WordRushScreen:
-#    TicTacToeScreen:
+    WelcomeScreen:
+    LoginScreen:
+    RegisterScreen:
+    HomeScreen:
+    BoardBlitzScreen:
+    HeadSpinScreen:
+    HeadSpinPlay:
+    HelpUsDecidePlay:
+    WordRushScreen:
+    TicTacToeScreen:
 #    HelpUsDecideScreen:
 #    BoardBlitzGame:
     TicTacToeGame:
@@ -3470,14 +3470,31 @@ WindowManager:
         pos_hint: {"center_x": .5}
         opacity: 0
 
-        MDLabel:
+        MDFlatButton:
             id: end_message
-            text: "draw!!"
-            adaptive_size: True
+            text: "bogdan won!!"
             font_size: "40sp"
+            ripple_alpha: 0
             font_name: "fonts/LuckiestGuy-Regular.ttf"
             pos_hint: {"center_y": .5, "center_x": .5}
 
+    MDFloatLayout:
+        id: ending_home_box
+        md_bg_color: "red"
+        size_hint: None,None
+        size: "250dp", "100dp"
+        radius: 10
+        pos_hint: {"center_x": .5, "center_y": .1}
+        opacity: 0
+
+        MDFlatButton:
+            id: ending_home
+            size_hint: 1, 1
+            text: "home"
+            font_size: "40sp"
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.tictactoe_go_home()
 
 <HelpUsDecideScreen>:
     name: "helpusdecide"

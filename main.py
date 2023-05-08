@@ -23,6 +23,7 @@ from functools import partial
 from boardblitz_helpers import boardblitz_avatars, coordinates, start_boxes, corners, players_color
 from boardblitz_helpers import next_dice as nd
 from cuvinte import words
+from tictactoe_helpers import medium_states, hard_states, solution_for_states
 
 Window.size = (400, 780)
 Window.top = 30
@@ -507,6 +508,14 @@ class PartyPlaytime(MDApp):
     tictactoe_finish = False
     tictactoe_board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     tictactoe_occupied = []
+    tictactoe_winner = None
+    animation_message = Animation(
+        duration=0.4,
+        opacity=1
+    ) + Animation(
+        duration=0.4,
+        opacity=0
+    )
 
     def build(self):
         return Builder.load_file('party.kv')
@@ -1332,29 +1341,70 @@ class PartyPlaytime(MDApp):
 
         self.tictactoe_exit_dialog.open()
 
-    def bot_makes_move(self):
+    def tictactoe_go_home(self):
+        self.reset_tictactoe()
+        self.root.current = "tictactoe"
+
+    def predict_next_move(self):
+        state = PartyPlaytime.tictactoe_board
+
+        check = medium_states if PartyPlaytime.tictactoe_difficulty == "medium" else hard_states
+        for i, j in check:
+            if state[i] == state[j] and state[i] == 1 and state[solution_for_states[(i, j)]] == 0:
+                return solution_for_states[(i, j)]
+
+        return -1
+    def make_random_choice(self, choice_made=-1):
         screen = self.root.get_screen("tictactoe_game")
-        if PartyPlaytime.tictactoe_difficulty == "easy":
+        if choice_made == -1:
             bot_choice = random.randint(0, 8)
             while bot_choice in PartyPlaytime.tictactoe_occupied:
                 bot_choice = random.randint(0, 8)
-
-            PartyPlaytime.tictactoe_occupied.append(bot_choice)
-
-            screen.ids["tac_box_" + str(bot_choice + 1)].button_value = "0"
-            screen.ids["tac_box_" + str(bot_choice + 1)].disabled = True
-
-            PartyPlaytime.tictactoe_board[bot_choice] = 2
-
-        elif PartyPlaytime.tictactoe_difficulty == "medium":
-            print("to be implemented medium")
         else:
-            print("to be implemented hard")
+            bot_choice = choice_made
+
+        PartyPlaytime.tictactoe_occupied.append(bot_choice)
+
+        screen.ids["tac_box_" + str(bot_choice + 1)].button_value = "0"
+        screen.ids["tac_box_" + str(bot_choice + 1)].disabled = True
+
+        PartyPlaytime.tictactoe_board[bot_choice] = 2
+
+    def bot_makes_move(self):
+        screen = self.root.get_screen("tictactoe_game")
+        if PartyPlaytime.tictactoe_difficulty == "easy":
+            self.make_random_choice()
+        else:
+            predicted_choice = self.predict_next_move()
+            self.make_random_choice(predicted_choice)
+
+    def animate_message(self, ending):
+        screen = self.root.get_screen("tictactoe_game")
+        if ending == "draw":
+            screen.ids.end_message.text = "draw!!"
+        else:
+            screen.ids.end_message.text = nickname_user_logged_in \
+                if PartyPlaytime.tictactoe_winner == 'x' \
+                else screen.ids.bot_nickname.text
+            screen.ids.end_message.text += " won!!"
+
+        animation = Animation(
+            duration=0.2,
+            opacity=1
+        )
+
+        animation.start(screen.ids.game_ending)
+        animation.start(screen.ids.ending_home_box)
+
+        PartyPlaytime.animation_message.repeat = True
+        PartyPlaytime.animation_message.start(screen.ids.end_message)
 
     def animate_win(self, *args):
         screen = self.root.get_screen("tictactoe_game")
         for i in args:
             screen.ids["tac_box_" + str(i + 1)].button_disabled_color = "#238823"
+
+        self.animate_message("win")
 
     def check_win_tictactoe(self):
         state = PartyPlaytime.tictactoe_board
@@ -1389,21 +1439,20 @@ class PartyPlaytime(MDApp):
 
                 PartyPlaytime.tictactoe_occupied.append(button_number)
 
+                PartyPlaytime.tictactoe_winner = "x"
                 if self.check_win_tictactoe():
                     PartyPlaytime.tictactoe_finish = True
-                    print("a castigat x,  green X? posibil un scris sa apara sus cu animatie")
                 elif len(PartyPlaytime.tictactoe_occupied) == 9:
-                    print("draw cu bot")
+                    self.animate_message("draw")
                 else:
                     self.bot_makes_move()
+                    PartyPlaytime.tictactoe_winner = "0"
                     if self.check_win_tictactoe():
                         PartyPlaytime.tictactoe_finish = True
-                        print("a castigat botul cu O, deci green + animatie")
             else:
                 print("joc cu player")
 
     def reset_tictactoe(self):
-        print("implementeaza reset")
         tictactoe_current_move = "x"
         screen = self.root.get_screen("tictactoe_game")
         screen.ids.bot_nickname.width = "30dp"
@@ -1411,10 +1460,14 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.tictactoe_finish = False
         PartyPlaytime.tictactoe_board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         PartyPlaytime.tictactoe_occupied = []
+        PartyPlaytime.tictactoe_winner = None
+        screen.ids.game_ending.opacity = 0
+        screen.ids.ending_home_box.opacity = 0
+        PartyPlaytime.animation_message.cancel(screen.ids.end_message)
 
         for i in "123456789":
             screen.ids["tac_box_" + i].button_value = ""
-            screen.ids["tac_box_" + i].disable = False
+            screen.ids["tac_box_" + i].disabled = False
             screen.ids["tac_box_" + i].button_disabled_color = "black"
 
     def exit_current_tictactoe_game(self, *args):
