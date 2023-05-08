@@ -17,10 +17,11 @@ WindowManager:
     md_bg_color: "white"
     button_value: ""
     button_id: ""
+    button_disabled_color: "black"
     Button:
         background_color: 0, 0, 0, 0
         text: root.button_value
-        color: "black"
+        disabled_color: root.button_disabled_color
         font_name: "fonts/LuckiestGuy-Regular.ttf"
         font_size: "160sp"
         text_size: (100, 200)
@@ -3326,6 +3327,7 @@ WindowManager:
         MDFloatLayout:
 
             MDGridLayout:
+                id: tac_grid
                 spacing: 2
                 md_bg_color: "black"
                 size_hint: None, None
@@ -3441,7 +3443,7 @@ WindowManager:
 
             MDLabel:
                 id: bot_nickname
-                text: "Nickname 2"
+                text: "BOT"
                 size_hint_x: None
                 font_name: "fonts/LuckiestGuy-Regular.ttf"
                 font_size: "14sp"
@@ -3459,6 +3461,22 @@ WindowManager:
             adaptive_size: True
             y: (tictactoe_game.top - self.height * 1.4)
             x: (tictactoe_game.width - self.width) / 2
+
+    MDFloatLayout:
+        id: game_ending
+        size_hint: None, None
+        size: "300dp", "50dp"
+        y: tac_grid.top
+        pos_hint: {"center_x": .5}
+        opacity: 0
+
+        MDLabel:
+            id: end_message
+            text: "draw!!"
+            adaptive_size: True
+            font_size: "40sp"
+            font_name: "fonts/LuckiestGuy-Regular.ttf"
+            pos_hint: {"center_y": .5, "center_x": .5}
 
 
 <HelpUsDecideScreen>:
