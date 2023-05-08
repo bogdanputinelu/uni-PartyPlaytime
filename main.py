@@ -346,12 +346,12 @@ class HeadSpinPlay(MDScreen):
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
 
-    # rounds_headspin = 2
-    # teams_headspin = 2
-    # words_headspin = ["Kilimanjaro"]
-    # timer_headspin = 60
-    # players_headspin = 4
-    # headspin_score = {}
+    rounds_headspin = None
+    teams_headspin = None
+    final_words = None
+    timer_headspin = None
+    player_teams = None
+    headspin_score = None
 
     def headspin_play(self):
         with open("headspin_settings.json", 'r+') as headspin_files:
@@ -359,10 +359,10 @@ class HeadSpinPlay(MDScreen):
 
             for setting in settings["headspin_settings"]:
                 if setting["username"] == user_logged_in:
-                    rounds_headspin = int(setting["round"])
-                    teams_headspin = int(setting["team"])
+                    HeadSpinPlay.rounds_headspin = int(setting["round"])
+                    HeadSpinPlay.teams_headspin = int(setting["team"])
                     words_headspin = setting["words"].split(",")
-                    timer_headspin = int(setting["timer"])
+                    HeadSpinPlay.timer_headspin = int(setting["timer"])
                     players_headspin = setting["players"].split(",")
                     break
 
@@ -371,44 +371,51 @@ class HeadSpinPlay(MDScreen):
             new_person = person.strip()
             players.append(new_person)
 
-        player_teams = []
+        HeadSpinPlay.player_teams = []
         while len(players) > 0:
             first_player = random.choice(players)
             players.remove(first_player)
             second_player = random.choice(players)
             players.remove(second_player)
-            player_teams.append((first_player, second_player))
+            HeadSpinPlay.player_teams.append((first_player, second_player))
 
-        final_words = words
+        HeadSpinPlay.final_words = words
         for word in words_headspin:
             new_word = word.strip()
-            final_words.append(str(new_word))
+            HeadSpinPlay.final_words.append(str(new_word))
 
-        print(final_words)
-        print(player_teams)
-        print(rounds_headspin)
-        print(teams_headspin)
-        print(timer_headspin)
+        print(HeadSpinPlay.final_words)
+        print(HeadSpinPlay.player_teams)
+        print(HeadSpinPlay.rounds_headspin)
+        print(HeadSpinPlay.teams_headspin)
+        print(HeadSpinPlay.timer_headspin)
 
-        headspin_score = {}
-        for team in player_teams:
+        HeadSpinPlay.headspin_score = {}
+        for team in HeadSpinPlay.player_teams:
             team_name = str(team[0] + " & " + team[1])
-            headspin_score[team_name] = 0
+            HeadSpinPlay.headspin_score[team_name] = 0
 
-        print(headspin_score)
+        print(HeadSpinPlay.headspin_score)
 
-        # for round in range(rounds_headspin):
-        #     for team in player_teams:
-        #         pass
+    def change_round(self, new_round):
+        self.ids.round_number.text = new_round
 
-    # def change_round(self, new_round):
-    #     self.ids.round_number.text = new_round
-    #
-    # def change_team(self, new_team_name):
-    #     self.ids.team_name.text = new_team_name
-    #
-    # def change_word(self, new_word):
-    #     self.ids.word_to_guess = new_word
+    def preprocessing(self):
+        first_team = list(HeadSpinPlay.headspin_score.keys())[0]
+        self.change_team(first_team)
+
+    def change_team(self, new_team_name):
+        self.ids.team_name.text = new_team_name
+
+    # def check_pressed(self):
+    #     self.change_word()
+    #     HeadSpinPlay.headspin_score[]
+
+    def change_word(self):
+        new_word = random.choice(HeadSpinPlay.final_words)
+        HeadSpinPlay.final_words.remove(new_word)
+        self.ids.word_to_guess.text = new_word
+
 
 
 class HelpUsDecidePlay(MDScreen):

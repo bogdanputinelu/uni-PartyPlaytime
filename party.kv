@@ -2483,9 +2483,9 @@ WindowManager:
         size_hint: 1, 1
         line_color: 0, 0, 0, 0
         on_release:
-            app.root.current = 'headspinPlay'
             app.root.get_screen('headspinPlay').headspin_play()
-
+            app.root.get_screen('headspinPlay').preprocessing()
+            app.root.current = 'headspinPlay'
 
 <HeadSpinSettings>:
     id: headspin_settings
@@ -2901,7 +2901,9 @@ WindowManager:
                 pos_hint: {"center_x": .75, "center_y": .28}
                 text_color: "white"
                 line_color: 0, 0, 0, 0
-                on_press: self.md_bg_color = "grey"
+                on_press:
+                    self.md_bg_color = "grey"
+                    root.change_word()
                 on_release: self.md_bg_color = 205/255, 33/255, 0/255, .9
 
             MDRectangleFlatButton:
