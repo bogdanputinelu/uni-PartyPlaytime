@@ -1200,7 +1200,7 @@ class PartyPlaytime(MDApp):
             dice.rotate_value_angle = 0
 
             dice_rolled = random.randint(1, 6)
-            if random.randint(2,4) == 3:
+            if random.randint(2, 3) == 3:
                 dice_rolled = 6
 
             dice.icon = "dice-" + str(dice_rolled)
@@ -1350,7 +1350,7 @@ class PartyPlaytime(MDApp):
 
         check = medium_states if PartyPlaytime.tictactoe_difficulty == "medium" else hard_states
         for i, j in check:
-            if state[i] == state[j] and state[i] == 1 and state[solution_for_states[(i, j)]] == 0:
+            if state[i] == state[j] and state[i] != 0 and state[solution_for_states[(i, j)]] == 0:
                 return solution_for_states[(i, j)]
 
         return -1
