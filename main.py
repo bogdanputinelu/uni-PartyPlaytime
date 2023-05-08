@@ -1354,6 +1354,7 @@ class PartyPlaytime(MDApp):
                 return solution_for_states[(i, j)]
 
         return -1
+
     def make_random_choice(self, choice_made=-1):
         screen = self.root.get_screen("tictactoe_game")
         if choice_made == -1:
@@ -1450,10 +1451,35 @@ class PartyPlaytime(MDApp):
                     if self.check_win_tictactoe():
                         PartyPlaytime.tictactoe_finish = True
             else:
-                print("joc cu player")
+                if PartyPlaytime.tictactoe_current_move == 'x':
+                    value = 'X'
+                    number = 1
+                    winner = 'x'
+                    next_move = '0'
+                else:
+                    value = '0'
+                    number = 2
+                    winner = '0'
+                    next_move = 'x'
+
+                screen.ids[button_id].button_value = value
+                screen.ids[button_id].disabled = True
+
+                button_number = int(button_id.split("_")[-1]) - 1
+
+                PartyPlaytime.tictactoe_board[button_number] = number
+
+                PartyPlaytime.tictactoe_occupied.append(button_number)
+
+                PartyPlaytime.tictactoe_winner = winner
+                PartyPlaytime.tictactoe_current_move = next_move
+                if self.check_win_tictactoe():
+                    PartyPlaytime.tictactoe_finish = True
+                elif len(PartyPlaytime.tictactoe_occupied) == 9:
+                    self.animate_message("draw")
 
     def reset_tictactoe(self):
-        tictactoe_current_move = "x"
+        PartyPlaytime.tictactoe_current_move = "x"
         screen = self.root.get_screen("tictactoe_game")
         screen.ids.bot_nickname.width = "30dp"
         screen.ids.bot_nickname.text = "BOT"
