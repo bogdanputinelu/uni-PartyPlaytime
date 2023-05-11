@@ -1145,7 +1145,8 @@ class PartyPlaytime(MDApp):
 
                 destination_number = number + offset[color_name]
                 corners_to_surpass = [current_box_number] if current_box_number in [12, 25, 38, 51] else corners_to_surpass[:-1] + [corners_to_surpass[-1] - 1]
-
+            if current_box_number == 52 and dice_rolled == 6:
+                corners_to_surpass = [5]
             if not finish:
 
                 animation = Animation(duration=0)
@@ -1200,7 +1201,7 @@ class PartyPlaytime(MDApp):
             dice.rotate_value_angle = 0
 
             dice_rolled = random.randint(1, 6)
-            if random.randint(2, 3) == 3:
+            if random.randint(2, 4) == 3:
                 dice_rolled = 6
 
             dice.icon = "dice-" + str(dice_rolled)
