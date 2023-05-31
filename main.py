@@ -223,7 +223,7 @@ class RegisterScreen(MDScreen):
                                         "round": "4",
                                         "team": "2",
                                         "words": "Kilimanjaro",
-                                        "timer": "60",
+                                        "words_per_round": "10",
                                         "players": "John, Linda, William, Andreea"
                                         }
                     settings["headspin_settings"].append(default_settings)
@@ -349,9 +349,12 @@ class HeadSpinPlay(MDScreen):
     rounds_headspin = None
     teams_headspin = None
     final_words = None
-    timer_headspin = None
+    words_per_round = None
     player_teams = None
     headspin_score = None
+    index_echipa = -1
+    words_per_team = None
+    index_round = 1
 
     def headspin_play(self):
         with open("headspin_settings.json", 'r+') as headspin_files:
@@ -362,7 +365,7 @@ class HeadSpinPlay(MDScreen):
                     HeadSpinPlay.rounds_headspin = int(setting["round"])
                     HeadSpinPlay.teams_headspin = int(setting["team"])
                     words_headspin = setting["words"].split(",")
-                    HeadSpinPlay.timer_headspin = int(setting["timer"])
+                    HeadSpinPlay.words_per_round = int(setting["words_per_round"])
                     players_headspin = setting["players"].split(",")
                     break
 
@@ -388,7 +391,7 @@ class HeadSpinPlay(MDScreen):
         print(HeadSpinPlay.player_teams)
         print(HeadSpinPlay.rounds_headspin)
         print(HeadSpinPlay.teams_headspin)
-        print(HeadSpinPlay.timer_headspin)
+        print(HeadSpinPlay.words_per_round)
 
         HeadSpinPlay.headspin_score = {}
         for team in HeadSpinPlay.player_teams:
@@ -397,25 +400,66 @@ class HeadSpinPlay(MDScreen):
 
         print(HeadSpinPlay.headspin_score)
 
-    def change_round(self, new_round):
-        self.ids.round_number.text = new_round
-
-    def preprocessing(self):
-        first_team = list(HeadSpinPlay.headspin_score.keys())[0]
-        self.change_team(first_team)
-
-    def change_team(self, new_team_name):
-        self.ids.team_name.text = new_team_name
-
-    # def check_pressed(self):
-    #     self.change_word()
-    #     HeadSpinPlay.headspin_score[]
-
-    def change_word(self):
+    def initialize(self):
+        HeadSpinPlay.index_round = 1
         new_word = random.choice(HeadSpinPlay.final_words)
         HeadSpinPlay.final_words.remove(new_word)
         self.ids.word_to_guess.text = new_word
 
+    def change_team(self):
+        self.ids.check_button.disabled = False
+        self.ids.pass_button.disabled = False
+        if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
+            HeadSpinPlay.index_echipa = 0
+            new_team_name = list(HeadSpinPlay.headspin_score.keys())[0]
+        else:
+            HeadSpinPlay.index_echipa += 1
+            new_team_name = list(HeadSpinPlay.headspin_score.keys())[int(HeadSpinPlay.index_echipa)]
+        HeadSpinPlay.words_per_team = HeadSpinPlay.words_per_round
+        print(HeadSpinPlay.index_echipa)
+        print(HeadSpinPlay.index_round)
+        self.ids.team_name.text = new_team_name
+        self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_round)
+
+    def check_pressed(self):
+        if HeadSpinPlay.words_per_team != 0:
+            self.change_word()
+            current_team = self.ids.team_name.text
+            HeadSpinPlay.headspin_score[current_team] += 1
+            print(HeadSpinPlay.headspin_score)
+        else:
+            self.ids.check_button.disabled = True
+            self.ids.pass_button.disabled = True
+
+    def change_word(self):
+        if HeadSpinPlay.words_per_team != 0:
+            new_word = random.choice(HeadSpinPlay.final_words)
+            HeadSpinPlay.final_words.remove(new_word)
+            HeadSpinPlay.words_per_team -= 1
+            self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
+            self.ids.word_to_guess.text = new_word
+            if HeadSpinPlay.words_per_team == 0:
+                self.ids.check_button.disabled = True
+                self.ids.pass_button.disabled = True
+
+    def pass_pressed(self):
+        if HeadSpinPlay.words_per_team != 0:
+            self.change_word()
+            print(HeadSpinPlay.headspin_score)
+        else:
+            self.ids.pass_button.disabled = True
+            self.ids.check_button.disabled = True
+
+    def round_change(self):
+        if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
+            if HeadSpinPlay.index_round != int(HeadSpinPlay.rounds_headspin):
+                HeadSpinPlay.index_round += 1
+                self.ids.round_number.text = str(HeadSpinPlay.index_round)
+            else:
+                self.ids.next_round_button.disabled = True
+
+    def end_next_team(self):
+        self.ids.next_round_button.disabled = True
 
 
 class HelpUsDecidePlay(MDScreen):
@@ -516,7 +560,7 @@ class PartyPlaytime(MDApp):
                     self.headspin_dialog.content_cls.ids.round_information.text = setting["round"]
                     self.headspin_dialog.content_cls.ids.team_information.text = setting["team"]
                     self.headspin_dialog.content_cls.ids.words_information.text = setting["words"]
-                    self.headspin_dialog.content_cls.ids.timer_information.text = setting["timer"]
+                    self.headspin_dialog.content_cls.ids.words_per_round_information.text = setting["words_per_round"]
                     self.headspin_dialog.content_cls.ids.players_information.text = setting["players"]
                     break
 
@@ -560,7 +604,7 @@ class PartyPlaytime(MDApp):
                     if setting["username"] == user_logged_in:
                         setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
                         setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
-                        setting["timer"] = self.headspin_dialog.content_cls.ids.timer_information.text
+                        setting["words_per_round"] = self.headspin_dialog.content_cls.ids.words_per_round_information.text
                         setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
                         setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
 
