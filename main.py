@@ -410,6 +410,7 @@ class HeadSpinPlay(MDScreen):
         self.ids.next_round_button.disabled = False
 
     def change_team(self):
+        self.ids.next_round_button.disabled = True
         new_word = random.choice(HeadSpinPlay.final_words)
         HeadSpinPlay.final_words.remove(new_word)
         self.ids.word_to_guess.text = new_word
@@ -436,6 +437,10 @@ class HeadSpinPlay(MDScreen):
             HeadSpinPlay.headspin_score[current_team] += 1
             print(HeadSpinPlay.headspin_score)
             HeadSpinPlay.words_per_team -= 1
+            self.ids.next_round_button.disabled = False
+            if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
+                    HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
+                self.ids.next_round_button.disabled = True
             self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
         elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
@@ -456,7 +461,7 @@ class HeadSpinPlay(MDScreen):
                 if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
                    HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
                     self.ids.next_round_button.disabled = True
-                    # aici clasament 
+                    # aici clasament
 
     def pass_pressed(self):
         if HeadSpinPlay.words_per_team == 1:
@@ -464,6 +469,10 @@ class HeadSpinPlay(MDScreen):
             self.ids.check_button.disabled = True
             HeadSpinPlay.words_per_team -= 1
             self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
+            self.ids.next_round_button.disabled = False
+            if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
+                    HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
+                self.ids.next_round_button.disabled = True
         elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
             print(HeadSpinPlay.headspin_score)
