@@ -387,11 +387,11 @@ class HeadSpinPlay(MDScreen):
             new_word = word.strip()
             HeadSpinPlay.final_words.append(str(new_word))
 
-        print(HeadSpinPlay.final_words)
-        print(HeadSpinPlay.player_teams)
-        print(HeadSpinPlay.rounds_headspin)
-        print(HeadSpinPlay.teams_headspin)
-        print(HeadSpinPlay.words_per_round)
+        # print(HeadSpinPlay.final_words)
+        # print(HeadSpinPlay.player_teams)
+        # print(HeadSpinPlay.rounds_headspin)
+        # print(HeadSpinPlay.teams_headspin)
+        # print(HeadSpinPlay.words_per_round)
 
         HeadSpinPlay.headspin_score = {}
         for team in HeadSpinPlay.player_teams:
@@ -399,14 +399,23 @@ class HeadSpinPlay(MDScreen):
             HeadSpinPlay.headspin_score[team_name] = 0
 
         print(HeadSpinPlay.headspin_score)
+        HeadSpinPlay.index_round = 1
 
     def initialize(self):
         HeadSpinPlay.index_round = 1
         new_word = random.choice(HeadSpinPlay.final_words)
         HeadSpinPlay.final_words.remove(new_word)
         self.ids.word_to_guess.text = new_word
+        self.ids.round_number.text = str(HeadSpinPlay.index_round)
+        self.ids.next_round_button.disabled = False
 
     def change_team(self):
+        new_word = random.choice(HeadSpinPlay.final_words)
+        HeadSpinPlay.final_words.remove(new_word)
+        self.ids.word_to_guess.text = new_word
+        if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 2 and \
+           HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
+            self.ids.next_round_button.disabled = True
         self.ids.check_button.disabled = False
         self.ids.pass_button.disabled = False
         if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
@@ -416,20 +425,23 @@ class HeadSpinPlay(MDScreen):
             HeadSpinPlay.index_echipa += 1
             new_team_name = list(HeadSpinPlay.headspin_score.keys())[int(HeadSpinPlay.index_echipa)]
         HeadSpinPlay.words_per_team = HeadSpinPlay.words_per_round
-        print(HeadSpinPlay.index_echipa)
-        print(HeadSpinPlay.index_round)
         self.ids.team_name.text = new_team_name
         self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_round)
 
     def check_pressed(self):
-        if HeadSpinPlay.words_per_team != 0:
+        if HeadSpinPlay.words_per_team == 1:
+            self.ids.pass_button.disabled = True
+            self.ids.check_button.disabled = True
+            current_team = self.ids.team_name.text
+            HeadSpinPlay.headspin_score[current_team] += 1
+            print(HeadSpinPlay.headspin_score)
+            HeadSpinPlay.words_per_team -= 1
+            self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
+        elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
             current_team = self.ids.team_name.text
             HeadSpinPlay.headspin_score[current_team] += 1
             print(HeadSpinPlay.headspin_score)
-        else:
-            self.ids.check_button.disabled = True
-            self.ids.pass_button.disabled = True
 
     def change_word(self):
         if HeadSpinPlay.words_per_team != 0:
@@ -441,14 +453,20 @@ class HeadSpinPlay(MDScreen):
             if HeadSpinPlay.words_per_team == 0:
                 self.ids.check_button.disabled = True
                 self.ids.pass_button.disabled = True
+                if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
+                   HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
+                    self.ids.next_round_button.disabled = True
+                    # aici clasament 
 
     def pass_pressed(self):
-        if HeadSpinPlay.words_per_team != 0:
-            self.change_word()
-            print(HeadSpinPlay.headspin_score)
-        else:
+        if HeadSpinPlay.words_per_team == 1:
             self.ids.pass_button.disabled = True
             self.ids.check_button.disabled = True
+            HeadSpinPlay.words_per_team -= 1
+            self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
+        elif HeadSpinPlay.words_per_team != 0:
+            self.change_word()
+            print(HeadSpinPlay.headspin_score)
 
     def round_change(self):
         if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
@@ -457,9 +475,6 @@ class HeadSpinPlay(MDScreen):
                 self.ids.round_number.text = str(HeadSpinPlay.index_round)
             else:
                 self.ids.next_round_button.disabled = True
-
-    def end_next_team(self):
-        self.ids.next_round_button.disabled = True
 
 
 class HelpUsDecidePlay(MDScreen):
