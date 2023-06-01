@@ -343,6 +343,10 @@ class HelpUsDecideRules(MDFloatLayout):
 
 
 class HeadSpinPlay(MDScreen):
+    def __init__(self, **kwargs):
+        super(HeadSpinPlay, self).__init__(**kwargs)
+        self.app = MDApp.get_running_app()
+
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
 
@@ -355,6 +359,8 @@ class HeadSpinPlay(MDScreen):
     index_echipa = -1
     words_per_team = None
     index_round = 1
+    headspin_ranking_dialog = None
+    clasament_final = []
 
     def headspin_play(self):
         with open("headspin_settings.json", 'r+') as headspin_files:
@@ -387,18 +393,11 @@ class HeadSpinPlay(MDScreen):
             new_word = word.strip()
             HeadSpinPlay.final_words.append(str(new_word))
 
-        # print(HeadSpinPlay.final_words)
-        # print(HeadSpinPlay.player_teams)
-        # print(HeadSpinPlay.rounds_headspin)
-        # print(HeadSpinPlay.teams_headspin)
-        # print(HeadSpinPlay.words_per_round)
-
         HeadSpinPlay.headspin_score = {}
         for team in HeadSpinPlay.player_teams:
             team_name = str(team[0] + " & " + team[1])
             HeadSpinPlay.headspin_score[team_name] = 0
 
-        print(HeadSpinPlay.headspin_score)
         HeadSpinPlay.index_round = 1
 
     def initialize(self):
@@ -408,6 +407,7 @@ class HeadSpinPlay(MDScreen):
         self.ids.word_to_guess.text = new_word
         self.ids.round_number.text = str(HeadSpinPlay.index_round)
         self.ids.next_round_button.disabled = False
+        HeadSpinPlay.clasament_final = []
 
     def change_team(self):
         self.ids.next_round_button.disabled = True
@@ -441,12 +441,13 @@ class HeadSpinPlay(MDScreen):
             if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
                     HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
                 self.ids.next_round_button.disabled = True
+                self.get_ranking()
+                self.end_game_headspin()
             self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
         elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
             current_team = self.ids.team_name.text
             HeadSpinPlay.headspin_score[current_team] += 1
-            print(HeadSpinPlay.headspin_score)
 
     def change_word(self):
         if HeadSpinPlay.words_per_team != 0:
@@ -461,7 +462,8 @@ class HeadSpinPlay(MDScreen):
                 if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
                    HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
                     self.ids.next_round_button.disabled = True
-                    # aici clasament
+                    self.get_ranking()
+                    self.end_game_headspin()
 
     def pass_pressed(self):
         if HeadSpinPlay.words_per_team == 1:
@@ -473,9 +475,10 @@ class HeadSpinPlay(MDScreen):
             if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
                     HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
                 self.ids.next_round_button.disabled = True
+                self.get_ranking()
+                self.end_game_headspin()
         elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
-            print(HeadSpinPlay.headspin_score)
 
     def round_change(self):
         if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
@@ -484,6 +487,71 @@ class HeadSpinPlay(MDScreen):
                 self.ids.round_number.text = str(HeadSpinPlay.index_round)
             else:
                 self.ids.next_round_button.disabled = True
+
+    def get_ranking(self):
+        ranking = sorted(HeadSpinPlay.headspin_score.items(), key=lambda x: x[1], reverse=True)
+        clasament = dict({})
+        for elem in ranking:
+            if elem[1] in clasament.keys():
+                clasament[elem[1]].append(elem[0])
+            else:
+                clasament[elem[1]] = [elem[0]]
+        HeadSpinPlay.clasament_final = sorted(clasament.items(), key=lambda x: x[0], reverse=True)
+
+    def go_home_headspin(self, *args):
+        self.headspin_ranking_dialog.dismiss()
+        self.app.root.current = 'headspin'
+
+    def end_game_headspin(self):
+        self.get_ranking()
+        if not self.headspin_ranking_dialog:
+            self.headspin_ranking_dialog = MDDialog(
+                type="custom",
+                content_cls=RankingInformationHeadspin(),
+                auto_dismiss=False,
+                buttons=[
+                    MDFlatButton(
+                        text="EXIT",
+                        font_name="fonts/BrunoAce-Regular.ttf",
+                        font_size="30sp",
+                        on_release=self.go_home_headspin,
+                        pos_hint={"center_x": .5, "center_y": .5}
+                    )
+                ]
+            )
+
+            container = MDBoxLayout(orientation='vertical',
+                                    spacing='5dp',
+                                    padding='10dp',
+                                    pos_hint={"center_x": .5, "center_y": .5},
+                                    size_hint_y=0.5
+                                    )
+            mini_container = MDFloatLayout(pos_hint={"center_x": .5, "center_y": .5})
+            sus = 400
+
+            for place, teams in enumerate(HeadSpinPlay.clasament_final, start=1):
+                points, team = teams
+                str_teams = ", ".join(team)
+
+                eticheta = MDLabel(
+                    text=f"{place}. {str_teams} - {points} points",
+                    size_hint_y=mini_container.y,
+                    y=mini_container.top + dp(sus),
+                    height=dp(100),
+                    pos_hint={"center_x": 0.5},
+                    font_name="fonts/LuckiestGuy-Regular.ttf",
+                    font_size="40sp",
+                    text_size="40sp"
+                )
+                sus -= 25
+                if place <= 3:
+                    eticheta.bold = True
+                mini_container.add_widget(eticheta)
+            container.add_widget(mini_container)
+
+            self.headspin_ranking_dialog.content_cls.add_widget(container)
+
+        self.headspin_ranking_dialog.open()
 
 
 class HelpUsDecidePlay(MDScreen):
@@ -521,6 +589,10 @@ class RankingInformation(MDFloatLayout):
 
 
 class GameInformation(MDFloatLayout):
+    pass
+
+
+class RankingInformationHeadspin(MDFloatLayout):
     pass
 
 
@@ -1076,7 +1148,6 @@ class PartyPlaytime(MDApp):
                 if PartyPlaytime.boardblitz_finish_aliens[color_name] == 4:
 
                     PartyPlaytime.number_of_players_finished += 1
-
 
                     PartyPlaytime.boardblitz_ranking[color_name] = PartyPlaytime.number_of_players_finished
 

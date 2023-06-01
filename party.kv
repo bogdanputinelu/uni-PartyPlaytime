@@ -343,6 +343,59 @@ WindowManager:
             font_name: "fonts/BrunoAce-Regular.ttf"
             font_size: "12sp"
 
+<RankingInformationHeadspin>:
+    id: ranking_box_headspin
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(60)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "350dp", "160dp"
+            source: "logos/winner.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(50)
+        pos_hint: {"center_x": .5}
+
+        MDLabel:
+            text: "RANKING"
+            adaptive_size: True
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "56sp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            bold: True
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_headspin.width * 1.1
+        color: "black"
+        y: ranking_box_headspin.top - dp(70)
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_headspin.width * 1.1
+        color: "black"
+        y: ranking_box_headspin.top - dp(500)
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(440)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "350dp", "160dp"
+            source: "logos/winner_reversed.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
 <RankingInformation>:
     id: ranking_box
     spacing: "12dp"
