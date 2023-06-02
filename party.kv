@@ -124,8 +124,8 @@ WindowManager:
             app.tictactoe_options(root.button_event, root.button_id)
 
 <BoardBlitzButton>:
-    focus_color: 1, 1, 1, .8
-    unfocus_color: 0, 0, 0, 0
+    focus_color: "#CBDDD1"
+    unfocus_color: "#457D58"
     on_enter: self.change_cursor("hand")
     on_leave: self.change_cursor("arrow")
     button_event: ""
@@ -604,6 +604,59 @@ WindowManager:
             font_name: "fonts/BrunoAce-Regular.ttf"
             font_size: "12sp"
 
+<RankingInformationHeadspin>:
+    id: ranking_box_headspin
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(60)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "350dp", "160dp"
+            source: "logos/winner.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(50)
+        pos_hint: {"center_x": .5}
+
+        MDLabel:
+            text: "RANKING"
+            adaptive_size: True
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "56sp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            bold: True
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_headspin.width * 1.1
+        color: "black"
+        y: ranking_box_headspin.top - dp(70)
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_headspin.width * 1.1
+        color: "black"
+        y: ranking_box_headspin.top - dp(500)
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_headspin.top - dp(440)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "350dp", "160dp"
+            source: "logos/winner_reversed.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
 <RankingInformation>:
     id: ranking_box
     spacing: "12dp"
@@ -790,7 +843,7 @@ WindowManager:
     MDFloatLayout:
         size_hint: 1.16, None
         height: "250dp"
-        y: account_box.top - self.height * 2 - dp(10)
+        y: account_box.top - self.height * 2 + dp(15)
         pos_hint: {"center_x": .5}
         radius: 10
 
@@ -888,18 +941,13 @@ WindowManager:
             game_text: "TicTacToe"
             game_description: "This game can be played either solo, or with another player."
 
-        MDSeparator:
-            md_bg_color: "black"
-            size_hint_x: None
-            opacity: .4
-            width: "140dp"
-            pos_hint: {"center_x": .5}
 
 <WelcomeScreen>:
     MDAnchorLayout:
         size: root.width, root.height
         anchor_x: "center"
         anchor_y: "center"
+        md_bg_color: "#437B56"
 
         Video:
             source: "logos/StartLogo.mp4"
@@ -912,7 +960,7 @@ WindowManager:
 
 <LoginScreen>:
     name: "login"
-    md_bg_color: "grey"
+    md_bg_color: "#457D58"
 
     ElevatedBox:
         id: login_box
@@ -1000,7 +1048,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Login"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 6
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -1013,7 +1062,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Register"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 7 - dp(10)
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -1023,7 +1073,7 @@ WindowManager:
 
 <RegisterScreen>:
     name: "register"
-    md_bg_color: "grey"
+    md_bg_color: "#457D58"
 
     ElevatedBox:
         id: register_box
@@ -1124,7 +1174,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Create an account"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: register_account_box.top - self.height * 9 - dp(10)
                 x: register_account_box.x + (register_account_box.width - self.width) / 2
@@ -1286,7 +1337,7 @@ WindowManager:
 
             ElevatedBox:
                 id: game_page_description
-                md_bg_color: 1, 252/255, 127/255, 1
+                md_bg_color: "#EFF2E8"
                 radius: 10
                 size_hint: .9, .35
                 pos_hint: {"center_x": .5}
@@ -1326,12 +1377,12 @@ WindowManager:
                     on_release: app.open_rules()
 
             BoardBlitzButton:
-                md_bg_color: "green"
-                unfocus_color: "green"
+                md_bg_color: "#457D58"
+                unfocus_color: "#457D58"
                 button_event: "choose_names_and_play"
                 button_name: "CHOOSE NICKNAMES AND PLAY!"
                 font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
+                focus_color: "#CBDDD1"
                 elevation: 0
                 radius: 10
                 size_hint: .9, .08
@@ -2734,9 +2785,10 @@ WindowManager:
         size_hint: 1, 1
         line_color: 0, 0, 0, 0
         on_release:
-            app.root.current = 'headspinPlay'
             app.root.get_screen('headspinPlay').headspin_play()
-
+            app.root.get_screen('headspinPlay').initialize()
+            app.root.get_screen('headspinPlay').change_team()
+            app.root.current = 'headspinPlay'
 
 <HeadSpinSettings>:
     id: headspin_settings
@@ -2835,9 +2887,9 @@ WindowManager:
             size_hint_y: .50
 
             MDTextField:
-                id: timer_information
+                id: words_per_round_information
                 mode: "rectangle"
-                hint_text: "Timer"
+                hint_text: "Words per round"
                 icon_right: "clock-outline"
                 hint_text_color_focus: 0, 0, 0, 1
                 line_color_focus: 0, 0, 0, 1
@@ -3074,6 +3126,7 @@ WindowManager:
                 x: (float.width - self.width) / 2
 
                 MDLabel:
+                    id: words_per_team_id
                     text: "00:45"
                     font_name: "fonts/BrunoAce-Regular.ttf"
                     font_size: "18sp"
@@ -3128,6 +3181,7 @@ WindowManager:
                         pos_hint: {"center_x": .7, "center_y": .6}
 
             MDRectangleFlatButton:
+                id: check_button
                 text: "CHECK"
                 font_size: "30dp"
                 bold: True
@@ -3137,11 +3191,15 @@ WindowManager:
                 font_name: "fonts/BrunoAce-Regular.ttf"
                 pos_hint: {"center_x": .25, "center_y": .28}
                 text_color: "white"
+                disabled: False
                 line_color: 0, 0, 0, 0
-                on_press: self.md_bg_color = "grey"
+                on_press:
+                    self.md_bg_color = "grey"
+                    root.check_pressed()
                 on_release: self.md_bg_color = 31/255, 80/255, 20/255, .9
 
             MDRectangleFlatButton:
+                id: pass_button
                 text: "PASS"
                 font_size: "30dp"
                 bold: True
@@ -3152,10 +3210,14 @@ WindowManager:
                 pos_hint: {"center_x": .75, "center_y": .28}
                 text_color: "white"
                 line_color: 0, 0, 0, 0
-                on_press: self.md_bg_color = "grey"
+                disabled: False
+                on_press:
+                    self.md_bg_color = "grey"
+                    root.pass_pressed()
                 on_release: self.md_bg_color = 205/255, 33/255, 0/255, .9
 
             MDRectangleFlatButton:
+                id: next_round_button
                 text: "Next Team"
                 font_size: "20dp"
                 bold: True
@@ -3166,7 +3228,11 @@ WindowManager:
                 pos_hint: {"center_x": .5, "center_y": .075}
                 text_color: "black"
                 line_color: 0, 0, 0, 0
-                on_press: self.md_bg_color = "grey"
+                disabled: False
+                on_press:
+                    self.md_bg_color = "grey"
+                    root.round_change()
+                    root.change_team()
                 on_release: self.md_bg_color = 203/255, 221/255, 209/255, 1
 
 <WordRushScreen>:
@@ -3484,3 +3550,4 @@ WindowManager:
             font_name: "fonts/LuckiestGuy-Regular.ttf"
             pos_hint: {"center_x": .5, "center_y": .5}
             on_release: app.tictactoe_go_home()
+

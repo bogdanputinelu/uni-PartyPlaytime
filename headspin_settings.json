@@ -1,19 +1,19 @@
 {
     "headspin_settings": [
         {
-            "username": "irina",
-            "round": "4",
-            "team": "3",
+            "username": "i",
+            "round": "2",
+            "team": "2",
             "words": "Kilimanjaro",
-            "timer": "60",
-            "players": "John, Linda, William, Andreea, Ion, Ion"
+            "words_per_round": "2",
+            "players": "unu, doi, trei, patru"
         },
         {
             "username": "irina1",
             "round": "4",
             "team": "2",
             "words": "Kilimanjaro",
-            "timer": "60",
+            "words_per_round": "60",
             "players": "John, Linda, William, Andreea"
         },
         {
@@ -21,16 +21,8 @@
             "round": "5",
             "team": "3",
             "words": "Kilimanjaro, Friend",
-            "timer": "50",
+            "words_per_round": "50",
             "players": "John, Linda, William, Andreea, Paul, Oscar"
-        },
-        {
-            "username": "bogdan",
-            "round": "4",
-            "team": "2",
-            "words": "Kilimanjaro",
-            "timer": "60",
-            "players": "John, Linda, William, Andreea"
         }
     ]
 }
