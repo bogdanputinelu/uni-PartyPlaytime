@@ -526,7 +526,7 @@ class HeadSpinPlay(MDScreen):
                                     size_hint_y=0.5
                                     )
             mini_container = MDFloatLayout(pos_hint={"center_x": .5, "center_y": .5})
-            sus = 400
+            sus = 450
 
             for place, teams in enumerate(HeadSpinPlay.clasament_final, start=1):
                 points, team = teams
@@ -541,9 +541,11 @@ class HeadSpinPlay(MDScreen):
                     pos_hint={"center_x": 0.5},
                     font_name="fonts/LuckiestGuy-Regular.ttf",
                 )
-                sus -= 50
+                sus -= 40
                 if place <= 3:
                     eticheta.bold = True
+                else:
+                    eticheta.bold = False
                 eticheta.font_size = "20sp"
                 eticheta.font_name = "fonts/LuckiestGuy-Regular.ttf"
                 mini_container.add_widget(eticheta)

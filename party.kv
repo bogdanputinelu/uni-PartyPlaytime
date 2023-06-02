@@ -212,7 +212,7 @@ WindowManager:
     id: game_box
     spacing: "12dp"
     size_hint_y: None
-    height: "500dp"
+    height: "455dp"
 
     MDBoxLayout:
         id: top_bar
@@ -228,7 +228,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_tictactoe_options()
 
@@ -244,6 +244,15 @@ WindowManager:
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
 
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_tictactoe_options()
+
     MDSeparator:
         pos_hint: {"center_x": .5}
         size_hint_x: None
@@ -257,7 +266,7 @@ WindowManager:
 
         MDBoxLayout:
             id: players_button_box
-            size_hint: 1.2, .12
+            size_hint: 1.2, .16
             pos_hint: {"center_x": .5, "top": 1}
             padding: "10dp"
             spacing: "10dp"
@@ -307,7 +316,7 @@ WindowManager:
                 size_hint: None, None
                 size: "250dp", "50dp"
                 font_dim: "20dp"
-                md_bg_color: "#238823"
+                md_bg_color: "#13750A"
                 unfocus_color: "#238823"
                 focus_color: 35/255, 136/255, 35/255, .8
                 button_text_color: "black"
@@ -321,7 +330,7 @@ WindowManager:
                 size_hint: None, None
                 size: "250dp", "50dp"
                 font_dim: "20dp"
-                md_bg_color: "#FFBF00"
+                md_bg_color: "#DDD642"
                 unfocus_color: "#FFBF00"
                 focus_color: 1, 191/255, 0, .8
                 button_text_color: "white"
@@ -335,7 +344,7 @@ WindowManager:
                 size_hint: None, None
                 size: "250dp", "50dp"
                 font_dim: "20dp"
-                md_bg_color: "#D2222D"
+                md_bg_color: "#B52B00"
                 unfocus_color: "#D2222D"
                 focus_color: 210/255, 34/255, 45/255, .8
                 button_text_color: "white"
@@ -351,6 +360,7 @@ WindowManager:
                 font_dim: "14dp"
                 md_bg_color: "white"
                 unfocus_color: "white"
+                focus_color: "#CBDDD1"
                 button_name: "START GAME"
                 button_event: "start_game"
                 radius: 10
@@ -359,7 +369,7 @@ WindowManager:
     id: game_box
     spacing: "12dp"
     size_hint_y: None
-    height: "500dp"
+    height: "455dp"
 
     MDBoxLayout:
         id: top_bar
@@ -375,7 +385,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_boardblitz_start()
 
@@ -391,6 +401,15 @@ WindowManager:
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
 
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_boardblitz_start()
+
     MDSeparator:
         pos_hint: {"center_x": .5}
         size_hint_x: None
@@ -404,7 +423,7 @@ WindowManager:
 
         MDBoxLayout:
             id: players_button_box
-            size_hint: 1.2, .12
+            size_hint: 1.2, .16
             pos_hint: {"center_x": .5, "top": 1}
             padding: "10dp"
             spacing: "10dp"
@@ -518,7 +537,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_tictactoe_rules()
 
@@ -534,6 +553,15 @@ WindowManager:
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
 
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_tictactoe_rules()
+
     MDSeparator:
         pos_hint: {"center_x": .5}
         size_hint_x: None
@@ -544,12 +572,32 @@ WindowManager:
     MDRelativeLayout:
         pos_hint: {"center_x": .5, "center_y": .5}
         size_hint_y: .9
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "490dp"
+        y: game_box.top - self.height - dp(20)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        halign: "center"
 
-        MDLabel:
-            text: "- The game is played on a grid that's 3 squares by 3 squares.\n\n- You are X, your friend (or the computer) is O. Players take turns putting their marks in empty squares.\n\n- The first player to get 3 of her marks in a row (up, down, across, or diagonally) is the winner.\n\n- When all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a tie."
-            bold: True
-            font_name: "fonts/BrunoAce-Regular.ttf"
-            font_size: "12sp"
+        MDScrollView:
+            id: scroll
+
+            MDList:
+                spacing: "12dp"
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    padding: "10dp"
+                    height: "380dp"
+
+                    MDLabel:
+                        text: "The game is played on a grid that's 3 squares by 3 squares.\n\nYou are X, your friend (or the computer) is O. Players take turns putting their marks in empty squares.\n\nThe first player to get 3 of her marks in a row (up, down, across, or diagonally) is the winner.\n\nWhen all 9 squares are full, the game is over. If no player has 3 marks in a row, the game ends in a tie."
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        font_size: "14sp"
+                        halign: "center"
+                        valign: "center"
+                        pos_hint: {"center_x": .5, "center_y": .5}
 
 <GameRulesInformation>:
     id: game_box
@@ -571,7 +619,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_game_rules()
 
@@ -587,6 +635,15 @@ WindowManager:
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
 
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_game_rules()
+
     MDSeparator:
         pos_hint: {"center_x": .5}
         size_hint_x: None
@@ -597,12 +654,32 @@ WindowManager:
     MDRelativeLayout:
         pos_hint: {"center_x": .5, "center_y": .5}
         size_hint_y: .9
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "490dp"
+        y: game_box.top - self.height - dp(20)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        halign: "center"
 
-        MDLabel:
-            text: "- Players take turns in a clockwise order; highest throw of the die starts.\n\n- Each throw, the player decides which piece to move. A piece simply moves in a clockwise direction around the track given by the number thrown. If no piece can legally move according to the number thrown, play passes to the next player.\n\n- A throw of 6 gives another turn.\n\n- A player must throw a 6 to move a piece from the starting circle onto the first square on the track. The piece moves 6 squares around the circuit beginning with the appropriately coloured start square (and the player then has another turn).\n\n- If a piece lands on a piece of a different colour, the piece jumped upon is returned to its starting circle.\n\n- If a piece lands upon a piece of the same colour, this forms a block. This block cannot be landed on by any opposing piece."
-            bold: True
-            font_name: "fonts/BrunoAce-Regular.ttf"
-            font_size: "12sp"
+        MDScrollView:
+            id: scroll
+
+            MDList:
+                spacing: "12dp"
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    padding: "10dp"
+                    height: "380dp"
+
+                    MDLabel:
+                        text: "\nPlayers take turns in a clockwise order; highest throw of the die starts.\n\nEach throw, the player decides which piece to move. A piece simply moves in a clockwise direction around the track given by the number thrown. If no piece can legally move according to the number thrown, play passes to the next player.\n\nA throw of 6 gives another turn.\n\nA player must throw a 6 to move a piece from the starting circle onto the first square on the track. The piece moves 6 squares around the circuit beginning with the appropriately coloured start square (and the player then has another turn).\n\nIf a piece lands on a piece of a different colour, the piece jumped upon is returned to its starting circle.\n\nIf a piece lands upon a piece of the same colour, this forms a block. This block cannot be landed on by any opposing piece."
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        font_size: "14sp"
+                        halign: "center"
+                        valign: "center"
+                        pos_hint: {"center_x": .5, "center_y": .5}
 
 <RankingInformationHeadspin>:
     id: ranking_box_headspin
@@ -612,17 +689,7 @@ WindowManager:
 
     MDFloatLayout:
         size_hint_y: 0.1
-        y: ranking_box_headspin.top - dp(60)
-        pos_hint: {"center_x": .5}
-        FitImage:
-            size_hint: None, None
-            size: "350dp", "160dp"
-            source: "logos/winner.png"
-            pos_hint: {"center_x": .5, "center_y":.5}
-
-    MDFloatLayout:
-        size_hint_y: 0.1
-        y: ranking_box_headspin.top - dp(50)
+        y: ranking_box_headspin.top - dp(20)
         pos_hint: {"center_x": .5}
 
         MDLabel:
@@ -638,7 +705,7 @@ WindowManager:
         size_hint_x: None
         width: ranking_box_headspin.width * 1.1
         color: "black"
-        y: ranking_box_headspin.top - dp(70)
+        y: ranking_box_headspin.top - dp(30)
 
     MDSeparator:
         pos_hint: {"center_x": .5}
@@ -651,10 +718,11 @@ WindowManager:
         size_hint_y: 0.1
         y: ranking_box_headspin.top - dp(440)
         pos_hint: {"center_x": .5}
+
         FitImage:
             size_hint: None, None
-            size: "350dp", "160dp"
-            source: "logos/winner_reversed.png"
+            size: "250dp", "250dp"
+            source: "logos/bunny.png"
             pos_hint: {"center_x": .5, "center_y":.5}
 
 <RankingInformation>:
@@ -746,10 +814,10 @@ WindowManager:
             ScaleLabel:
                 text: "USER INFORMATION"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                font_size: "16sp"
+                font_size: "18sp"
                 bold: True
                 adaptive_size: True
-                pos_hint: {"center_x": .45, "center_y": .5}
+                pos_hint: {"center_x": .5, "center_y": .5}
 
         MDRelativeLayout:
             size_hint: None, None
@@ -758,7 +826,7 @@ WindowManager:
             MDIconButton:
                 icon: "check-bold"
                 ripple_alpha: 0
-                pos_hint: {"center_x": .3, "center_y": .5}
+                pos_hint: {"center_x": .5, "center_y": .5}
                 icon_color: "black"
                 line_color: 0, 0, 0, 0
                 on_release: app.save_changes_made()
@@ -843,7 +911,7 @@ WindowManager:
     MDFloatLayout:
         size_hint: 1.16, None
         height: "250dp"
-        y: account_box.top - self.height * 2 + dp(15)
+        y: account_box.top - self.height * 2 + dp(30)
         pos_hint: {"center_x": .5}
         radius: 10
 
@@ -873,7 +941,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_game_information()
 
@@ -888,6 +956,15 @@ WindowManager:
                 bold: True
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_game_information()
 
     MDSeparator:
         pos_hint: {"center_x": .5}
@@ -1049,7 +1126,8 @@ WindowManager:
                 text: "Login"
                 font_name: "fonts/BrunoAce-Regular.ttf"
                 text_color: "white"
-                md_bg_color: "#457D58"
+                md_bg_color: "#1e1e1e"
+                bold: True
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 6
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -1063,7 +1141,8 @@ WindowManager:
                 text: "Register"
                 font_name: "fonts/BrunoAce-Regular.ttf"
                 text_color: "white"
-                md_bg_color: "#457D58"
+                bold: True
+                md_bg_color: "#1e1e1e"
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 7 - dp(10)
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -1175,7 +1254,7 @@ WindowManager:
                 text: "Create an account"
                 font_name: "fonts/BrunoAce-Regular.ttf"
                 text_color: "white"
-                md_bg_color: "#457D58"
+                md_bg_color: "#1e1e1e"
                 line_color: 0, 0, 0, 1
                 y: register_account_box.top - self.height * 9 - dp(10)
                 x: register_account_box.x + (register_account_box.width - self.width) / 2
@@ -1337,7 +1416,7 @@ WindowManager:
 
             ElevatedBox:
                 id: game_page_description
-                md_bg_color: "#EFF2E8"
+                md_bg_color: "#F1F4CC"
                 radius: 10
                 size_hint: .9, .35
                 pos_hint: {"center_x": .5}
@@ -1440,12 +1519,14 @@ WindowManager:
 
     MDBoxLayout:
         orientation: "vertical"
+        md_bg_color: "white"
 
         MDTopAppBar:
             md_bg_color: "white"
             specific_text_color: "black"
             elevation: 0
             left_action_items: [["window-close", lambda x: app.exit_boardblitz_game()]]
+            right_action_items: [["window-close", lambda x: app.exit_boardblitz_game()]]
 
         MDSeparator:
             width: "80dp"
@@ -1453,7 +1534,7 @@ WindowManager:
 
         MDRelativeLayout:
             id: game_page_space
-            md_bg_color: 0, 0, 0, .1
+            md_bg_color: 0, 0, 0, 0
 
             MDRelativeLayout:
                 id: boardblitz_table
@@ -2668,7 +2749,7 @@ WindowManager:
 
             ElevatedBox:
                 id: game_page_description
-                md_bg_color: 1, 252/255, 127/255, 1
+                md_bg_color: "#F1F4CC"
                 radius: 10
                 size_hint: .9, .25
                 pos_hint: {"center_x": .5}
@@ -2701,8 +2782,8 @@ WindowManager:
 
             HeadSpinButtonSettings:
                 id: settings_button
-                md_bg_color: 0, 0, 0, .4
-                unfocus_color: 0, 0, 0, .4
+                md_bg_color: "#BBBBBB"
+                unfocus_color: "#BBBBBB"
                 button_event: "open_headspin_settings"
                 button_name: "SETTINGS"
                 font_dim: "16dp"
@@ -2714,12 +2795,12 @@ WindowManager:
                 y: game_page_description.top - game_page_description.height - self.height - dp(10)
 
             HeadSpinButtonPlay:
-                md_bg_color: "green"
-                unfocus_color: "green"
+                md_bg_color: "#457D58"
+                unfocus_color: "#457D58"
                 button_event: "headspinPlay"
                 button_name: "PLAY!"
                 font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
+                focus_color: "#CBDDD1"
                 elevation: 0
                 radius: 10
                 size_hint: .9, .08
@@ -2832,7 +2913,7 @@ WindowManager:
 
             MDIconButton:
                 icon: "check-bold"
-                pos_hint: {"center_x": .6, "center_y": .5}
+                pos_hint: {"center_x": .5, "center_y": .5}
                 icon_color: "black"
                 font_size: "20dp"
                 text_color: "black"
@@ -2890,7 +2971,6 @@ WindowManager:
                 id: words_per_round_information
                 mode: "rectangle"
                 hint_text: "Words per round"
-                icon_right: "clock-outline"
                 hint_text_color_focus: 0, 0, 0, 1
                 line_color_focus: 0, 0, 0, 1
                 text_color_focus: 0, 0, 0, 1
@@ -2960,7 +3040,7 @@ WindowManager:
             size: top_bar.height, top_bar.height
 
             MDIconButton:
-                icon: "window-close"
+                icon: "close-thick"
                 pos_hint: {"center_y": .5, "center_x": .5}
                 on_release: app.exit_headspin_rules()
 
@@ -2975,6 +3055,15 @@ WindowManager:
                 bold: True
                 adaptive_size: True
                 pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_headspin_rules()
 
     MDSeparator:
         pos_hint: {"center_x": .5}
@@ -3018,7 +3107,7 @@ WindowManager:
                     height: "380dp"
 
                     MDLabel:
-                        text: "Collect as many points as possible by guessing who is on the card using only your partner clues. At each stage of the game, one player from each team will stay behind the device, without seeing the card displayed on the screen. Each player will have one minute to guess as many cards as possible. The other player will yell out clues for the first player. The first player will try to guess who is on their card until they either guess the correct answer or they decide to pass. If the player guesses correctly they have a point. If they pass, the first card is discarded and another card will be displayed on the screen. The player continues to guess cards until time is up. Repeat until the rounds have run out. After that, each team counts their cards and the team with the most cards wins."
+                        text: "Collect as many points as possible by guessing who is on the card using only your partner clues. At each stage of the game, one player from each team will stay behind the device, without seeing the card displayed on the screen. Each player will have n cards to guess. The other player will yell out clues for the first player. The first player will try to guess who is on their card until they either guess the correct answer or they decide to pass. If the player guesses correctly they have a point. If they pass, the first card is discarded and another card will be displayed on the screen. The player continues to guess cards until there are no more. Repeat until the rounds have run out. After that, each team counts their cards and the team with the most cards wins."
                         font_size: "14sp"
                         font_name: "fonts/BrunoAce-Regular.ttf"
                         halign: "center"
@@ -3032,6 +3121,7 @@ WindowManager:
 
     MDBoxLayout:
         orientation: "vertical"
+        md_bg_color: "white"
 
         MDTopAppBar:
             id: top_bar
@@ -3039,6 +3129,7 @@ WindowManager:
             specific_text_color: "black"
             elevation: 0
             left_action_items: [["window-close", lambda x: app.exit_headspin_game()]]
+            right_action_items: [["window-close", lambda x: app.exit_headspin_game()]]
 
         MDSeparator:
             width: "80dp"
@@ -3064,9 +3155,11 @@ WindowManager:
     MDBoxLayout:
         id: all
         size_hint_y: .920
+        md_bg_color: "white"
 
         MDFloatLayout:
             id: float
+            md_bg_color: "white"
 
             ElevatedBox:
                 id: game_card_box
@@ -3274,7 +3367,7 @@ WindowManager:
 
             ElevatedBox:
                 id: game_page_description
-                md_bg_color: 1, 252/255, 127/255, 1
+                md_bg_color: "#F1F4CC"
                 radius: 10
                 size_hint: .9, .35
                 pos_hint: {"center_x": .5}
@@ -3314,12 +3407,12 @@ WindowManager:
                     on_release: app.open_tictactoe_rules()
 
             TicTacToeButton:
-                md_bg_color: "green"
-                unfocus_color: "green"
+                md_bg_color: "#457D58"
+                unfocus_color: "#457D58"
                 button_event: "choose_options"
                 button_name: "CHOOSE OPTIONS AND PLAY!"
                 font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
+                focus_color: "#CBDDD1"
                 elevation: 0
                 radius: 10
                 size_hint: .9, .08
@@ -3339,6 +3432,7 @@ WindowManager:
                     unfocus_color: 1, 1, 1, .8
                     button_name: "VERSUS BOT"
                     button_event: "versus_bot"
+                    focus_color: "#CBDDD1"
                     radius: 10
 
                 TicTacToeButton:
@@ -3346,6 +3440,7 @@ WindowManager:
                     button_id: "versus_player"
                     md_bg_color: "white"
                     unfocus_color: "white"
+                    focus_color: "#CBDDD1"
                     button_name: "VERSUS PLAYER"
                     button_event: "versus_player"
                     radius: 10
@@ -3374,6 +3469,7 @@ WindowManager:
             specific_text_color: "black"
             elevation: 0
             left_action_items: [["window-close", lambda x: app.exit_tictactoe_game()]]
+            right_action_items: [["window-close", lambda x: app.exit_tictactoe_game()]]
 
         MDSeparator:
             width: "80dp"
@@ -3505,16 +3601,29 @@ WindowManager:
                 adaptive_size: True
                 pos_hint: {"right": .8, "center_y": .5}
 
+#        MDFloatLayout:
+#        size_hint: None, None
+#        size: 0, 0
+#
+#        MDLabel:
+#            text: "Headspin"
+#            font_name: "fonts/BrunoAce-Regular.ttf"
+#            font_size: "22sp"
+#            bold: True
+#            adaptive_size: True
+#            y: (headspin.top - self.height * 1.7)
+#            x: (headspin.width - self.width) / 2
+
     MDFloatLayout:
         size_hint: None, None
         size: 0, 0
         MDLabel:
             text: "TicTacToe"
-            font_name: "fonts/LuckiestGuy-Regular.ttf"
-            font_size: "42sp"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
             bold: True
             adaptive_size: True
-            y: (tictactoe_game.top - self.height * 1.4)
+            y: (tictactoe_game.top - self.height * 1.7)
             x: (tictactoe_game.width - self.width) / 2
 
     MDFloatLayout:
@@ -3535,9 +3644,9 @@ WindowManager:
 
     MDFloatLayout:
         id: ending_home_box
-        md_bg_color: "red"
+        md_bg_color: "#B52B00"
         size_hint: None,None
-        size: "250dp", "100dp"
+        size: "180dp", "70dp"
         radius: 10
         pos_hint: {"center_x": .5, "center_y": .1}
         opacity: 0
