@@ -123,17 +123,7 @@ class HeadSpinButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior
         Window.set_system_cursor(cursor_name)
 
 
-class HelpUsDecideButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
-    def change_cursor(self, cursor_name):
-        Window.set_system_cursor(cursor_name)
-
-
 class HeadSpinButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
-    def change_cursor(self, cursor_name):
-        Window.set_system_cursor(cursor_name)
-
-
-class HelpUsDecideButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
@@ -250,18 +240,6 @@ class RegisterScreen(MDScreen):
                     json.dump(settings, headspin_settings_default_file, indent=4)
                     screen_manager.current = 'login'
 
-                with open("helpusdecide_settings.json", 'r+') as helpusdecide_settings_default_file:
-                    settings = json.load(helpusdecide_settings_default_file)
-
-                    default_settings = {"username": self.ids.username_register.text,
-                                        "options": "Option 1, Option 2",
-                                        "players": "John, Linda, William, Andreea"
-                                        }
-                    settings["helpusdecide_settings"].append(default_settings)
-                    helpusdecide_settings_default_file.seek(0)
-                    json.dump(settings, helpusdecide_settings_default_file, indent=4)
-                    screen_manager.current = 'login'
-
 
 class LoginScreen(MDScreen):
     def switch_password_mode(self):
@@ -353,28 +331,13 @@ class HeadSpinSettings(MDFloatLayout):
     pass
 
 
-class HelpUsDecideSettings(MDFloatLayout):
-    pass
-
-
 class HeadSpinRules(MDFloatLayout):
-    pass
-
-
-class HelpUsDecideRules(MDFloatLayout):
     pass
 
 
 class HeadSpinPlay(MDScreen):
     def exit_game(self, screen_manager):
         screen_manager.current = "headspin"
-
-    # rounds_headspin = 2
-    # teams_headspin = 2
-    # words_headspin = ["Kilimanjaro"]
-    # timer_headspin = 60
-    # players_headspin = 4
-    # headspin_score = {}
 
     def headspin_play(self):
         with open("headspin_settings.json", 'r+') as headspin_files:
@@ -420,24 +383,6 @@ class HeadSpinPlay(MDScreen):
 
         print(headspin_score)
 
-        # for round in range(rounds_headspin):
-        #     for team in player_teams:
-        #         pass
-
-    # def change_round(self, new_round):
-    #     self.ids.round_number.text = new_round
-    #
-    # def change_team(self, new_team_name):
-    #     self.ids.team_name.text = new_team_name
-    #
-    # def change_word(self, new_word):
-    #     self.ids.word_to_guess = new_word
-
-
-class HelpUsDecidePlay(MDScreen):
-    def exit_game(self, screen_manager):
-        screen_manager.current = "helpusdecide"
-
 
 class WordRushScreen(MDScreen):
     pass
@@ -447,15 +392,6 @@ class TicTacToeScreen(MDScreen):
     def go_back(self, screen_manager):
         screen_manager.transition.direction = 'right'
         screen_manager.current = "home"
-
-
-class HelpUsDecideScreen(MDScreen):
-    def go_back(self, screen_manager):
-        screen_manager.transition.direction = 'right'
-        screen_manager.current = "home"
-
-    def play_game(self, screen_manager):
-        screen_manager.current = "helpusdecidePlay"
 
 
 class GameRulesInformation(MDFloatLayout):
@@ -481,9 +417,7 @@ class GameInformation(MDFloatLayout):
 class PartyPlaytime(MDApp):
     account_dialog = None
     headspin_dialog = None
-    helpusdecide_dialog = None
     headspin_rules_dialog = None
-    helpusdecide_rules_dialog = None
     information_dialog = None
     boardblitz_rules = None
     boardblitz_start = None
@@ -497,7 +431,6 @@ class PartyPlaytime(MDApp):
     boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
     boardblitz_ranking_dialog = None
     headspin_exit_game = None
-    helpusdecide_exit_game = None
     tictactoe_rules = None
     tictactoe_choose_options = None
     player_button_selected = "players_button_2"
@@ -561,29 +494,8 @@ class PartyPlaytime(MDApp):
 
         self.headspin_dialog.open()
 
-    def helpusdecide_settings(self):
-        if not self.helpusdecide_dialog:
-            self.helpusdecide_dialog = MDDialog(
-                type="custom",
-                content_cls=HelpUsDecideSettings(),
-            )
-
-        with open("helpusdecide_settings.json", 'r+') as helpusdecide_files:
-            settings = json.load(helpusdecide_files)
-
-            for setting in settings["helpusdecide_settings"]:
-                if setting["username"] == user_logged_in:
-                    self.helpusdecide_dialog.content_cls.ids.options_information.text = setting["options"]
-                    self.helpusdecide_dialog.content_cls.ids.players_information.text = setting["players"]
-                    break
-
-        self.helpusdecide_dialog.open()
-
     def headspin_settings_exit(self):
         self.headspin_dialog.dismiss()
-
-    def helpusdecide_settings_exit(self):
-        self.helpusdecide_dialog.dismiss()
 
     def headspin_save_settings(self):
         nicknames = self.headspin_dialog.content_cls.ids.players_information.text.split(',')
@@ -609,21 +521,6 @@ class PartyPlaytime(MDApp):
                         self.headspin_dialog.dismiss()
                         return
 
-    def helpusdecide_save_settings(self):
-        with open("helpusdecide_settings.json", 'r+') as helpusdecide_settings:
-            settings = json.load(helpusdecide_settings)
-
-            for setting in settings["helpusdecide_settings"]:
-                if setting["username"] == user_logged_in:
-                    setting["options"] = self.helpusdecide_dialog.content_cls.ids.options_information.text
-                    setting["players"] = self.helpusdecide_dialog.content_cls.ids.players_information.text
-
-                    helpusdecide_settings.seek(0)
-                    json.dump(settings, helpusdecide_settings, indent=4)
-                    helpusdecide_settings.truncate()
-                    self.helpusdecide_dialog.dismiss()
-                    return
-
     def headspin_rules(self):
         if not self.headspin_rules_dialog:
             self.headspin_rules_dialog = MDDialog(
@@ -632,19 +529,8 @@ class PartyPlaytime(MDApp):
             )
         self.headspin_rules_dialog.open()
 
-    def helpusdecide_rules(self):
-        if not self.helpusdecide_rules_dialog:
-            self.helpusdecide_rules_dialog = MDDialog(
-                type='custom',
-                content_cls=HelpUsDecideRules()
-            )
-        self.helpusdecide_rules_dialog.open()
-
     def exit_headspin_rules(self):
         self.headspin_rules_dialog.dismiss()
-
-    def exit_helpusdecide_rules(self):
-        self.helpusdecide_rules_dialog.dismiss()
 
     def exit_headspin_game(self):
         if not self.headspin_exit_game:
@@ -664,37 +550,12 @@ class PartyPlaytime(MDApp):
 
         self.headspin_exit_game.open()
 
-    def exit_helpusdecide_game(self):
-        if not self.helpusdecide_exit_game:
-            self.helpusdecide_exit_game = MDDialog(
-                title="Do you want to leave this poll?",
-                buttons=[
-                    MDFlatButton(
-                        text="NO",
-                        on_release=self.dismiss_helpusdecide_game
-                    ),
-                    MDFlatButton(
-                        text="YES",
-                        on_release=self.exit_current_helpusdecide_game
-                    ),
-                ]
-            )
-
-        self.helpusdecide_exit_game.open()
-
     def dismiss_headspin_game(self, *args):
         self.headspin_exit_game.dismiss()
-
-    def dismiss_helpusdecide_game(self, *args):
-        self.helpusdecide_exit_game.dismiss()
 
     def exit_current_headspin_game(self, *args):
         self.headspin_exit_game.dismiss()
         self.root.current = 'headspin'
-
-    def exit_current_helpusdecide_game(self, *args):
-        self.helpusdecide_exit_game.dismiss()
-        self.root.current = 'helpusdecide'
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()
