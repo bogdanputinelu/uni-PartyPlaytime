@@ -6,10 +6,8 @@ WindowManager:
     BoardBlitzScreen:
     HeadSpinScreen:
     HeadSpinPlay:
-    HelpUsDecidePlay:
     WordRushScreen:
     TicTacToeScreen:
-    HelpUsDecideScreen:
     BoardBlitzGame:
 
 <Dice>:
@@ -63,8 +61,8 @@ WindowManager:
             root.dispatch("on_release", app.root, root.next_screen)
 
 <BoardBlitzButton>:
-    focus_color: 1, 1, 1, .8
-    unfocus_color: 0, 0, 0, 0
+    focus_color: "#CBDDD1"
+    unfocus_color: "#457D58"
     on_enter: self.change_cursor("hand")
     on_leave: self.change_cursor("arrow")
     button_event: ""
@@ -582,7 +580,7 @@ WindowManager:
     MDFloatLayout:
         size_hint: 1.16, None
         height: "250dp"
-        y: account_box.top - self.height * 2 - dp(10)
+        y: account_box.top - self.height * 2 + dp(15)
         pos_hint: {"center_x": .5}
         radius: 10
 
@@ -680,22 +678,13 @@ WindowManager:
             game_text: "TicTacToe"
             game_description: "This game can be played either solo, or with another player."
 
-        MDSeparator:
-            md_bg_color: "black"
-            size_hint_x: None
-            opacity: .4
-            width: "140dp"
-            pos_hint: {"center_x": .5}
-
-        GameInformationCard:
-            game_text: "HelpUsDecide"
-            game_description: "This game requires at least 2 players."
 
 <WelcomeScreen>:
     MDAnchorLayout:
         size: root.width, root.height
         anchor_x: "center"
         anchor_y: "center"
+        md_bg_color: "#437B56"
 
         Video:
             source: "logos/StartLogo.mp4"
@@ -708,7 +697,7 @@ WindowManager:
 
 <LoginScreen>:
     name: "login"
-    md_bg_color: "grey"
+    md_bg_color: "#457D58"
 
     ElevatedBox:
         id: login_box
@@ -796,7 +785,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Login"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 6
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -809,7 +799,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Register"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: login_account_box.top - self.height * 7 - dp(10)
                 x: login_account_box.x + (login_account_box.width - self.width) / 2
@@ -819,7 +810,7 @@ WindowManager:
 
 <RegisterScreen>:
     name: "register"
-    md_bg_color: "grey"
+    md_bg_color: "#457D58"
 
     ElevatedBox:
         id: register_box
@@ -920,7 +911,8 @@ WindowManager:
                 width: root.width * 0.6
                 text: "Create an account"
                 font_name: "fonts/BrunoAce-Regular.ttf"
-                text_color: "black"
+                text_color: "white"
+                md_bg_color: "#457D58"
                 line_color: 0, 0, 0, 1
                 y: register_account_box.top - self.height * 9 - dp(10)
                 x: register_account_box.x + (register_account_box.width - self.width) / 2
@@ -1041,11 +1033,6 @@ WindowManager:
                     next_screen: "tictactoe"
                     game_description: "Challenge your friends to a 1v1 battle!"
 
-                GameCard:
-                    source: "logos/Help_Us_Decide_-_Logo.png"
-                    game_name: "HelpUsDecide"
-                    next_screen: "helpusdecide"
-                    game_description: "Need some help making decisions?"
     MDFloatLayout:
         size_hint: None, None
         size: 0, 0
@@ -1087,7 +1074,7 @@ WindowManager:
 
             ElevatedBox:
                 id: game_page_description
-                md_bg_color: 1, 252/255, 127/255, 1
+                md_bg_color: "#EFF2E8"
                 radius: 10
                 size_hint: .9, .35
                 pos_hint: {"center_x": .5}
@@ -1127,12 +1114,12 @@ WindowManager:
                     on_release: app.open_rules()
 
             BoardBlitzButton:
-                md_bg_color: "green"
-                unfocus_color: "green"
+                md_bg_color: "#457D58"
+                unfocus_color: "#457D58"
                 button_event: "choose_names_and_play"
                 button_name: "CHOOSE NICKNAMES AND PLAY!"
                 font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
+                focus_color: "#CBDDD1"
                 elevation: 0
                 radius: 10
                 size_hint: .9, .08
@@ -3005,379 +2992,3 @@ WindowManager:
         on_release: app.root.current = 'home'
         md_bg_color: "white"
         pos_hint: {"center_y": .5, "center_x": .5}
-
-<HelpUsDecideScreen>:
-    name: "helpusdecide"
-    md_bg_color: "white"
-    id: helpusdecide
-
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MDTopAppBar:
-            md_bg_color: root.md_bg_color
-            specific_text_color: "black"
-            elevation: 0
-            right_action_items: [["text-box-outline", lambda x: app.helpusdecide_rules()]]
-            left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
-
-        MDRelativeLayout:
-
-            MDBoxLayout:
-                id: game_picture
-                size_hint: .8, .4
-                radius: 10
-                pos_hint: {"center_x": .5, "top": .95}
-
-                FitImage:
-                    source: "logos/Help_Us_Decide_-_Logo.png"
-                    radius: 10
-
-            ElevatedBox:
-                id: game_page_description
-                md_bg_color: 1, 252/255, 127/255, 1
-                radius: 10
-                size_hint: .9, .30
-                pos_hint: {"center_x": .5}
-                y: game_picture.top - game_picture.height - self.height - dp(10)
-                elevation: 4
-                shadow_softness: 2
-                shadow_offset: 0, 1
-
-                MDLabel:
-                    id: how_to_play
-                    text: "How to make a Poll:"
-                    size_hint: None, None
-                    size: "280dp", "50dp"
-                    bold: True
-                    font_name: "fonts/BrunoAce-Regular.ttf"
-                    font_size: "22sp"
-                    x: game_page_description.x + dp(12)
-                    y: game_page_description.top - self.height - dp(12)
-
-                MDLabel:
-                    id: game_rules
-                    text: "- Check out the poll settings and instructions \n\n- Change the names of the participants and the options \n\n- Press 'Make a poll!' and start voting!"
-                    size_hint: None, None
-                    size: "320dp", "140dp"
-                    bold: True
-                    font_name: "fonts/BrunoAce-Regular.ttf"
-                    font_size: "14sp"
-                    x: game_page_description.x + dp(15)
-                    y: how_to_play.top - how_to_play.height - self.height
-
-            HelpUsDecideButtonSettings:
-                id: settings_button
-                md_bg_color: 0, 0, 0, .4
-                unfocus_color: 0, 0, 0, .4
-                button_event: "open_headspin_settings"
-                button_name: "SETTINGS"
-                font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
-                elevation: 0
-                radius: 10
-                size_hint: .5, .08
-                pos_hint: {"center_x": .5}
-                y: game_page_description.top - game_page_description.height - self.height - dp(10)
-
-            HelpUsDecideButtonPlay:
-                md_bg_color: "green"
-                unfocus_color: "green"
-                button_event: "helpusdecidePlay"
-                button_name: "MAKE A POLL!"
-                font_dim: "16dp"
-                focus_color: 0, 0, 0, .2
-                elevation: 0
-                radius: 10
-                size_hint: .9, .08
-                pos_hint: {"center_x": .5}
-                y: game_page_description.top - game_page_description.height - settings_button.height - self.height - dp(20)
-
-    MDFloatLayout:
-        size_hint: None, None
-        size: 0, 0
-        MDLabel:
-            text: "Help Us Decide"
-            font_name: "fonts/BrunoAce-Regular.ttf"
-            font_size: "22sp"
-            bold: True
-            adaptive_size: True
-            y: (helpusdecide.top - self.height * 1.7)
-            x: (helpusdecide.width - self.width) / 2
-
-<HelpUsDecideButtonSettings>:
-    focus_color: 1, 1, 1, .8
-    unfocus_color: 0, 0, 0, 0
-    on_enter: self.change_cursor("hand")
-    on_leave: self.change_cursor("arrow")
-    button_event: ""
-    button_name: ""
-    font_dim: "12dp"
-    button_id: ""
-    elevation: 4
-    shadow_softness: 2
-    shadow_offset: 0, 1
-
-    MDRectangleFlatButton:
-        text: root.button_name
-        font_name: "fonts/BrunoAce-Regular.ttf"
-        text_color: "black"
-        font_size: root.font_dim
-        bold: True
-        size_hint: 1, 1
-        line_color: 0, 0, 0, 0
-        on_release:
-            app.helpusdecide_settings()
-
-<HelpUsDecideSettings>:
-    id: helpusdecide_settings
-    spacing: "12dp"
-    size_hint_y: None
-    height: "500dp"
-
-    MDBoxLayout:
-        id: top_bar
-        size_hint: 1.16, None
-        height: "60dp"
-        y: helpusdecide_settings.top - dp(10)
-        pos_hint: {"center_x": .5}
-        radius: 10
-        spacing: "10dp"
-
-        MDRelativeLayout:
-            size_hint: None, None
-            size: top_bar.height, top_bar.height
-
-            MDIconButton:
-                icon: "close-thick"
-                pos_hint: {"center_y": .5, "center_x": .5}
-                on_release: app.helpusdecide_settings_exit()
-
-        MDRelativeLayout:
-            size_hint: None, None
-            size: top_bar.width / 2 + dp(36), top_bar.height
-
-            ScaleLabel:
-                text: "POLL SETTINGS"
-                font_name: "fonts/BrunoAce-Regular.ttf"
-                font_size: "18sp"
-                bold: True
-                adaptive_size: True
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-        MDRelativeLayout:
-            size_hint: None, None
-            size: top_bar.height, top_bar.height
-
-            MDIconButton:
-                icon: "check-bold"
-                pos_hint: {"center_x": .6, "center_y": .5}
-                icon_color: "black"
-                font_size: "20dp"
-                text_color: "black"
-                line_color: 0, 0, 0, 0
-                on_release: app.helpusdecide_save_settings()
-
-    MDSeparator:
-        pos_hint: {"center_x": .5}
-        size_hint_x: None
-        width: helpusdecide_settings.width * 1.1
-        color: "black"
-        y: helpusdecide_settings.top - dp(10)
-
-    MDBoxLayout:
-        orientation: "vertical"
-        size_hint: 1.16, None
-        height: "250dp"
-        y: helpusdecide_settings.top - self.height - dp(20)
-        pos_hint: {"center_x": .5}
-        radius: 10
-
-        MDFloatLayout:
-            id: details_box
-            size_hint_y: .25
-
-            MDTextField:
-                id: options_information
-                mode: "rectangle"
-                hint_text: "Options"
-                hint_text_color_focus: 0, 0, 0, 1
-                line_color_focus: 0, 0, 0, 1
-                text_color_focus: 0, 0, 0, 1
-                size_hint_x: None
-                width: "326dp"
-                y: details_box.top - self.height * 2 - dp(4)
-                x: details_box.x + (details_box.width - self.width) / 2
-
-        MDFloatLayout:
-            id: players_box
-            size_hint_y: .25
-
-            MDTextField:
-                id: players_information
-                mode: "rectangle"
-                hint_text: "Players"
-                hint_text_color_focus: 0, 0, 0, 1
-                line_color_focus: 0, 0, 0, 1
-                text_color_focus: 0, 0, 0, 1
-                size_hint_x: None
-                width: "326dp"
-                y: players_box.top - self.height
-                x: players_box.x + (players_box.width - self.width) / 2
-
-    MDFloatLayout:
-        size_hint: 1.16, None
-        height: "250dp"
-        y: helpusdecide_settings.top - self.height - dp(10)
-        pos_hint: {"center_x": .5, "center_y": .3}
-        radius: 10
-
-        FitImage:
-            size_hint: None, None
-            size: "220dp", "160dp"
-            source: "logos/account_information_logo.png"
-            pos_hint: {"center_x": .5, "center_y":.5}
-
-<HelpUsDecideButtonPlay>:
-    focus_color: 1, 1, 1, .8
-    unfocus_color: 0, 0, 0, 0
-    on_enter: self.change_cursor("hand")
-    on_leave: self.change_cursor("arrow")
-    button_event: ""
-    button_name: ""
-    font_dim: "12dp"
-    button_id: ""
-    elevation: 4
-    shadow_softness: 2
-    shadow_offset: 0, 1
-
-    MDRectangleFlatButton:
-        text: root.button_name
-        font_name: "fonts/BrunoAce-Regular.ttf"
-        text_color: "black"
-        font_size: root.font_dim
-        bold: True
-        size_hint: 1, 1
-        line_color: 0, 0, 0, 0
-        on_release:
-            app.root.current = 'helpusdecidePlay'
-
-<HelpUsDecideRules>:
-    id: helpusdecide_rules
-    spacing: "12dp"
-    size_hint_y: None
-    height: "500dp"
-
-    MDBoxLayout:
-        id: top_bar
-        size_hint: 1.16, None
-        height: "60dp"
-        y: helpusdecide_rules.top - dp(10)
-        pos_hint: {"center_x": .5}
-        radius: 10
-        spacing: "10dp"
-
-        MDRelativeLayout:
-            size_hint: None, None
-            size: top_bar.height, top_bar.height
-
-            MDIconButton:
-                icon: "window-close"
-                pos_hint: {"center_y": .5, "center_x": .5}
-                on_release: app.exit_helpusdecide_rules()
-
-        MDRelativeLayout:
-            size_hint: None, None
-            size: top_bar.width / 2 + dp(36), top_bar.height
-
-            ScaleLabel:
-                text: "HelpUsDecide Rules"
-                font_size: "18sp"
-                font_name: "fonts/BrunoAce-Regular.ttf"
-                bold: True
-                adaptive_size: True
-                pos_hint: {"center_x": .5, "center_y": .5}
-
-    MDSeparator:
-        pos_hint: {"center_x": .5}
-        size_hint_x: None
-        width: helpusdecide_rules.width * 1.1
-        color: "black"
-        y: helpusdecide_rules.top - dp(10)
-
-    MDBoxLayout:
-        orientation: "vertical"
-        size_hint: 1.16, None
-        height: "490dp"
-        y: helpusdecide_rules.top - self.height - dp(20)
-        pos_hint: {"center_x": .5}
-        radius: 10
-        halign: "center"
-
-        MDScrollView:
-            id: scroll
-
-            MDList:
-                spacing: "12dp"
-                id: helpusdecide_list
-
-                MDBoxLayout:
-                    size_hint_y: None
-                    height: "60dp"
-                    padding: "10dp"
-
-                    MDLabel:
-                        text: "Before starting the game, make sure you have customized the poll settings! Enter the participants names and the options."
-                        font_size: "14sp"
-                        font_name: "fonts/BrunoAce-Regular.ttf"
-                        halign: "center"
-                        valign: "center"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-
-                MDBoxLayout:
-                    size_hint_y: None
-                    padding: "10dp"
-                    height: "140dp"
-
-                    MDLabel:
-                        text: "The survey can begin after the poll settings have been configured. Each poll participant will vote for their favorite option on the screen. At the end, the votes are counted and the ranking is displayed. In case of a tie, a random option will be chosen."
-                        font_size: "14sp"
-                        font_name: "fonts/BrunoAce-Regular.ttf"
-                        halign: "center"
-                        valign: "center"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-
-<HelpUsDecidePlay>:
-    name: "helpusdecidePlay"
-    id: helpusdecide
-    md_bg_color: "white"
-
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MDTopAppBar:
-            md_bg_color: "white"
-            specific_text_color: "black"
-            elevation: 0
-            left_action_items: [["window-close", lambda x: app.exit_helpusdecide_game()]]
-
-        MDSeparator:
-            width: "80dp"
-            color: "black"
-
-        MDRelativeLayout:
-            id: game_page_space
-            md_bg_color: 0, 0, 0, .1
-
-    MDFloatLayout:
-        size_hint: None, None
-        size: 0, 0
-
-        MDLabel:
-            text: "Help Us Decide"
-            font_name: "fonts/BrunoAce-Regular.ttf"
-            font_size: "22sp"
-            bold: True
-            adaptive_size: True
-            y: (helpusdecide.top - self.height * 1.7)
-            x: (helpusdecide.width - self.width) / 2
