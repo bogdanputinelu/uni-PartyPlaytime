@@ -6,6 +6,13 @@
             "nrPoints": "3",
             "nrRounds": "5",
             "nrTeams": "2"
+        },
+        {
+            "username": "irinaa",
+            "gameMode": "0",
+            "nrPoints": "5",
+            "nrRounds": "10",
+            "nrTeams": "2"
         }
     ]
 }

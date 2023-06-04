@@ -39,6 +39,14 @@
             "words": "Kilimanjaro",
             "words_per_round": "10",
             "players": "John, Linda, William, Andreea"
+        },
+        {
+            "username": "irinaa",
+            "round": "2",
+            "team": "2",
+            "words": "Kilimanjaro",
+            "words_per_round": "2",
+            "players": "John, Linda, William, Andreea"
         }
     ]
 }
