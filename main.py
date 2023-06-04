@@ -355,6 +355,9 @@ class HeadSpinPlay(MDScreen):
     headspin_ranking_dialog = None
     clasament_final = []
 
+    # Fuctie ce se apeleaza in momentul in care utilizatorul da play.
+    # Se extrag setarile din fisier si se initializeaza jocul.
+
     def headspin_play(self):
         with open("headspin_settings.json", 'r+') as headspin_files:
             settings = json.load(headspin_files)
@@ -394,6 +397,8 @@ class HeadSpinPlay(MDScreen):
         HeadSpinPlay.index_round = 1
         HeadSpinPlay.headspin_ranking_dialog = None
 
+    # Functie de initializare a setarilor in cazul in care se da replay
+
     def initialize(self):
         HeadSpinPlay.index_round = 1
         new_word = random.choice(HeadSpinPlay.final_words)
@@ -403,6 +408,8 @@ class HeadSpinPlay(MDScreen):
         self.ids.next_round_button.disabled = False
         HeadSpinPlay.clasament_final = []
         HeadSpinPlay.headspin_ranking_dialog = None
+
+    # Functie ce schimba echipa curenta si reseteaza corespunzator starile butoanelor
 
     def change_team(self):
         self.ids.next_round_button.disabled = True
@@ -424,6 +431,8 @@ class HeadSpinPlay(MDScreen):
         self.ids.team_name.text = new_team_name
         self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_round)
 
+    # Functie ce se apeleaza atunci cand un cuvant este ghicit, contorizand scorul si schimband cuvantul curent
+
     def check_pressed(self):
         if HeadSpinPlay.words_per_team == 1:
             self.ids.pass_button.disabled = True
@@ -444,6 +453,8 @@ class HeadSpinPlay(MDScreen):
             current_team = self.ids.team_name.text
             HeadSpinPlay.headspin_score[current_team] += 1
 
+    # Functie ce schimba cuvantul curent de pe ecran
+
     def change_word(self):
         if HeadSpinPlay.words_per_team != 0:
             new_word = random.choice(HeadSpinPlay.final_words)
@@ -459,6 +470,8 @@ class HeadSpinPlay(MDScreen):
                     self.ids.next_round_button.disabled = True
                     self.get_ranking()
                     self.end_game_headspin()
+
+    # Functie ce se apeleaza atunci cand un cuvant nu este ghicit, schimbandu-se doar cuvantul curent
 
     def pass_pressed(self):
         if HeadSpinPlay.words_per_team == 1:
@@ -476,6 +489,8 @@ class HeadSpinPlay(MDScreen):
         elif HeadSpinPlay.words_per_team != 0:
             self.change_word()
 
+    # Functie ce tine evidenta rundelor, afisand un mesaj corespunzator
+
     def round_change(self):
         if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1:
             if HeadSpinPlay.index_round != int(HeadSpinPlay.rounds_headspin):
@@ -483,6 +498,8 @@ class HeadSpinPlay(MDScreen):
                 self.ids.round_number.text = str(HeadSpinPlay.index_round)
             else:
                 self.ids.next_round_button.disabled = True
+
+    # Functie ce stabileste clasamentul final, salvandu-l in functie de numarul de puncte al fiecarei echipe
 
     def get_ranking(self):
         ranking = sorted(HeadSpinPlay.headspin_score.items(), key=lambda x: x[1], reverse=True)
@@ -500,10 +517,12 @@ class HeadSpinPlay(MDScreen):
         self.headspin_ranking_dialog = None
         self.app.root.current = 'headspin'
 
+    # Functie ce se apeleaza automat in ultima runda in momentul in care ultima echipa a ghicit sau nu a ghicit toate
+    # cuvintele alocate. Pe baza clasamentului generat de get_ranking() se editeaza dialogul deschis.
+
     def end_game_headspin(self):
         self.get_ranking()
         if not self.headspin_ranking_dialog:
-            print("am intart")
             self.headspin_ranking_dialog = MDDialog(
                 type="custom",
                 content_cls=RankingInformationHeadspin(),
@@ -519,6 +538,8 @@ class HeadSpinPlay(MDScreen):
                 ]
             )
 
+            # Se adauga dinamic intr-un container cate o eticheta cu fiecare echipa si scorul corespunzator.
+
             container = MDBoxLayout(orientation='vertical',
                                     spacing='5dp',
                                     padding='10dp',
@@ -526,7 +547,7 @@ class HeadSpinPlay(MDScreen):
                                     size_hint_y=0.5
                                     )
             mini_container = MDFloatLayout(pos_hint={"center_x": .5, "center_y": .5})
-            sus = 400
+            sus = 450
 
             for place, teams in enumerate(HeadSpinPlay.clasament_final, start=1):
                 points, team = teams
@@ -541,9 +562,11 @@ class HeadSpinPlay(MDScreen):
                     pos_hint={"center_x": 0.5},
                     font_name="fonts/LuckiestGuy-Regular.ttf",
                 )
-                sus -= 50
+                sus -= 40
                 if place <= 3:
                     eticheta.bold = True
+                else:
+                    eticheta.bold = False
                 eticheta.font_size = "20sp"
                 eticheta.font_name = "fonts/LuckiestGuy-Regular.ttf"
                 mini_container.add_widget(eticheta)
@@ -647,6 +670,8 @@ class PartyPlaytime(MDApp):
 
         self.account_dialog.open()
 
+    # Functie ce deschide un dialog si afiseaza setarile introduse pentru jocul Headspin
+
     def headspin_settings(self):
         if not self.headspin_dialog:
             self.headspin_dialog = MDDialog(
@@ -671,6 +696,8 @@ class PartyPlaytime(MDApp):
     def headspin_settings_exit(self):
         self.headspin_dialog.dismiss()
 
+    # Functie ce salveaza setarile nou introduse in dialog
+
     def headspin_save_settings(self):
         nicknames = self.headspin_dialog.content_cls.ids.players_information.text.split(',')
         number = int(self.headspin_dialog.content_cls.ids.team_information.text)
@@ -685,7 +712,8 @@ class PartyPlaytime(MDApp):
                     if setting["username"] == user_logged_in:
                         setting["round"] = self.headspin_dialog.content_cls.ids.round_information.text
                         setting["team"] = self.headspin_dialog.content_cls.ids.team_information.text
-                        setting["words_per_round"] = self.headspin_dialog.content_cls.ids.words_per_round_information.text
+                        setting["words_per_round"] = \
+                            self.headspin_dialog.content_cls.ids.words_per_round_information.text
                         setting["words"] = self.headspin_dialog.content_cls.ids.words_information.text
                         setting["players"] = self.headspin_dialog.content_cls.ids.players_information.text
 
@@ -694,6 +722,8 @@ class PartyPlaytime(MDApp):
                         headspin_settings.truncate()
                         self.headspin_dialog.dismiss()
                         return
+
+    # Functie ce deschide dialogul cu reguli pentru Headspin
 
     def headspin_rules(self):
         if not self.headspin_rules_dialog:
@@ -705,6 +735,8 @@ class PartyPlaytime(MDApp):
 
     def exit_headspin_rules(self):
         self.headspin_rules_dialog.dismiss()
+
+    # Functie ce avertizeaza utilizatorul ca a apasat pe X, luand decizia de a parasi jocul
 
     def exit_headspin_game(self):
         if not self.headspin_exit_game:
@@ -928,7 +960,8 @@ class PartyPlaytime(MDApp):
         for color in colors:
             for alien_number in "1234":
                 current_alien = color + "_alien_" + alien_number
-                screen.ids[current_alien].pos = (dp(coordinates[current_alien]["width"]), dp(coordinates[current_alien]["height"]))
+                screen.ids[current_alien].pos = \
+                    (dp(coordinates[current_alien]["width"]), dp(coordinates[current_alien]["height"]))
 
     def blockage(self, alien, color, dice_rolled):
         starting_point = {
@@ -976,9 +1009,10 @@ class PartyPlaytime(MDApp):
         for i in "1234":
             current_alien = alien_color + "_alien_" + i
 
-            if aliens_state[current_alien] == 0 and dice_rolled == 6 and self.blockage(current_alien, alien_color, dice_rolled) == False:
+            if aliens_state[current_alien] == 0 and dice_rolled == 6 and \
+                    self.blockage(current_alien, alien_color, dice_rolled) is False:
                 alien_moves.append(current_alien)
-            elif aliens_state[current_alien] > 0 and self.blockage(current_alien, alien_color, dice_rolled) == False:
+            elif aliens_state[current_alien] > 0 and self.blockage(current_alien, alien_color, dice_rolled) is False:
                 alien_moves.append(current_alien)
 
         return alien_moves
@@ -1149,9 +1183,9 @@ class PartyPlaytime(MDApp):
                 destination_number = current_box_number + dice_rolled
 
             if (color_name == "red" and current_box_number + dice_rolled > 51) or \
-                (color_name == "blue" and current_box_number + dice_rolled > 38 and 33 <= current_box_number <= 38) or \
-                (color_name == "green" and current_box_number + dice_rolled > 12 and 7 <= current_box_number <= 12) or\
-                (color_name == "yellow" and current_box_number + dice_rolled > 25 and 20 <= current_box_number <= 25):
+               (color_name == "blue" and current_box_number + dice_rolled > 38 and 33 <= current_box_number <= 38) or \
+               (color_name == "green" and current_box_number + dice_rolled > 12 and 7 <= current_box_number <= 12) or\
+               (color_name == "yellow" and current_box_number + dice_rolled > 25 and 20 <= current_box_number <= 25):
 
                 if dice_rolled == 6 and current_box_number in [12, 25, 38, 51]:
                     finish = True
@@ -1178,7 +1212,8 @@ class PartyPlaytime(MDApp):
                             end = True
 
                 destination_number = number + offset[color_name]
-                corners_to_surpass = [current_box_number] if current_box_number in [12, 25, 38, 51] else corners_to_surpass[:-1] + [corners_to_surpass[-1] - 1]
+                corners_to_surpass = [current_box_number] if current_box_number in [12, 25, 38, 51] \
+                    else corners_to_surpass[:-1] + [corners_to_surpass[-1] - 1]
             if current_box_number == 52 and dice_rolled == 6:
                 corners_to_surpass = [5]
             if not finish:
@@ -1205,7 +1240,8 @@ class PartyPlaytime(MDApp):
                 animation.start(screen.ids[alien_id])
                 aliens_state[alien_id] = destination_number
                 things = PartyPlaytime.boardblitz_miscellaneous
-                Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled), duration)
+                Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled),
+                                    duration)
             else:
                 animation = Animation(
                     duration=0.2,
@@ -1220,7 +1256,8 @@ class PartyPlaytime(MDApp):
                 else:
                     aliens_state[alien_id] = -1
                     things = PartyPlaytime.boardblitz_miscellaneous
-                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled), 0.2)
+                    Clock.schedule_once(partial(self.go_to_next_turn, things[0], things[1], things[2], dice_rolled),
+                                        0.2)
 
     def animate_dice(self, dice, dice_number):
         if dice.opacity == 0 or dice_clicked[dice_number]:
@@ -1230,7 +1267,8 @@ class PartyPlaytime(MDApp):
         def rotate_back_dice(dt):
             nonlocal dice, dice_number
             screen = self.root.get_screen("boardblitz_game")
-            next_player_dice = screen.ids["dice_player_" + str(next_dice[PartyPlaytime.number_of_players_boardblitz][dice_number])]
+            next_player_dice = screen.ids["dice_player_" +
+                                          str(next_dice[PartyPlaytime.number_of_players_boardblitz][dice_number])]
 
             dice.rotate_value_angle = 0
 
@@ -1276,7 +1314,8 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.number_of_players_boardblitz = int(PartyPlaytime.player_button_selected[-1])
 
         boardblitz_game_screen.ids.first_player_nickname.text = nickname_user_logged_in
-        boardblitz_game_screen.ids.second_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
+        boardblitz_game_screen.ids.second_player_nickname.text = \
+            self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text
         nickname_2_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_1.text)
         boardblitz_game_screen.ids.second_player_nickname.width = str(nickname_2_length) + "dp"
 
@@ -1296,7 +1335,8 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": 3, "right": 1}
 
-            boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+            boardblitz_game_screen.ids.third_player_nickname.text = \
+                self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
             boardblitz_game_screen.ids.third_player_avatar.source = boardblitz_avatars[chosen_avatar_list[2]]
 
@@ -1307,9 +1347,11 @@ class PartyPlaytime(MDApp):
             boardblitz_game_screen.ids.third_avatar_box.pos_hint = {"center_y": .77, "center_x": .2}
             boardblitz_game_screen.ids.fourth_avatar_box.pos_hint = {"center_y": .77, "right": 1}
 
-            boardblitz_game_screen.ids.third_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
+            boardblitz_game_screen.ids.third_player_nickname.text = \
+                self.boardblitz_start.content_cls.ids.boardblitz_nickname_2.text
 
-            boardblitz_game_screen.ids.fourth_player_nickname.text = self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
+            boardblitz_game_screen.ids.fourth_player_nickname.text = \
+                self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text
             nickname_4_length = 10 * len(self.boardblitz_start.content_cls.ids.boardblitz_nickname_3.text)
             boardblitz_game_screen.ids.fourth_player_nickname.width = str(nickname_4_length) + "dp"
 
