@@ -2254,7 +2254,7 @@ class PartyPlaytime(MDApp):
         Inainte de a salva, modificarile sunt validate, iar daca acestea nu sunt
         valide, este animata casuta unde informatia trebuie introdusa corect.
         """
-        global email_regex
+        global email_regex, nickname_user_logged_in
 
         if not re.fullmatch(email_regex, self.account_dialog.content_cls.ids.email_information.text):
             self.animate_wrong_widget(self.account_dialog.content_cls.ids.email_information)
@@ -2268,6 +2268,7 @@ class PartyPlaytime(MDApp):
                         user["last_name"] = self.account_dialog.content_cls.ids.last_name_information.text
                         user["e-mail"] = self.account_dialog.content_cls.ids.email_information.text
                         user["nickname"] = self.account_dialog.content_cls.ids.nickname_information.text
+                        nickname_user_logged_in = self.account_dialog.content_cls.ids.nickname_information.text
 
                         accounts_file.seek(0)
                         json.dump(accounts, accounts_file, indent=4)
