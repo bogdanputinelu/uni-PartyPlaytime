@@ -805,7 +805,8 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
         self.ended = 0 # Jocul nu e gata (abia a inceput)
         self.checkable = 1 # Butonul e bifabil
 
-        # Secventa urmatoare preia setarile personalizate ale utilizatorului din fisierul .json si initializeaza datele membre ale clasei cu valorile respective
+        # Secventa urmatoare preia setarile personalizate ale utilizatorului din fisierul .json si initializeaza
+        # datele membre ale clasei cu valorile respective
 
         with open("wordrush_settings.json", 'r+') as wordrush_files: # Incaracam fisierul
             settings = json.load(wordrush_files)
@@ -818,6 +819,8 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                     self.nrPoints = int(setting["nrPoints"]) # Se preia valoarea din setari
                     self.nrRounds = int(setting["nrRounds"]) # Se preia valoarea din setari
                     self.nrTeams = int(setting["nrTeams"]) # Se preia valoarea din setari
+                    self.teamPoints = [0 for contor in range(0, self.nrTeams + 1)] # Echipele au 0 puncte initial
+                    self.teamPasses = [3 for contor in range(0, self.nrTeams + 1)] # Echipele au 3 pass-uri initial
                     break
         ### 1106 AICI VINE LOGICA JOCULUI
         self.team = 1 # Incepe echipa 1
