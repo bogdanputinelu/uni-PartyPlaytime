@@ -818,8 +818,6 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                     self.nrPoints = int(setting["nrPoints"]) # Se preia valoarea din setari
                     self.nrRounds = int(setting["nrRounds"]) # Se preia valoarea din setari
                     self.nrTeams = int(setting["nrTeams"]) # Se preia valoarea din setari
-                    self.teamPoints = [0 for contor in range(0, self.nrTeams + 1)] # Echipele au 0 puncte initial
-                    self.teamPasses = [3 for contor in range(0, self.nrTeams + 1)] # Echipele au 3 pass-uri initial
                     break
         ### 1106 AICI VINE LOGICA JOCULUI
         self.team = 1 # Incepe echipa 1
