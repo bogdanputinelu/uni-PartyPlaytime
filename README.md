@@ -82,7 +82,10 @@ Comentariile din cod sunt utilizate pentru a adăuga explicații și clarificăr
 
 ![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/f59213d2-980c-4e02-9785-e0a7c50e9685)
 
+## Raportare bug si rezolvare cu pull request 
+[Nicolae](https://github.com/MihailaNicolae) a raportat un bug in cadrul functionalitatii unui joc (jocurile anterioare afectau valorile pass & points in jocurile urmatoare), iar [Irina ](https://github.com/irinaenescu2002) l-a rezolvat cu pull request. 
 
+![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/5e2db323-c01f-4477-ba54-c62d00f130ac)
 
 
 
