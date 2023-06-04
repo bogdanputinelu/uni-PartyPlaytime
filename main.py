@@ -127,13 +127,16 @@ class HeadSpinButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
+
 class WordRushButtonSettings(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
 
+
 class WordRushButtonPlay(MDBoxLayout, FocusBehavior, CommonElevationBehavior):
     def change_cursor(self, cursor_name):
         Window.set_system_cursor(cursor_name)
+
 
 class Game(MDBoxLayout):
     pass
@@ -247,19 +250,17 @@ class RegisterScreen(MDScreen):
                     json.dump(settings, headspin_settings_default_file, indent=4)
                     screen_manager.current = 'login'
 
-                with open("wordrush_settings.json",
-                          'r+') as wordrush_settings_default_file:  # Utilizatorii noi sunt adaugati in fisierul wordrush_settings.json si
+                with open("wordrush_settings.json", 'r+') as wordrush_settings_default_file:
                     settings = json.load(
-                        wordrush_settings_default_file)  # setarile lor sunt initializate cu valorile default
+                        wordrush_settings_default_file)
 
                     default_settings = {"username": self.ids.username_register.text,
-                                        # Acestea sunt: Numele utilizatorului + valorile default
                                         "gameMode": "0",
                                         "nrPoints": "10",
                                         "nrRounds": "10",
                                         "nrTeams": "2"
                                         }
-                    settings["wordrush_settings"].append(default_settings)  # Adaugam valorile in fisierul .json
+                    settings["wordrush_settings"].append(default_settings)
                     wordrush_settings_default_file.seek(0)
                     json.dump(settings, wordrush_settings_default_file, indent=4)
                     screen_manager.current = 'login'
@@ -463,7 +464,6 @@ class HeadSpinPlay(MDScreen):
             self.ids.check_button.disabled = True
             current_team = self.ids.team_name.text
             HeadSpinPlay.headspin_score[current_team] += 1
-            print(HeadSpinPlay.headspin_score)
             HeadSpinPlay.words_per_team -= 1
             self.ids.next_round_button.disabled = False
             if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
@@ -504,7 +504,6 @@ class HeadSpinPlay(MDScreen):
             HeadSpinPlay.words_per_team -= 1
             self.ids.words_per_team_id.text = "Words: " + str(HeadSpinPlay.words_per_team)
             self.ids.next_round_button.disabled = False
-            print(HeadSpinPlay.headspin_score)
             if HeadSpinPlay.index_echipa == int(HeadSpinPlay.teams_headspin) - 1 and \
                     HeadSpinPlay.index_round == int(HeadSpinPlay.rounds_headspin):
                 self.ids.next_round_button.disabled = True
@@ -534,7 +533,6 @@ class HeadSpinPlay(MDScreen):
             else:
                 clasament[elem[1]] = [elem[0]]
         HeadSpinPlay.clasament_final = sorted(clasament.items(), key=lambda x: x[0], reverse=True)
-        print(HeadSpinPlay.clasament_final)
 
     def go_home_headspin(self, *args):
         self.headspin_ranking_dialog.dismiss()
@@ -600,84 +598,106 @@ class HeadSpinPlay(MDScreen):
 
         self.headspin_ranking_dialog.open()
 
+# Se ocupa de trecerea de la pagina principala a jocului la meniul principal si la play game
 
-class WordRushScreen(MDScreen): # Se ocupa de trecerea de la pagina principala a jocului la meniul principal si la play game
-    def go_back(self, screen_manager): # Ne intoarce la meniul principal
+
+class WordRushScreen(MDScreen):
+    def go_back(self, screen_manager):
         screen_manager.transition.direction = 'right'
         screen_manager.current = "home"
 
-    def play_game(self, screen_manager): # Ne duce la ecranul jocului
+    def play_game(self, screen_manager):
         screen_manager.current = "wordrushPlay"
 
 
-class WordRushSettings(MDFloatLayout): # Clasa asta trebuie sa existe pentru a putea avea in fisierul kivy o sectiune dedicata setarilor jocului WordRush, dar nu face nimic
+# Clasa asta trebuie sa existe pentru a putea avea in fisierul kivy o sectiune dedicata setarilor
+# jocului WordRush, dar nu face nimic
+
+
+class WordRushSettings(MDFloatLayout):
     pass
 
 
-class WordRushRules(MDFloatLayout): # Clasa asta trebuie sa existe pentru a putea avea in fisierul kivy o sectiune dedicata setarilor jocului WordRush, dar nu face nimic
+# Clasa asta trebuie sa existe pentru a putea avea in fisierul kivy o sectiune dedicata setarilor
+# jocului WordRush, dar nu face nimic
+
+
+class WordRushRules(MDFloatLayout):
     pass
 
 
-class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului WordRush. Aici sunt toate functiile care asigura functionalitatea jocului
-    def exit_game(self, screen_manager): # Ne intoarce din ecranul jocului la meniul jocului WordRush
+# Clasa asta se ocupa de toata logica jocului WordRush. Aici sunt toate functiile care asigura functionalitatea jocului
+
+
+class WordRushPlay(MDScreen):
+    def __init__(self, **kwargs):
+        super(WordRushPlay, self).__init__(**kwargs)
+        self.app = MDApp.get_running_app()
+
+    def exit_game(self, *args):
         self.wordrush_ranking_dialog.dismiss()
         self.wordrush_ranking_dialog = None
-        screen_manager.current = "wordrush"
+        self.app.root.current = 'wordrush'
 
     # Variabile pe care le folosesc pentru a folosi setarile jocului
+
     gameMode = 0
     nrPoints = 10
     nrRounds = 10
     nrTeams = 5
+
     # Variabile care ajuta in desfasurarea jocului
-    teamPoints = [0 for contor in range(0, nrTeams + 1)] # Cate puncte are fiecare echipa
-    teamPasses = [3 for contor in range(0, nrTeams + 1)] # Cate pass-uri are fiecare echipa
-    round = 0 # Runda curenta
-    team = 0 # Echipa curenta
-    checkable = 1 # Se poate apasa butonul de check
-    ended = 0 # Jocul s-a terminat
-    wordrush_ranking_dialog = None # Avem nevoie de ea pentru a afisa clasamentul
 
+    teamPoints = [0 for _ in range(0, nrTeams + 1)]
+    teamPasses = [3 for _ in range(0, nrTeams + 1)]
+    team = 0
+    checkable = 1
+    ended = 0
+    wordrush_ranking_dialog = None
 
-    def check(self): # O functie care gestioneaza functionalitatea butonului check
-        if self.checkable == 1 and self.ended != 1: # daca se poate apasa check si jocul nu este gata
-            self.teamPoints[self.team] += 1 # Marim scorul echipei cu un punct
-            self.checkable = 0 # pentru a nu putea apasa check cand jocul e gata
-            self.updateScreen() # trecem la runda urmatoare
+    # O functie care gestioneaza functionalitatea butonului check
 
-    def updateScreen(self): # O functie care se ocupa de actualizarea ecranului la fiecare modificare adusa
-        if self.gameMode == 1 and self.teamPoints[self.team] == self.nrPoints: # daca se joaca pe puncte, iar echipa curenta a atins punctele necesare pentru a castiga
+    def check(self):
+        if self.checkable == 1 and self.ended != 1:
+            self.teamPoints[self.team] += 1
+            self.checkable = 0
+            self.update_screen()
+
+    # O functie care se ocupa de actualizarea ecranului la fiecare modificare adusa
+
+    def update_screen(self):
+        if self.gameMode == 1 and self.teamPoints[self.team] == self.nrPoints:
             # Aici doar modificam ce afisam pe ecran
             self.ids.roundLabel.text = "     End"
             self.ids.teamLabel.text = "Winner: "
-            maxScore = max(self.teamPoints)
-            for i in range(1, self.nrTeams + 1): # Alegem castigatorul
-                if self.teamPoints[i] == maxScore:
+            max_score = max(self.teamPoints)
+            for i in range(1, self.nrTeams + 1):
+                if self.teamPoints[i] == max_score:
                     self.ids.teamLabel.text += "Team " + str(i) + " "
             self.ids.pointsLabel.text = "Final score = " + str(self.teamPoints[self.team])
             self.ids.wordLabel.text = "Game ended. Return to main menu"
             self.ids.roundTypeLabel.text = ""
             self.ids.nextLabel.text = "See ranking"
-            self.ended = 1 # Jocul s-a terminat
-        if self.gameMode == 0 and self.round >= self.nrRounds and self.team == self.nrTeams: # Daca se joaca pe runde si s-a ajuns la final
+            self.ended = 1
+        if self.gameMode == 0 and self.round >= self.nrRounds and self.team == self.nrTeams:
             # Aici doar modificam ce afisam pe ecran
             self.ids.roundLabel.text = "     End"
             self.ids.teamLabel.text = "Winners: "
-            maxScore = max(self.teamPoints)
-            for i in range(1,self.nrTeams+1): # Alegem echipele castigatoare (pot fi mai multe)
-                if self.teamPoints[i] == maxScore:
-                    self.ids.teamLabel.text += "Team " + str(i)+ " "
+            max_score = max(self.teamPoints)
+            for i in range(1, self.nrTeams+1):
+                if self.teamPoints[i] == max_score:
+                    self.ids.teamLabel.text += "Team " + str(i) + " "
             self.ids.pointsLabel.text = "Final score = " + str(self.teamPoints[self.team])
             self.ids.wordLabel.text = "Game ended. Return to main menu"
             self.ids.roundTypeLabel.text = ""
             self.ids.nextLabel.text = "See ranking"
-            self.ended = 1 # Jocul s-a terminat
-        if self.ended == 1: # Meciul e gata. Modificam niste aspecte ale interfetei si afisam clasamentul
+            self.ended = 1
+        if self.ended == 1:
             self.ids.checkLabel.disabled = True
             self.ids.passLabel.disabled = True
             self.ids.passLabel.text = "Pass"
             if not self.wordrush_ranking_dialog:
-                self.wordrush_ranking_dialog = MDDialog( # Generam widget-ul pentru clasament
+                self.wordrush_ranking_dialog = MDDialog(  # Generam widget-ul pentru clasament
                     type="custom",
                     content_cls=RankingInformationWordRush(),
                     auto_dismiss=False,
@@ -692,7 +712,7 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                     ]
                 )
 
-                container = MDBoxLayout(orientation='vertical', # Aici va sta clasamentul
+                container = MDBoxLayout(orientation='vertical',  # Aici va sta clasamentul
                                         spacing='5dp',
                                         padding='10dp',
                                         pos_hint={"center_x": .5, "center_y": .5},
@@ -701,13 +721,13 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                 mini_container = MDFloatLayout(pos_hint={"center_x": .5, "center_y": .5})
                 sus = 450
 
-                clasament = [] # generam clasamentul
-                for i in range(1,self.nrTeams+1):
+                clasament = []
+                for i in range(1, self.nrTeams+1):
                     clasament.append([self.teamPoints[i], "Team " + str(i)])
                 clasament.sort(reverse=True)
                 i = 0
                 fin = self.nrTeams - 1
-                while i < fin: # Punem echipele cu acelasi scor pe acelasi loc in clasament
+                while i < fin:  # Punem echipele cu acelasi scor pe acelasi loc in clasament
                     if clasament[i][0] == clasament[i+1][0]:
                         clasament[i][1] = clasament[i][1] + ", " + clasament[i+1][1]
                         del clasament[i+1]
@@ -715,13 +735,11 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                         fin = fin - 1
                     i = i + 1
 
-
-
-                for place, teams in enumerate(clasament, start=1): # formatam
+                for place, teams in enumerate(clasament, start=1):
                     points, team = teams
                     str_teams = "".join(team)
 
-                    eticheta = MDLabel( # Punem echipele pe locul lor in clasament in widget
+                    eticheta = MDLabel(  # Punem echipele pe locul lor in clasament in widget
                         id=f"{place}",
                         text=f"{place}. {str_teams} - {points} points",
                         size_hint_y=mini_container.y,
@@ -742,49 +760,25 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
 
             self.wordrush_ranking_dialog.open()
 
-
-
-        if self.ended != 1: # Jocul nu e gata. Continua
-            if(self.team == self.nrTeams): # Se ocupa de trecerea ciclica de la o echipa la alta
+        if self.ended != 1:  # Jocul nu e gata. Continua
+            if self.team == self.nrTeams:  # Se ocupa de trecerea ciclica de la o echipa la alta
                 self.team = 1
             else:
                 self.team = self.team + 1
-            self.ids.teamLabel.text = "Team " + str(self.team) # Afisam randul carei echipe este
-            if(self.team == 1):
-                self.round = self.round + 1 # Modificam runda corespunzator
-            if self.gameMode == 0: # Daca se joaca pe runde, modificam label-urile cum trebuie
+            self.ids.teamLabel.text = "Team " + str(self.team)
+            if self.team == 1:
+                self.round = self.round + 1
+            if self.gameMode == 0:
                 self.ids.roundLabel.text = "Round " + str(self.round) + "/" + str(self.nrRounds)
-            self.ids.pointsLabel.text = "Your points: " + str(self.teamPoints[self.team]) # Afisam cate puncte are echipa curenta
-            roundType = random.randint(1, 4) # Alegem aleator tipul rundei
-            indexWord = random.randint(0, len(words) - 1) # Alegem aleator un cuvant din lista
-            cuvant = words[indexWord]  # extragem din lista cuvantul
-            if roundType == 1: # Runda e de tip describe
-                self.ids.wordLabel.text = cuvant  # Cele 3 comenzi afiseaza pe ecran cuvantul, tipul rundei, si imaginea corespunzatoare rundei
-                self.ids.roundTypeLabel.text = "DESCRIBE"
-                self.ids.logoLabel.source = "logos/explain.png"
-            elif roundType == 2: # Runda e de tip mime
-                self.ids.wordLabel.text = cuvant  # Cele 3 comenzi afiseaza pe ecran cuvantul, tipul rundei, si imaginea corespunzatoare rundei
-                self.ids.roundTypeLabel.text = "MIME"
-                self.ids.logoLabel.source = "logos/mime.png"
-            else: # Runda e de tip draw
-                self.ids.wordLabel.text = cuvant  # Cele 3 comenzi afiseaza pe ecran cuvantul, tipul rundei, si imaginea corespunzatoare rundei
-                self.ids.roundTypeLabel.text = "DRAW"
-                self.ids.logoLabel.source = "logos/draw.png"
-            self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")" # Afisam cate pass-uri mai are echipa
-            self.checkable = 1 # Facem butonul check bifabil
-
-
-    def passWord(self): # O functie care se ocupa de functionalitatea butonului de pass (echipa alege sa joace alt cuvant)
-        if self.teamPasses[self.team] != 0 and self.ended != 1: # Daca echipa mai are dreptul la pass si meciul nu e gata
-            self.teamPasses[self.team] -= 1 # echipa pierde un pass
-            roundType = random.randint(1, 4) # Exact ca mai sus, se genereaza un alt cuvant
-            indexWord = random.randint(0, len(words) - 1)
-            cuvant = words[indexWord]  # extragem din lista cuvantul
-            if roundType == 1:
+            self.ids.pointsLabel.text = "Your points: " + str(self.teamPoints[self.team])
+            round_type = random.randint(1, 4)
+            index_word = random.randint(0, len(words) - 1)
+            cuvant = words[index_word]
+            if round_type == 1:
                 self.ids.wordLabel.text = cuvant
                 self.ids.roundTypeLabel.text = "DESCRIBE"
                 self.ids.logoLabel.source = "logos/explain.png"
-            elif roundType == 2:
+            elif round_type == 2:
                 self.ids.wordLabel.text = cuvant
                 self.ids.roundTypeLabel.text = "MIME"
                 self.ids.logoLabel.source = "logos/mime.png"
@@ -792,54 +786,80 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
                 self.ids.wordLabel.text = cuvant
                 self.ids.roundTypeLabel.text = "DRAW"
                 self.ids.logoLabel.source = "logos/draw.png"
-            self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")" # Modificam afisarea corespunzator
-            self.checkable = 1 # facem butonul de check bifabil
+            self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")"
+            self.checkable = 1
 
+    # O functie care se ocupa de functionalitatea butonului de pass (echipa alege sa joace alt cuvant)
 
-    def wordrush_play(self): # O functie care se ocupa de initializarea jocului
+    def pass_word(self):
+        if self.teamPasses[self.team] != 0 and self.ended != 1:
+            self.teamPasses[self.team] -= 1
+            round_type = random.randint(1, 4)
+            index_word = random.randint(0, len(words) - 1)
+            cuvant = words[index_word]
+            if round_type == 1:
+                self.ids.wordLabel.text = cuvant
+                self.ids.roundTypeLabel.text = "DESCRIBE"
+                self.ids.logoLabel.source = "logos/explain.png"
+            elif round_type == 2:
+                self.ids.wordLabel.text = cuvant
+                self.ids.roundTypeLabel.text = "MIME"
+                self.ids.logoLabel.source = "logos/mime.png"
+            else:
+                self.ids.wordLabel.text = cuvant
+                self.ids.roundTypeLabel.text = "DRAW"
+                self.ids.logoLabel.source = "logos/draw.png"
+            self.ids.passLabel.text = "Pass (" + str(self.teamPasses[self.team]) + ")"
+            self.checkable = 1
+
+    # O functie care se ocupa de initializarea jocului
+
+    def wordrush_play(self):
         self.ids.passLabel.disabled = False
         self.ids.checkLabel.disabled = False
         self.wordrush_ranking_dialog = None
-        self.ids.nextLabel.text = "Allow next team" # Pune textul corespunzator in label-ul lui
-        self.ids.teamLabel.text = "Team 1" # Initial e randul echipei 1
-        self.ended = 0 # Jocul nu e gata (abia a inceput)
-        self.checkable = 1 # Butonul e bifabil
+        self.ids.nextLabel.text = "Allow next team"
+        self.ids.teamLabel.text = "Team 1"
+        self.ended = 0
+        self.checkable = 1
 
         # Secventa urmatoare preia setarile personalizate ale utilizatorului din fisierul .json si initializeaza
         # datele membre ale clasei cu valorile respective
 
-        with open("wordrush_settings.json", 'r+') as wordrush_files: # Incaracam fisierul
+        with open("wordrush_settings.json", 'r+') as wordrush_files:
             settings = json.load(wordrush_files)
 
-            for setting in settings["wordrush_settings"]: # gasim utilizatorul curent
+            for setting in settings["wordrush_settings"]:
                 if setting["username"] == user_logged_in:
-                    if setting["gameMode"] != "0" and setting["gameMode"] != "1": # Daca utilizatorul a introdus o valoare gresita pentru gameMode, se alege cea default = 0
+                    # Daca utilizatorul a introdus o valoare gresita pentru gameMode, se alege cea default = 0
+                    if setting["gameMode"] != "0" and setting["gameMode"] != "1":
                         setting["gameMode"] = "0"
-                    self.gameMode = int(setting["gameMode"]) # Se preia valoarea din setari
-                    self.nrPoints = int(setting["nrPoints"]) # Se preia valoarea din setari
-                    self.nrRounds = int(setting["nrRounds"]) # Se preia valoarea din setari
-                    self.nrTeams = int(setting["nrTeams"]) # Se preia valoarea din setari
-                    self.teamPoints = [0 for contor in range(0, self.nrTeams + 1)] # Echipele au 0 puncte initial
-                    self.teamPasses = [3 for contor in range(0, self.nrTeams + 1)] # Echipele au 3 pass-uri initial
+                    self.gameMode = int(setting["gameMode"])
+                    self.nrPoints = int(setting["nrPoints"])
+                    self.nrRounds = int(setting["nrRounds"])
+                    self.nrTeams = int(setting["nrTeams"])
+                    # Initializare pass + points
+                    self.teamPoints = [0 for contor in range(0, self.nrTeams + 1)]
+                    self.teamPasses = [3 for contor in range(0, self.nrTeams + 1)]
                     break
-        ### 1106 AICI VINE LOGICA JOCULUI
-        self.team = 1 # Incepe echipa 1
-        self.round = 1 # Initial runda este 1
-        if self.gameMode == 0: # Modificam textul de pe ecran in functie de tipul jocului
-            self.ids.roundLabel.text = "Round 1/" + str(self.nrRounds) # Textul pentru Rounds
+
+        self.team = 1
+        self.round = 1
+        if self.gameMode == 0:
+            self.ids.roundLabel.text = "Round 1/" + str(self.nrRounds)
         else:
-            self.ids.roundLabel.text = "Playing for \n" + str(self.nrPoints) + " points" # Textul pentru Points
-        self.ids.pointsLabel.text = "Your points: " + str(self.teamPoints[self.team]) # Afisam cate puncte are echipa curenta
-        self.ids.passLabel.text = "Pass(3)" # Initial are 3 pass-uri
-        # Exact ca mai sus, generam o runda. Adica tipul rundei si cartonasul ei
-        roundType = random.randint(1, 4)
-        indexWord = random.randint(0, len(words) - 1)
-        cuvant = words[indexWord]  # extragem din lista cuvantul
-        if roundType == 1:
+            self.ids.roundLabel.text = "Playing for \n" + str(self.nrPoints) + " points"
+        self.ids.pointsLabel.text = "Your points: " + str(self.teamPoints[self.team])
+        self.ids.passLabel.text = "Pass(3)"
+        # Exact ca mai sus, generam o runda - tipul rundei si cartonasul ei
+        round_type = random.randint(1, 4)
+        index_word = random.randint(0, len(words) - 1)
+        cuvant = words[index_word]
+        if round_type == 1:
             self.ids.wordLabel.text = cuvant
             self.ids.roundTypeLabel.text = "DESCRIBE"
             self.ids.logoLabel.source = "logos/explain.png"
-        elif roundType == 2:
+        elif round_type == 2:
             self.ids.wordLabel.text = cuvant
             self.ids.roundTypeLabel.text = "MIME"
             self.ids.logoLabel.source = "logos/mime.png"
@@ -849,7 +869,10 @@ class WordRushPlay(MDScreen): # Clasa asta se ocupa de toata logica jocului Word
             self.ids.logoLabel.source = "logos/draw.png"
 
 
-class RankingInformationWordRush(MDFloatLayout): # Avem nevoie de clasa asta pentru a afisa clasamentul
+# Avem nevoie de clasa asta pentru a afisa clasamentul
+
+
+class RankingInformationWordRush(MDFloatLayout):
     pass
 
 
@@ -1045,14 +1068,13 @@ class PartyPlaytime(MDApp):
                 content_cls=WordRushSettings(),
             )
 
-        with open("wordrush_settings.json",
-                  'r+') as wordrush_files:  # Preluam datele din fisier .json cu setarile fiecarui utilizator
+        with open("wordrush_settings.json", 'r+') as wordrush_files:
             settings = json.load(wordrush_files)
-
-            for setting in settings["wordrush_settings"]:  # Fiecare optiune primeste setarea salvata de utilizator
+            # Fiecare optiune primeste setarea salvata de utilizator
+            for setting in settings["wordrush_settings"]:
                 if setting["username"] == user_logged_in:
-                    if setting["gameMode"] != "0" and setting[
-                        "gameMode"] != "1":  # Utilizatorul a introdus o valoare gresita. GameMode primeste valoarea default 0
+                    # Utilizatorul a introdus o valoare gresita. GameMode primeste valoarea default 0
+                    if setting["gameMode"] != "0" and setting["gameMode"] != "1":
                         setting["gameMode"] = "0"
                     self.wordrush_dialog.content_cls.ids.gameMode.text = setting[
                         "gameMode"]  # Punem in casete valoarile din setari
@@ -1067,18 +1089,16 @@ class PartyPlaytime(MDApp):
         self.wordrush_dialog.dismiss()
 
     def wordrush_save_settings(self):  # Se ocupa de salvarea setarilor introduse in meniul de setari
-        with open("wordrush_settings.json", 'r+') as wordrush_settings:  # Incarcam fisierul cu setari
+        with open("wordrush_settings.json", 'r+') as wordrush_settings:
             settings = json.load(wordrush_settings)
 
             for setting in settings["wordrush_settings"]:  # Trecem prin utilizatori
                 if setting["username"] == user_logged_in:  # Pana il gasim pe cel logat
-                    setting[
-                        "gameMode"] = self.wordrush_dialog.content_cls.ids.gameMode.text  # Modificam setarile utilizatorului dupa cum le-a setat
-                    if setting["gameMode"] != "0" and setting[
-                        "gameMode"] != "1":  # Verificam validitatea setarii pentru gameMode. Daca e invalida, dam valoarea default
+                    setting["gameMode"] = self.wordrush_dialog.content_cls.ids.gameMode.text
+                    # Verificam validitatea setarii pentru gameMode. Daca e invalida, dam valoarea default
+                    if setting["gameMode"] != "0" and setting["gameMode"] != "1":
                         setting["gameMode"] = "0"
-                    setting[
-                        "nrPoints"] = self.wordrush_dialog.content_cls.ids.nrPoints.text  # Modificam setarile utilizatorului dupa cum le-a setat
+                    setting["nrPoints"] = self.wordrush_dialog.content_cls.ids.nrPoints.text
                     setting["nrRounds"] = self.wordrush_dialog.content_cls.ids.nrRounds.text
                     setting["nrTeams"] = self.wordrush_dialog.content_cls.ids.nrTeams.text
 
@@ -1096,11 +1116,14 @@ class PartyPlaytime(MDApp):
             )
         self.wordrush_rules_dialog.open()
 
-    def exit_wordrush_rules(self):  # Aceasta functie se ocupa de iesirea din fereastra cu reguli pentru WordRush
+    # Aceasta functie se ocupa de iesirea din fereastra cu reguli pentru WordRush
+
+    def exit_wordrush_rules(self):
         self.wordrush_rules_dialog.dismiss()
 
-    def exit_wordrush_game(
-            self):  # Aceasta functie se ocupa de afisarea ferestrei pentru iesirea dintr-un meci activ de WordRush
+    # Aceasta functie se ocupa de afisarea ferestrei pentru iesirea dintr-un meci activ de WordRush
+
+    def exit_wordrush_game(self):
         if not self.wordrush_exit_game:
             self.wordrush_exit_game = MDDialog(
                 title="Do you want to exit this game?",
@@ -1118,13 +1141,16 @@ class PartyPlaytime(MDApp):
 
         self.wordrush_exit_game.open()
 
-    def dismiss_wordrush_game(self,
-                              *args):  # Aceasta functie se ocupa de anularea iesirii dintr-un meci activ de WordRush
+    # Aceasta functie se ocupa de anularea iesirii dintr-un meci activ de WordRush
+
+    def dismiss_wordrush_game(self, *args):
         self.wordrush_exit_game.dismiss()
 
-    def exit_current_wordrush_game(self, *args):  # Aceasta functie se ocupa de iesirea dintr-un meci activ de WordRush
+    # Aceasta functie se ocupa de iesirea dintr-un meci activ de WordRush
+
+    def exit_current_wordrush_game(self, *args):
         self.wordrush_exit_game.dismiss()
-        self.root.current = 'wordrush'  # Ne intoarcem la meniul principal al jocului WordRush
+        self.root.current = 'wordrush'
 
     def exit_dialogue(self):
         self.account_dialog.dismiss()
