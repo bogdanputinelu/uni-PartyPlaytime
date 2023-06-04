@@ -268,6 +268,9 @@ class RegisterScreen(MDScreen):
 
 class LoginScreen(MDScreen):
     def switch_password_mode(self):
+        """
+        Da voie utilizatorului sa schimbe modul de vizualizare a parolei introduse
+        """
         if self.ids.password_login.password is True:
             self.ids.password_login.password = False
             self.ids.password_login.icon_right = "lock-open"
@@ -277,6 +280,9 @@ class LoginScreen(MDScreen):
         self.ids.password_login.focus = True
 
     def login(self, screen_manager):
+        """
+        Verifica daca contul introdus se afla in baza de date si logheaza utilizatorul
+        """
         with open("user_accounts.json", 'r+') as accounts_file:
             accounts = json.load(accounts_file)
 
@@ -292,6 +298,9 @@ class LoginScreen(MDScreen):
                 self.animate_wrong_account()
 
     def animate_wrong_account(self):
+        """
+        Animeaza datele introduse gresit
+        """
         animate = Animation(
             duration=0.2,
             line_color_normal=(1, 0, 0, 1),
@@ -949,6 +958,9 @@ class PartyPlaytime(MDApp):
         return Builder.load_file('party.kv')
 
     def account_info(self):
+        """
+        Deschide meniul ce contine informatiile contului
+        """
         if not self.account_dialog:
             self.account_dialog = MDDialog(
                 type="custom",
@@ -1156,6 +1168,9 @@ class PartyPlaytime(MDApp):
         self.account_dialog.dismiss()
 
     def game_information(self):
+        """
+        Deschide meniul ce ofera informatii despre jocuri din pagina de home
+        """
         if not self.information_dialog:
             self.information_dialog = MDDialog(
                 type='custom',
@@ -1168,6 +1183,9 @@ class PartyPlaytime(MDApp):
         self.information_dialog.dismiss()
 
     def open_tictactoe_rules(self):
+        """
+        Deschide meniul ce ofera informatii despre tictactoe
+        """
         if not self.tictactoe_rules:
             self.tictactoe_rules = MDDialog(
                 type="custom",
@@ -1180,6 +1198,9 @@ class PartyPlaytime(MDApp):
         self.tictactoe_rules.dismiss()
 
     def open_rules(self):
+        """
+        Deschide meniul ce ofera informatii despre boardblitz
+        """
         if not self.boardblitz_rules:
             self.boardblitz_rules = MDDialog(
                 type="custom",
@@ -1192,6 +1213,11 @@ class PartyPlaytime(MDApp):
         self.boardblitz_rules.dismiss()
 
     def boardblitz_players(self, *args):
+        """
+        Gestioneaza meniul de dinaintea inceperii jocului de BoardBlitz, functionalitatea alegerii
+        optiunilor(cuplarea butoanelor din meniu cu cele din pagina) precum si validarea acestora
+        pentru inceperea jocului.
+        """
         if self.boardblitz_ranking_dialog is None:
             self.boardblitz_ranking_dialog = MDDialog(
                 type="custom",
@@ -1249,6 +1275,10 @@ class PartyPlaytime(MDApp):
             self.open_boardblitz_start()
 
     def update_nickname_boxes(self):
+        """
+        Coreleaza numarul de casete de nickname(din meniul de optiuni, precum si in meniul de ranking)
+        ale playerilor cu optiunea aleasa.
+        """
         if self.boardblitz_ranking_dialog is None:
             self.boardblitz_ranking_dialog = MDDialog(
                 type="custom",
@@ -1294,6 +1324,9 @@ class PartyPlaytime(MDApp):
                                                                                           "center_y": .1}
 
     def open_boardblitz_start(self):
+        """
+        Deschide meniul optiunilor ce trebuie alese pentru a incepe jocul de Boardblitz.
+        """
         if not self.boardblitz_start:
             self.boardblitz_start = MDDialog(
                 type="custom",
@@ -1307,6 +1340,9 @@ class PartyPlaytime(MDApp):
         self.boardblitz_start.dismiss()
 
     def exit_boardblitz_game(self):
+        """
+        Deschide meniul pentru parasirea jocului de BoardBlitz
+        """
         if not self.boardblitz_exit_game:
             self.boardblitz_exit_game = MDDialog(
                 title="Do you want to exit this game?",
@@ -1328,6 +1364,9 @@ class PartyPlaytime(MDApp):
         self.boardblitz_exit_game.dismiss()
 
     def choose_avatars_for_boardblitz(self):
+        """
+        Alege random un avatar pentru fiecare player.
+        """
         avatars = []
 
         while len(avatars) < 4:
@@ -1341,11 +1380,17 @@ class PartyPlaytime(MDApp):
         return avatars
 
     def send_away_aliens(self, screen, colors):
+        """
+        Face ca pionii de culori specificate sa dispara de pe ecran.
+        """
         for color in colors:
             for alien_number in "1234":
                 screen.ids[color + "_alien_" + alien_number].pos = (dp(1000), dp(1000))
 
     def bring_in_aliens(self, screen, colors):
+        """
+        Face ca pionii de culori specificate sa apara pe ecran.
+        """
         for color in colors:
             for alien_number in "1234":
                 current_alien = color + "_alien_" + alien_number
@@ -1353,6 +1398,9 @@ class PartyPlaytime(MDApp):
                     (dp(coordinates[current_alien]["width"]), dp(coordinates[current_alien]["height"]))
 
     def blockage(self, alien, color, dice_rolled):
+        """
+        Verifica pentru zarul aruncat daca pionul are sau nu un blocaj in fata.
+        """
         starting_point = {
             "red": 7, "green": 20, "yellow": 33, "blue": 46
         }
@@ -1390,6 +1438,9 @@ class PartyPlaytime(MDApp):
         return True if blocking_aliens >= 2 else False
 
     def find_alien_moves(self, turn, dice_rolled):
+        """
+        Gaseste lista de pioni ce pot efectua o mutare avand in vedere zarul aruncat.
+        """
         alien_moves = []
         player_turn = ["red", "blue", "green", "yellow"]
 
@@ -1407,6 +1458,9 @@ class PartyPlaytime(MDApp):
         return alien_moves
 
     def go_to_next_turn(self, dice, next_player_dice, dice_number, dice_rolled, *args):
+        """
+        Efectueaza animatia zarului de la o runda la alta.
+        """
         PartyPlaytime.boardblitz_miscellaneous = []
 
         if dice_rolled != 6:
@@ -1425,11 +1479,17 @@ class PartyPlaytime(MDApp):
         dice_clicked[dice_number] = False
 
     def go_home(self, *args):
+        """
+        Intoarce utilizatorul la pagina jocului si reseteaza jocul de BoardBlitz.
+        """
         self.boardblitz_ranking_dialog.dismiss()
         self.reset_boardblitz()
         self.root.current = 'boardblitz'
 
     def end_game(self):
+        """
+        Afiseaza meniul de ranking de la finalul jocului de BoardBlitz.
+        """
         if not self.boardblitz_ranking_dialog:
             self.boardblitz_ranking_dialog = MDDialog(
                 type="custom",
@@ -1470,6 +1530,11 @@ class PartyPlaytime(MDApp):
         self.boardblitz_ranking_dialog.open()
 
     def alien_is_pressed(self, alien_id):
+        """
+        Efectueaza miscarea pionului ales si gestioneaza situatiile urmate de aceasta miscare:
+            - jocul se termina
+            - player-ul curent a ajuns la finish (iese din pool-ul de playeri ce continua jocul)
+        """
         screen = self.root.get_screen("boardblitz_game")
 
         alien_moves = PartyPlaytime.boardblitz_miscellaneous[4]
@@ -1649,6 +1714,9 @@ class PartyPlaytime(MDApp):
                                         0.2)
 
     def animate_dice(self, dice, dice_number):
+        """
+        Animeaza zarul apasat si activeaza pionii ce se pot muta, altfel se trece la urmatorul player
+        """
         if dice.opacity == 0 or dice_clicked[dice_number]:
             return
         dice_clicked[dice_number] = True
@@ -1699,6 +1767,10 @@ class PartyPlaytime(MDApp):
         Clock.schedule_once(rotate_back_dice, 0.5)
 
     def start_boardlitz_game(self):
+        """
+        Pentru fiecare player sunt aduse in ecran elementele pentru inceperea jocului de BoardBlitz.
+        Avatarele sunt alese, nickname-urile atribuite si pionii adusi in ecran
+        """
         boardblitz_game_screen = self.root.get_screen("boardblitz_game")
         PartyPlaytime.number_of_players_boardblitz = int(PartyPlaytime.player_button_selected[-1])
 
@@ -1750,6 +1822,9 @@ class PartyPlaytime(MDApp):
             self.bring_in_aliens(boardblitz_game_screen, ["green", "yellow", "red", "blue"])
 
     def reset_dice(self):
+        """
+        Reseteaza zarul
+        """
         boardblitz_game_screen = self.root.get_screen("boardblitz_game")
         boardblitz_game_screen.ids.dice_player_1.opacity = 1
 
@@ -1760,6 +1835,9 @@ class PartyPlaytime(MDApp):
             dice_clicked[i] = False
 
     def reset_alien_size(self):
+        """
+        Reseteaza marimea pionilor
+        """
         screen = self.root.get_screen("boardblitz_game")
         for color in ["red", "blue", "green", "yellow"]:
             for alien_number in "1234":
@@ -1767,11 +1845,17 @@ class PartyPlaytime(MDApp):
                 screen.ids[current_alien].icon_size = "30sp"
 
     def reset_ranking(self):
+        """
+        Reseteaza ranking-ul
+        """
         PartyPlaytime.boardblitz_finish_aliens = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
         PartyPlaytime.number_of_players_finished = 0
         PartyPlaytime.boardblitz_ranking = {"red": 0, "green": 0, "blue": 0, "yellow": 0}
 
     def reset_boardblitz(self):
+        """
+        Reseteaza toate optiunile necesare, pentru a se putea juca iar BoardBlitz.
+        """
         PartyPlaytime.player_chosen_to_start_boardblitz = False
         PartyPlaytime.current_player_boardblitz = None
         PartyPlaytime.number_of_players_boardblitz = None
@@ -1783,6 +1867,9 @@ class PartyPlaytime(MDApp):
         self.reset_ranking()
 
     def exit_current_boardblitz_game(self, *args):
+        """
+        Asigura parasirea jocului de BoardBlitz.
+        """
         self.boardblitz_exit_game.dismiss()
 
         self.reset_boardblitz()
@@ -1790,6 +1877,9 @@ class PartyPlaytime(MDApp):
         self.root.current = 'boardblitz'
 
     def exit_tictactoe_game(self):
+        """
+        Deschide meniul de parasire a jocului de TicTacToe.
+        """
         if not self.tictactoe_exit_dialog:
             self.tictactoe_exit_dialog = MDDialog(
                 title="Do you want to exit this game?",
@@ -1808,10 +1898,16 @@ class PartyPlaytime(MDApp):
         self.tictactoe_exit_dialog.open()
 
     def tictactoe_go_home(self):
+        """
+        Returneaza player-ul la pagina jocului de TicTacToe dupa finalizarea acestuia.
+        """
         self.reset_tictactoe()
         self.root.current = "tictactoe"
 
     def predict_next_move(self):
+        """
+        In functie de dificultatea aleasa (mediu sau dificil) calculeaza urmatoarea mutare.
+        """
         state = PartyPlaytime.tictactoe_board
 
         check = medium_states if PartyPlaytime.tictactoe_difficulty == "medium" else hard_states
@@ -1822,6 +1918,9 @@ class PartyPlaytime(MDApp):
         return -1
 
     def make_random_choice(self, choice_made=-1):
+        """
+        Genereaza urmatoarea mutare a botului pentru orice dificultate.
+        """
         screen = self.root.get_screen("tictactoe_game")
         if choice_made == -1:
             bot_choice = random.randint(0, 8)
@@ -1838,6 +1937,9 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.tictactoe_board[bot_choice] = 2
 
     def bot_makes_move(self):
+        """
+        Calculeaza mutarea bot-ului pentru TicTacToe.
+        """
         screen = self.root.get_screen("tictactoe_game")
         if PartyPlaytime.tictactoe_difficulty == "easy":
             self.make_random_choice()
@@ -1846,6 +1948,10 @@ class PartyPlaytime(MDApp):
             self.make_random_choice(predicted_choice)
 
     def animate_message(self, ending):
+        """
+        Animeaza mesajul de final pentru TicTacToe care anunta castigatorul
+        sau daca a fost egal.
+        """
         screen = self.root.get_screen("tictactoe_game")
         if ending == "draw":
             screen.ids.end_message.text = "draw!!"
@@ -1867,6 +1973,9 @@ class PartyPlaytime(MDApp):
         PartyPlaytime.animation_message.start(screen.ids.end_message)
 
     def animate_win(self, *args):
+        """
+        Coloreaza formatia castigatoare.
+        """
         screen = self.root.get_screen("tictactoe_game")
         for i in args:
             screen.ids["tac_box_" + str(i + 1)].button_disabled_color = "#238823"
@@ -1874,6 +1983,9 @@ class PartyPlaytime(MDApp):
         self.animate_message("win")
 
     def check_win_tictactoe(self):
+        """
+        Verifica daca exista un castigator pentru situatia curenta.
+        """
         state = PartyPlaytime.tictactoe_board
 
         for i in range(3):
@@ -1894,6 +2006,11 @@ class PartyPlaytime(MDApp):
         return False
 
     def tictactoe_make_move(self, button_id):
+        """
+        Pentru casuta selectata, se va afisa mutarea facuta. Apoi alterneaza randul cu
+        celalalt player sau, daca se joaca impotriva unui bot, va muta si pentru bot.
+        Verifica daca jocul s-a terminat.
+        """
         if not PartyPlaytime.tictactoe_finish:
             screen = self.root.get_screen("tictactoe_game")
             if PartyPlaytime.tictactoe_mode == "bot":
@@ -1945,6 +2062,9 @@ class PartyPlaytime(MDApp):
                     self.animate_message("draw")
 
     def reset_tictactoe(self):
+        """
+        Reseteaza jocul de TicTacToe pentru a putea fi jucat din nou.
+        """
         PartyPlaytime.tictactoe_current_move = "x"
         screen = self.root.get_screen("tictactoe_game")
         screen.ids.bot_nickname.width = "30dp"
@@ -1963,6 +2083,9 @@ class PartyPlaytime(MDApp):
             screen.ids["tac_box_" + i].button_disabled_color = "black"
 
     def exit_current_tictactoe_game(self, *args):
+        """
+        Paraseste jocul curent de TicTacToe
+        """
         self.tictactoe_exit_dialog.dismiss()
 
         self.reset_tictactoe()
@@ -1977,6 +2100,10 @@ class PartyPlaytime(MDApp):
         self.tictactoe_choose_options.dismiss()
 
     def prepare_avatars_tictactoe(self):
+        """
+        Alege random avatare pentru cei doi playeri sau pentru player si bot.
+        Pune pe ecran nickname-urile aferente.
+        """
         chosen_avatar_list = self.choose_avatars_for_boardblitz()
 
         screen = self.root.get_screen("tictactoe_game")
@@ -1993,6 +2120,11 @@ class PartyPlaytime(MDApp):
             screen.ids.bot_nickname.text = player_nickname
 
     def tictactoe_options(self, *args):
+        """
+        Gestioneaza meniul de optiuni pentru inceperea jocului de TicTacToe.
+        Coreleaza butoanele de optiuni Versus Bot si Versus Player cu cele din pagina
+        jocului. Valideaza nickname-ul player-ului introdus. Da start la joc.
+        """
         if args[0] == "start_game":
             nickname_box = self.tictactoe_choose_options.content_cls.ids.tictactoe_nickname
             if PartyPlaytime.tictactoe_mode == "player" \
@@ -2047,6 +2179,11 @@ class PartyPlaytime(MDApp):
             self.tictactoe_choose_options.open()
 
     def update_tictactoe_options(self):
+        """
+        Coreleaza butoanele de Versus Bot si Versus Player cu optiunile aferente.
+        Versus Player - introducere nickname player
+        Versus Bot - alegerea dificultatii
+        """
         if PartyPlaytime.tictactoe_mode == "bot":
             self.tictactoe_choose_options.content_cls.ids.tictactoe_nickname.\
                 pos_hint = {"center_y": 3.5}
@@ -2069,6 +2206,9 @@ class PartyPlaytime(MDApp):
                 pos_hint = {"center_x": .5, "center_y": 3.3}
 
     def set_tictactoe_difficulty(self, difficulty):
+        """
+        Evidentiaza butonul de dificultate ales
+        """
         self.tictactoe_choose_options.content_cls.ids[PartyPlaytime.tictactoe_difficulty + "_button"].\
             button_text_color = "white"
 
@@ -2078,6 +2218,9 @@ class PartyPlaytime(MDApp):
             button_text_color = "black"
 
     def animate_wrong_widget(self, widget):
+        """
+        Animeaza informatia introdusa gresit.
+        """
         animate = Animation(
             duration=0.2,
             line_color_normal=(1, 0, 0, 1),
@@ -2106,7 +2249,11 @@ class PartyPlaytime(MDApp):
         animate.start(widget)
 
     def save_changes_made(self):
-
+        """
+        Salveaza modificarile facute la informatiile facute.
+        Inainte de a salva, modificarile sunt validate, iar daca acestea nu sunt
+        valide, este animata casuta unde informatia trebuie introdusa corect.
+        """
         global email_regex
 
         if not re.fullmatch(email_regex, self.account_dialog.content_cls.ids.email_information.text):
