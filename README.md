@@ -87,6 +87,28 @@ Comentariile din cod sunt utilizate pentru a adăuga explicații și clarificăr
 
 ![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/5e2db323-c01f-4477-ba54-c62d00f130ac)
 
+## Teste automate 
+- Functia care verifica daca avem un castigator 
+- Functia care prezice urmatoarea mutare a bot-ului pe dificultatea hard 
+- Functia care testeaza daca un pion are in fata un blocaj 
+- Functia care verifica ce pioni pot fi mutati 
+
+![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/9d8a6de7-6641-46a5-b5d4-b17b997db3e7)
+
+## Code refactoring 
+Urmatoarea bucata de cod face parte din functia ce animeaza miscarea pionilor pe table jocului BoardBlitz si se regaseste in acest [commit](https://github.com/bogdanputinelu/uni-PartyPlaytime/commit/400c11eddfbcfe87ca1eb3fdab773e24bc063485).
+
+![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/c0791403-3722-4895-a9cb-4d1e93b293f4)
+
+Acesta a fost refactorizat, fiind eliminate mai multe bucati de cod redundante. Noul cod este unul concis si usor de inteles si se regaseste in acest [commit](https://github.com/bogdanputinelu/uni-PartyPlaytime/commit/76caf9849976275f1c8eecde845d963031f5356d).
+
+![image](https://github.com/bogdanputinelu/uni-PartyPlaytime/assets/93870739/fe9b8c50-ab7e-43e1-848c-3e79276ef291)
+
+## Documentatie
+O prezentare mai detaliata a proiectului se regaseste in folderul [documentation](https://github.com/bogdanputinelu/uni-PartyPlaytime/tree/main/documentation). 
+
+
+
 
 
 
