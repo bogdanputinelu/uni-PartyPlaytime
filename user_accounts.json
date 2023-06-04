@@ -55,6 +55,22 @@
             "last_name": "bogdan",
             "e-mail": "ceva@gmail.ro",
             "nickname": "bogdan"
+        },
+        {
+            "username": "Nicolae",
+            "password": "12345678",
+            "first_name": "asdasd",
+            "last_name": "asdads",
+            "e-mail": "amogus@yahoo.com",
+            "nickname": "Nicolae"
+        },
+        {
+            "username": "Nicolae2",
+            "password": "12345678",
+            "first_name": "asdasd",
+            "last_name": "adasd",
+            "e-mail": "amogus2@yahoo.com",
+            "nickname": "Nicolae"
         }
     ]
 }

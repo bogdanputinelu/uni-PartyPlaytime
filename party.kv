@@ -7,6 +7,7 @@ WindowManager:
     HeadSpinScreen:
     HeadSpinPlay:
     WordRushScreen:
+    WordRushPlay:
     TicTacToeScreen:
     BoardBlitzGame:
     TicTacToeGame:
@@ -3328,15 +3329,6 @@ WindowManager:
                     root.change_team()
                 on_release: self.md_bg_color = 203/255, 221/255, 209/255, 1
 
-<WordRushScreen>:
-    name: "wordrush"
-    md_bg_color: "yellow"
-
-    MDFlatButton:
-        text: "aici wordrush"
-        on_release: app.root.current = 'home'
-        md_bg_color: "white"
-        pos_hint: {"center_y": .5, "center_x": .5}
 
 <TicTacToeScreen>:
     name: "tictactoe"
@@ -3660,3 +3652,634 @@ WindowManager:
             pos_hint: {"center_x": .5, "center_y": .5}
             on_release: app.tictactoe_go_home()
 
+<WordRushScreen>:
+    name: "wordrush"
+    id: wordrush
+    md_bg_color: "white"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTopAppBar:
+            md_bg_color: root.md_bg_color
+            specific_text_color: "black"
+            elevation: 0
+            right_action_items: [["text-box-outline", lambda x: app.wordrush_rules()]]
+            left_action_items: [["chevron-left", lambda x: root.go_back(app.root)]]
+
+        MDRelativeLayout:
+
+            MDBoxLayout:
+                id: game_picture
+                size_hint: .8, .4
+                radius: 10
+                pos_hint: {"center_x": .5, "top": .95}
+
+                FitImage:
+                    source: "logos/Word_Rush_-_Logo.png"
+                    radius: 10
+
+            ElevatedBox:
+                id: game_page_description
+                md_bg_color: "#F1F4CC"
+                radius: 10
+                size_hint: .9, .25
+                pos_hint: {"center_x": .5}
+                y: game_picture.top - game_picture.height - self.height - dp(10)
+                elevation: 4
+                shadow_softness: 2
+                shadow_offset: 0, 1
+
+                MDLabel:
+                    id: how_to_play
+                    text: "How to Play:"
+                    size_hint: None, None
+                    size: "200dp", "50dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "22sp"
+                    x: game_page_description.x + dp(12)
+                    y: game_page_description.top - self.height - dp(12)
+
+                MDLabel:
+                    id: game_rules
+                    text: "- Check out the rules of the game\n\n- Select your preferred game settings\n\n- Press play and have fun!"
+                    size_hint: None, None
+                    size: "320dp", "100dp"
+                    bold: True
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "14sp"
+                    x: game_page_description.x + dp(15)
+                    y: how_to_play.top - how_to_play.height - self.height
+
+            WordRushButtonSettings:
+                id: settings_button
+                md_bg_color: "#BBBBBB"
+                unfocus_color: "#BBBBBB"
+                button_event: "open_wordrush_settings"
+                button_name: "SETTINGS"
+                font_dim: "16dp"
+                focus_color: 0, 0, 0, .2
+                elevation: 0
+                radius: 10
+                size_hint: .5, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - self.height - dp(10)
+
+            WordRushButtonPlay:
+                md_bg_color: "#457D58"
+                unfocus_color: "#457D58"
+                button_event: "wordrushPlay"
+                button_name: "PLAY!"
+                font_dim: "16dp"
+                focus_color: "#CBDDD1"
+                elevation: 0
+                radius: 10
+                size_hint: .9, .08
+                pos_hint: {"center_x": .5}
+                y: game_page_description.top - game_page_description.height - settings_button.height - self.height - dp(20)
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+
+        MDLabel:
+            text: "WordRush"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (wordrush.top - self.height * 1.7)
+            x: (wordrush.width - self.width) / 2
+
+<WordRushButtonSettings>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.wordrush_settings()
+
+<WordRushButtonPlay>:
+    focus_color: 1, 1, 1, .8
+    unfocus_color: 0, 0, 0, 0
+    on_enter: self.change_cursor("hand")
+    on_leave: self.change_cursor("arrow")
+    button_event: ""
+    button_name: ""
+    font_dim: "12dp"
+    button_id: ""
+    elevation: 4
+    shadow_softness: 2
+    shadow_offset: 0, 1
+
+    MDRectangleFlatButton:
+        text: root.button_name
+        font_name: "fonts/BrunoAce-Regular.ttf"
+        text_color: "black"
+        font_size: root.font_dim
+        bold: True
+        size_hint: 1, 1
+        line_color: 0, 0, 0, 0
+        on_release:
+            app.root.current = 'wordrushPlay'
+            app.root.get_screen('wordrushPlay').wordrush_play()
+
+
+<WordRushSettings>:
+    id: wordrush_settings
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: wordrush_settings.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.wordrush_settings_exit()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "WORDRUSH SETTINGS"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                font_size: "18sp"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "check-bold"
+                pos_hint: {"center_x": .6, "center_y": .5}
+                icon_color: "black"
+                font_size: "20dp"
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+                on_release: app.wordrush_save_settings()
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: wordrush_settings.width * 1.1
+        color: "black"
+        y: wordrush_settings.top - dp(10)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "250dp"
+        y: wordrush_settings.top - self.height - dp(20)
+        pos_hint: {"center_x": .5}
+        radius: 10
+
+        MDFloatLayout:
+            id: rounds_and_teams_box
+            size_hint_y: .25
+
+            MDTextField:
+                id: nrRounds
+                mode: "rectangle"
+                hint_text: "Rounds"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "150dp"
+                y: rounds_and_teams_box.top - self.height
+                x: rounds_and_teams_box.x + (rounds_and_teams_box.width / 2 - self.width) / 2
+
+            MDTextField:
+                id: nrPoints
+                mode: "rectangle"
+                hint_text: "Points"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "150dp"
+                y: rounds_and_teams_box.top - self.height
+                x: rounds_and_teams_box.x + (3 * rounds_and_teams_box.width / 2 - self.width) / 2
+
+        MDFloatLayout:
+            id: details_box
+            size_hint_y: .50
+
+            MDTextField:
+                id: nrTeams
+                mode: "rectangle"
+                hint_text: "Teams"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "326dp"
+                y: details_box.top - self.height + dp(10)
+                x: details_box.x + (details_box.width - self.width) / 2
+
+
+            MDTextField:
+                id: gameMode
+                mode: "rectangle"
+                hint_text: "Game Mode (0 = Rounds, 1 = Points)"
+                hint_text_color_focus: 0, 0, 0, 1
+                line_color_focus: 0, 0, 0, 1
+                text_color_focus: 0, 0, 0, 1
+                size_hint_x: None
+                width: "326dp"
+                y: details_box.top - self.height * 2 - dp(4)
+                x: details_box.x + (details_box.width - self.width) / 2
+
+
+
+    MDFloatLayout:
+        size_hint: 1.16, None
+        height: "250dp"
+        y: wordrush_settings.top - self.height * 2 + dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+
+        FitImage:
+            size_hint: None, None
+            size: "220dp", "160dp"
+            source: "logos/account_information_logo.png"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
+<WordRushRules>:
+    id: wordrush_rules
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDBoxLayout:
+        id: top_bar
+        size_hint: 1.16, None
+        height: "60dp"
+        y: wordrush_rules.top - dp(10)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        spacing: "10dp"
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_wordrush_rules()
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.width / 2 + dp(36), top_bar.height
+
+            ScaleLabel:
+                text: "GAME RULES"
+                font_size: "18sp"
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                bold: True
+                adaptive_size: True
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDRelativeLayout:
+            size_hint: None, None
+            size: top_bar.height, top_bar.height
+
+            MDIconButton:
+                icon: "close-thick"
+                pos_hint: {"center_y": .5, "center_x": .5}
+                on_release: app.exit_wordrush_rules()
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: wordrush_rules.width * 1.1
+        color: "black"
+        y: wordrush_rules.top - dp(10)
+
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1.16, None
+        height: "490dp"
+        y: wordrush_rules.top - self.height - dp(20)
+        pos_hint: {"center_x": .5}
+        radius: 10
+        halign: "center"
+
+        MDScrollView:
+            id: scroll
+
+            MDList:
+                spacing: "12dp"
+                id: wordrush_list
+
+                MDBoxLayout: # Textul cu Objective
+                    size_hint_y: None
+                    height: "160dp"
+                    padding: "10dp"
+
+                    MDLabel:
+                        text: "Objective: Be the first team to either win a certain amount of rounds or get a certain score by guessing the words that you and your team members will be miming, drawing or describing!\n"
+                        font_size: "14sp"
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        halign: "center"
+                        valign: "center"
+                        #pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    padding: "10dp"
+                    height: "1200dp"
+
+
+                    MDLabel:
+                        text: "Select from the Settings Menu your game options after reading and understanding the rules.\n\n    This game is a team game in which teams take turns guessing a word that their chosen team member either mimes, draws or describes\n\n    A round consists of each team guessing one card\n\n    At the start of a round, the team currently playing will be displayed on the screen. That team must choose one of its members that will mime, draw or describe. That player will interact with the screen, which will show a word and whether that word must be mimed, drawn or described. Without showing the others the screen, he must make his team members guess that word by ONLY miming, drawing or describing, depending on the type of round he was assigned.\n\n    Each team has the right to ask for another word, which may lead to a different type of round being played, up to three times. These skips are allowed per team, NOT PER TEAM MEMBER\n\n    Members of other teams may not guess the words that are not being played by their team members\n\n    If a team guesses a word, they earn a point\n\n    The process is repeated until a team either reaches the amount of points needed to win, or the rounds end, depending on the Game Settings. The winner or winners, if there is a draw, will be displayed at the end of the game\n\n    Go back to the Game Settings in order to choose between the following parameters:\n\n *Game type (points or rounds): Choose whether you want to play until a team reaches a certain number of points or play a fixed number of rounds, after which the winner will be chosen\n\n *Number of points: Choose how many points a team must earn in order to win when playing for points\n\n *Number of rounds: Choose how many rounds will be played until selecting the winner when playing for rounds\n\n *Number of Teams: Choose how many teams will be playing (between 2-4)\n\n"
+                        font_size: "14sp"
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        halign: "center"
+                        valign: "center"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+<WordRushPlay>:
+    name: "wordrushPlay"
+    id: wordrush
+    md_bg_color: "white"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: "white"
+
+        MDTopAppBar:
+            id: top_bar
+            md_bg_color: "white"
+            specific_text_color: "black"
+            elevation: 0
+            left_action_items: [["window-close", lambda x: app.exit_wordrush_game()]]
+            right_action_items: [["window-close", lambda x: app.exit_wordrush_game()]]
+
+        MDSeparator:
+            width: "80dp"
+            color: "black"
+
+        MDRelativeLayout:
+            id: game_page_space
+            md_bg_color: 0, 0, 0, .1
+
+    MDFloatLayout:
+        size_hint: None, None
+        size: 0, 0
+        md_bg_color: "white"
+
+        MDLabel:
+            text: "WordRush"
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "22sp"
+            bold: True
+            adaptive_size: True
+            y: (wordrush.top - self.height * 1.7)
+            x: (wordrush.width - self.width) / 2
+
+    MDBoxLayout:
+        id: all
+        size_hint_y: .920
+        md_bg_color: "white"
+
+        MDFloatLayout:
+            id: float
+
+            ElevatedBox:
+                id: game_card_box
+                md_bg_color: "white"
+                size_hint_x: .8
+                radius: 10
+                elevation: 4
+                size_hint: .4, .075
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 1.3
+                x: (float.width - self.width) / 2
+
+                MDLabel:
+                    id: roundLabel
+                    text: "ROUND:"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    size_hint: None, None
+                    size: "180dp", "100dp"
+                    valign: "middle"
+                    #halign: "center"
+                    pos_hint: {"center_x": .7, "center_y": .5}
+
+            ElevatedBox:
+                id: game_card_box
+                radius: 10
+                md_bg_color: 203/255, 221/255, 209/255, 1
+                elevation: 4
+                size_hint: .75, .075
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 2.5
+                x: (float.width - self.width) / 2
+
+                MDLabel:
+                    id: teamLabel
+                    text: "Team"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    size_hint: None, None
+                    size: "300dp", "80dp"
+                    valign: "middle"
+                    halign: "center"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            ElevatedBox:
+                id: game_card_box
+                size_hint: .2, .075
+                y: float.top - self.height * 3.8
+                x: (float.width - self.width) / 2
+
+                MDLabel:
+                    id: pointsLabel
+                    text: "Points: "
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "18sp"
+                    size_hint: None, None
+                    size: "300dp", "80dp"
+                    valign: "middle"
+                    halign: "center"
+                    pos_hint: {"center_x": .5, "center_y": .5}
+
+            ElevatedBox:
+                id: game_card_box
+                md_bg_color: "white"
+                radius: 10
+                elevation: 4
+                size_hint: .8, .25
+                shadow_softness: 2
+                shadow_offset: 0, 1
+                y: float.top - self.height * 2.2
+                x: (float.width - self.width) / 2
+
+                FitImage:
+                    id: logoLabel
+                    source: "logos/winner.png"
+                    size_hint: None, None
+                    size: "100dp", "100dp"
+                    pos_hint: {"center_x": .2, "center_y": .6}
+                    radius: 10
+
+                MDLabel:
+                    id: wordLabel
+                    text: "Your word"
+                    font_name: "fonts/BrunoAce-Regular.ttf"
+                    font_size: "26sp"
+                    size_hint: None, None
+                    size: "180dp", "100dp"
+                    pos_hint: {"center_x": .7, "center_y": .6}
+
+                ElevatedBox:
+                    id: game_title_box
+                    size_hint: .2, .2
+                    y: game_card_box.top - self.height * 4.8
+                    x: (game_card_box.width - self.width) / 2
+
+                    MDLabel:
+                        id: roundTypeLabel
+                        text: "Mime/Draw/Describe"
+                        bold: True
+                        font_name: "fonts/BrunoAce-Regular.ttf"
+                        font_size: "18sp"
+                        x: game_title_box.x
+                        size_hint_x: None
+                        width: "220dp"
+                        pos_hint: {"center_x": .7, "center_y": .6}
+
+            MDRectangleFlatButton:
+                id: checkLabel
+                text: "CHECK"
+                font_size: "30dp"
+                bold: True
+                size_hint: .47, .25
+                md_bg_color: 31/255, 80/255, 20/255, .9
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .25, "center_y": .28}
+                text_color: "white"
+                line_color: 0, 0, 0, 0
+                on_press: root.check()
+                on_release: self.md_bg_color = 31/255, 80/255, 20/255, .9
+
+            MDRectangleFlatButton:
+                id: passLabel
+                text: "PASS"
+                font_size: "30dp"
+                bold: True
+                size_hint: .47, .25
+                md_bg_color: 205/255, 33/255, 0/255, .9
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .75, "center_y": .28}
+                text_color: "white"
+                line_color: 0, 0, 0, 0
+                on_press: root.passWord()
+                on_release: self.md_bg_color = 205/255, 33/255, 0/255, .9
+
+            MDRectangleFlatButton:
+                id: nextLabel
+                text: "Start"
+                font_size: "20dp"
+                bold: True
+                size_hint: .1, .07
+                md_bg_color: 203/255, 221/255, 209/255, 1
+                ripple_alpha: 0
+                font_name: "fonts/BrunoAce-Regular.ttf"
+                pos_hint: {"center_x": .5, "center_y": .075}
+                text_color: "black"
+                line_color: 0, 0, 0, 0
+                on_press: root.updateScreen()
+                on_release: self.md_bg_color = 203/255, 221/255, 209/255, 1
+
+<RankingInformationWordRush>:
+    id: ranking_box_wordrush
+    spacing: "12dp"
+    size_hint_y: None
+    height: "500dp"
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_wordrush.top - dp(60)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "350dp", "160dp"
+            pos_hint: {"center_x": .5, "center_y":.5}
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_wordrush.top - dp(20)
+        pos_hint: {"center_x": .5}
+
+        MDLabel:
+            text: "RANKING"
+            adaptive_size: True
+            font_name: "fonts/BrunoAce-Regular.ttf"
+            font_size: "56sp"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            bold: True
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_wordrush.width * 1.1
+        color: "black"
+        y: ranking_box_wordrush.top - dp(30)
+
+    MDSeparator:
+        pos_hint: {"center_x": .5}
+        size_hint_x: None
+        width: ranking_box_wordrush.width * 1.1
+        color: "black"
+        y: ranking_box_wordrush.top - dp(500)
+
+    MDFloatLayout:
+        size_hint_y: 0.1
+        y: ranking_box_wordrush.top - dp(440)
+        pos_hint: {"center_x": .5}
+        FitImage:
+            size_hint: None, None
+            size: "180dp", "180dp"
+            source: "logos/yellow_monster.png" # sursa
+            pos_hint: {"center_x": .5, "center_y":.5}
