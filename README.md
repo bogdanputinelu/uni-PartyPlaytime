@@ -12,6 +12,8 @@ Aplicatia PartyPlaytime este o aplicatie destinata distractiei pentru grupuri de
 
 **‘Tic Tac Toe’** este un joc clasic ce necesita doua persoane. Pe ecran va aparea un tabel cu trei linii si trei coloane. Fiecare jucator marcheaza pe rand cate o casuta cu X si 0, iar primul jucator care reușește să marcheze 3 căsute adiacente pe orizontală, verticală sau diagonală caștigă jocul. In cazul in care este un singur utilizator, acesta o sa joace cu un bot.
 
+## Demo
+Prezentarea aplicatiei se poate gasi atat in arhiva din folderul [demo](https://github.com/bogdanputinelu/uni-PartyPlaytime/tree/main/demo), cat si pe [Youtube](https://www.youtube.com/watch?v=ugx_KXCsY3U). 
 
 ## Membrii echipei 
 - **[Putinelu Bogdan](https://github.com/bogdanputinelu)**
